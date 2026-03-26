@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseOS — Student Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+</head>
+<body>
+<div class="app-container">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <h1>CourseOS</h1>
+            <div class="subtitle">Project-Based Curriculum</div>
+        </div>
+
+        <ul class="sidebar-nav">
+            <li><a href="#dashboard" data-page="dashboard">
+                <span class="nav-icon">⬛</span> Dashboard
+            </a></li>
+            <li><a href="#project" data-page="project">
+                <span class="nav-icon">◆</span> My Project
+            </a></li>
+            <li><a href="#track" data-page="track">
+                <span class="nav-icon">★</span> Track
+            </a></li>
+
+            <li class="section-title">Courses</li>
+            <li><a href="#course/cp1" data-page="course" data-code="cp1">
+                <span class="nav-icon">①</span> CP1 — Fundamentals
+            </a></li>
+            <li><a href="#course/cp2" data-page="course" data-code="cp2">
+                <span class="nav-icon">②</span> CP2 — Professional
+            </a></li>
+            <li><a href="#course/oop" data-page="course" data-code="oop">
+                <span class="nav-icon">③</span> OOP — Architecture
+            </a></li>
+            <li><a href="#course/dsa" data-page="course" data-code="dsa">
+                <span class="nav-icon">④</span> DSA — Performance
+            </a></li>
+
+            <li class="section-title">Settings</li>
+            <li><a href="javascript:void(0)" onclick="resetData()" style="color:var(--text-muted)">
+                <span class="nav-icon">↺</span> Reset Data
+            </a></li>
+        </ul>
+
+        <div class="sidebar-footer" id="sidebar-footer"></div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="app">
+        <div class="empty-state">
+            <div class="empty-icon">⏳</div>
+            <p>Loading...</p>
+        </div>
+    </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  // Update sidebar footer with student info
+  function updateFooter() {
+    const footer = document.getElementById("sidebar-footer");
+    if (state.setup && state.student.name) {
+      footer.innerHTML = `<div class="user-name">${esc(state.student.name)}</div><div class="user-id">${esc(state.student.studentId)}</div>`;
+    }
+  }
+  const _origRender = render;
+  render = function() { _origRender(); updateFooter(); };
+</script>
+</body>
+</html>
