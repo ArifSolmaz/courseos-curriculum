@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Admin Panel — CourseOS{% endblock %}
 
+{% block breadcrumb %}
+<div class="breadcrumb">
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <span class="sep">/</span>
+    <span class="current">Admin Panel</span>
+</div>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
     <h1>Instructor Admin Panel</h1>
@@ -18,7 +26,7 @@
         <div class="stat-label">Teams</div>
     </div>
     <div class="card stat-card">
-        <div class="stat-value text-danger">{{ red_list|length }}</div>
+        <div class="stat-value {% if red_list %}text-danger{% endif %}">{{ red_list|length }}</div>
         <div class="stat-label">Red List</div>
     </div>
     <div class="card stat-card">
@@ -27,24 +35,24 @@
     </div>
 </div>
 
-<!-- Red List (At-Risk Students) -->
+<!-- Red List -->
 {% if red_list %}
 <div class="card mb-3" style="border-left:3px solid var(--danger);">
     <div class="card-header">
-        <h2 style="color:var(--danger);">Red List — At-Risk Students</h2>
+        <h2 class="text-danger">At-Risk Students</h2>
     </div>
-    <p class="text-sm text-muted mb-2">Students with 2+ failed checks or 2+ open recovery tickets. Per policy: these students get rescue-lane tasks first and a mandatory instructor checkpoint.</p>
+    <p class="text-sm text-muted mb-2">Students with 2+ failed checks or open recovery tickets — per policy they get rescue-lane tasks and mandatory instructor checkpoints.</p>
 
     {% for item in red_list %}
     <div class="deliverable-item">
-        <div class="check-icon" style="background:var(--danger);color:white;">!</div>
+        <div class="check-icon" style="background:var(--danger-bg);color:var(--danger);">!</div>
         <div class="deliverable-info">
-            <h5>{{ item.student.name }} ({{ item.student.student_id }})</h5>
-            <span class="type-tag">{{ item.student.track }}</span>
+            <h5>{{ item.student.name }}</h5>
+            <span class="type-tag">{{ item.student.student_id }} &middot; {{ item.student.track }}</span>
         </div>
         <div class="flex gap-1">
-            <span class="badge badge-danger">{{ item.failed }} failed checks</span>
-            <span class="badge badge-warning">{{ item.recovery }} open recovery</span>
+            <span class="badge badge-danger">{{ item.failed }} failed</span>
+            <span class="badge badge-warning">{{ item.recovery }} recovery</span>
         </div>
     </div>
     {% endfor %}
@@ -56,13 +64,13 @@
     <div class="card-header">
         <h2>Track Distribution</h2>
     </div>
-    <div class="grid grid-3">
+    <div class="grid grid-3" style="grid-template-columns: repeat(5, 1fr);">
         {% for key, track in tracks.items() %}
         {% set count = students|selectattr('track', 'equalto', key)|list|length %}
-        <div class="text-center" style="padding:12px;">
-            <div style="font-size:2rem;">{{ track.icon }}</div>
-            <div class="font-bold">{{ count }}</div>
-            <div class="text-sm text-muted">{{ track.name }}</div>
+        <div class="text-center" style="padding:14px;">
+            <div style="font-size:2.2rem;">{{ track.icon }}</div>
+            <div class="font-bold" style="font-size:1.3rem;">{{ count }}</div>
+            <div class="text-xs text-muted">{{ track.name }}</div>
         </div>
         {% endfor %}
     </div>
@@ -73,40 +81,40 @@
     <div class="card-header">
         <h2>All Students</h2>
     </div>
-    <table style="width:100%;border-collapse:collapse;">
+    <table class="data-table">
         <thead>
-            <tr style="border-bottom:1px solid var(--border);">
-                <th style="text-align:left;padding:8px;font-size:0.8rem;color:var(--text-muted);">Student</th>
-                <th style="text-align:left;padding:8px;font-size:0.8rem;color:var(--text-muted);">Track</th>
-                <th style="text-align:center;padding:8px;font-size:0.8rem;color:var(--text-muted);">CP1</th>
-                <th style="text-align:center;padding:8px;font-size:0.8rem;color:var(--text-muted);">CP2</th>
-                <th style="text-align:center;padding:8px;font-size:0.8rem;color:var(--text-muted);">OOP</th>
-                <th style="text-align:center;padding:8px;font-size:0.8rem;color:var(--text-muted);">DSA</th>
+            <tr>
+                <th>Student</th>
+                <th>Track</th>
+                <th style="text-align:center">CP1</th>
+                <th style="text-align:center">CP2</th>
+                <th style="text-align:center">OOP</th>
+                <th style="text-align:center">DSA</th>
             </tr>
         </thead>
         <tbody>
             {% for s in students %}
             {% if not s.is_admin %}
-            <tr style="border-bottom:1px solid var(--border);">
-                <td style="padding:10px 8px;">
-                    <strong>{{ s.name }}</strong><br>
-                    <span class="text-sm text-muted">{{ s.student_id }}</span>
+            <tr>
+                <td>
+                    <div class="font-medium">{{ s.name }}</div>
+                    <div class="text-xs text-muted">{{ s.student_id }}</div>
                 </td>
-                <td style="padding:10px 8px;">
+                <td>
                     {% if s.track in tracks %}
-                    {{ tracks[s.track].icon }} {{ tracks[s.track].name }}
+                    {{ tracks[s.track].icon }} <span class="text-sm">{{ tracks[s.track].name }}</span>
                     {% if s.track_confirmed %}<span class="badge badge-success" style="margin-left:4px;">Locked</span>{% endif %}
                     {% else %}
-                    <span class="text-muted">Undecided</span>
+                    <span class="text-muted text-sm">Undecided</span>
                     {% endif %}
                 </td>
                 {% for code in ['cp1', 'cp2', 'oop', 'dsa'] %}
                 {% set pct = s.get_progress(code) %}
-                <td style="padding:10px 8px;text-align:center;">
-                    <div class="progress-bar" style="width:60px;margin:0 auto;">
-                        <div class="progress-fill {% if pct == 100 %}success{% elif pct > 0 %}{% else %}{% endif %}" style="width:{{ pct }}%"></div>
+                <td style="text-align:center;">
+                    <div class="progress-bar" style="width:50px;margin:0 auto;height:5px;">
+                        <div class="progress-fill {% if pct == 100 %}success{% endif %}" style="width:{{ pct }}%"></div>
                     </div>
-                    <div class="text-sm text-muted">{{ pct }}%</div>
+                    <div class="text-xs text-muted mt-1">{{ pct }}%</div>
                 </td>
                 {% endfor %}
             </tr>

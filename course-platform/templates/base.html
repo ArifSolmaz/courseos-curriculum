@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CourseOS{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
 </head>
 <body>
 {% if current_user.is_authenticated %}
 <div class="app-container">
-    <!-- Sidebar -->
     <nav class="sidebar">
         <div class="sidebar-brand">
             <h1>CourseOS</h1>
@@ -18,41 +18,44 @@
 
         <ul class="sidebar-nav">
             <li><a href="{{ url_for('dashboard') }}" class="{% if request.endpoint == 'dashboard' %}active{% endif %}">
-                <span class="nav-icon">&#9776;</span> Dashboard
+                <span class="nav-icon">&#9632;</span> Dashboard
             </a></li>
             <li><a href="{{ url_for('project_view') }}" class="{% if request.endpoint == 'project_view' %}active{% endif %}">
-                <span class="nav-icon">&#9881;</span> My Project
+                <span class="nav-icon">&#9670;</span> My Project
+            </a></li>
+            <li><a href="{{ url_for('select_track') }}" class="{% if request.endpoint == 'select_track' %}active{% endif %}">
+                <span class="nav-icon">&#9733;</span> Track
             </a></li>
 
             <li class="section-title">Courses</li>
+            {% set course_icons = {'cp1': '①', 'cp2': '②', 'oop': '③', 'dsa': '④'} %}
+            {% set course_names = {'cp1': 'CP1 — Fundamentals', 'cp2': 'CP2 — Professional', 'oop': 'OOP — Architecture', 'dsa': 'DSA — Performance'} %}
             {% for c in ['cp1', 'cp2', 'oop', 'dsa'] %}
-            <li><a href="{{ url_for('course_view', code=c) }}" class="{% if request.endpoint == 'course_view' and request.view_args.get('code') == c %}active{% endif %}">
-                <span class="nav-icon">{% if c == 'cp1' %}1{% elif c == 'cp2' %}2{% elif c == 'oop' %}3{% else %}4{% endif %}</span>
-                {{ c|upper }}
+            <li><a href="{{ url_for('course_view', code=c) }}" class="{% if request.endpoint in ('course_view','week_view') and request.view_args.get('code') == c %}active{% endif %}">
+                <span class="nav-icon">{{ course_icons[c] }}</span>
+                {{ course_names[c] }}
             </a></li>
             {% endfor %}
 
-            <li class="section-title">Account</li>
-            <li><a href="{{ url_for('select_track') }}">
-                <span class="nav-icon">&#9733;</span> Track: {{ current_user.track|default('undecided') }}
-            </a></li>
             {% if current_user.is_admin %}
+            <li class="section-title">Instructor</li>
             <li><a href="{{ url_for('admin_panel') }}" class="{% if request.endpoint == 'admin_panel' %}active{% endif %}">
                 <span class="nav-icon">&#9881;</span> Admin Panel
             </a></li>
             {% endif %}
-            <li><a href="{{ url_for('logout') }}">
-                <span class="nav-icon">&#10140;</span> Logout
-            </a></li>
         </ul>
 
-        <div style="padding: 24px; border-top: 1px solid var(--border); margin-top: auto;">
-            <div class="text-sm text-muted">{{ current_user.name }}</div>
-            <div class="text-sm text-muted">{{ current_user.student_id }}</div>
+        <div class="sidebar-footer">
+            <div class="flex-between">
+                <div>
+                    <div class="user-name">{{ current_user.name }}</div>
+                    <div class="user-id">{{ current_user.student_id }}</div>
+                </div>
+                <a href="{{ url_for('logout') }}" class="btn-ghost" title="Sign out">&#10140;</a>
+            </div>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <main class="main-content">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -62,6 +65,7 @@
         {% endif %}
         {% endwith %}
 
+        {% block breadcrumb %}{% endblock %}
         {% block content %}{% endblock %}
     </main>
 </div>

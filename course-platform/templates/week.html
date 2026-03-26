@@ -1,20 +1,26 @@
 {% extends "base.html" %}
 {% block title %}{{ course.code|upper }} Week {{ week.week_num }} — CourseOS{% endblock %}
 
+{% block breadcrumb %}
+<div class="breadcrumb">
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <span class="sep">/</span>
+    <a href="{{ url_for('course_view', code=course.code) }}">{{ course.code|upper }}</a>
+    <span class="sep">/</span>
+    <span class="current">Week {{ week.week_num }}: {{ week.title }}</span>
+</div>
+{% endblock %}
+
 {% block content %}
-<!-- Navigation -->
+<!-- Week Navigation -->
 <div class="flex-between mb-2">
-    <div>
-        {% if prev_week %}
-        <a href="{{ url_for('week_view', code=course.code, week_num=prev_week.week_num) }}" class="btn btn-outline btn-sm">&#8592; Week {{ prev_week.week_num }}</a>
-        {% endif %}
-    </div>
-    <a href="{{ url_for('course_view', code=course.code) }}" class="btn btn-outline btn-sm">Back to {{ course.code|upper }}</a>
-    <div>
-        {% if next_week %}
-        <a href="{{ url_for('week_view', code=course.code, week_num=next_week.week_num) }}" class="btn btn-outline btn-sm">Week {{ next_week.week_num }} &#8594;</a>
-        {% endif %}
-    </div>
+    {% if prev_week %}
+    <a href="{{ url_for('week_view', code=course.code, week_num=prev_week.week_num) }}" class="btn btn-outline btn-sm">&#8592; Week {{ prev_week.week_num }}</a>
+    {% else %}<div></div>{% endif %}
+
+    {% if next_week %}
+    <a href="{{ url_for('week_view', code=course.code, week_num=next_week.week_num) }}" class="btn btn-outline btn-sm">Week {{ next_week.week_num }} &#8594;</a>
+    {% else %}<div></div>{% endif %}
 </div>
 
 <div class="page-header">
@@ -25,47 +31,47 @@
     </div>
 </div>
 
-<!-- Weekly Targets -->
+<!-- Three-Level Targets -->
 <div class="grid grid-3 mb-3">
-    <div class="card" style="border-left:3px solid var(--success);">
-        <h3 class="text-sm" style="color:var(--success);">Must-Pass Core</h3>
-        <p class="text-sm mt-1">{{ week.must_pass or 'Complete the minimum working version' }}</p>
+    <div class="target-card must-pass">
+        <div class="target-label">Must-Pass Core</div>
+        <p class="text-sm">{{ week.must_pass or 'Complete the minimum working version' }}</p>
     </div>
-    <div class="card" style="border-left:3px solid var(--accent);">
-        <h3 class="text-sm" style="color:var(--accent);">Standard Target</h3>
-        <p class="text-sm mt-1">{{ week.standard_target or 'Complete the normal weekly goal' }}</p>
+    <div class="target-card standard">
+        <div class="target-label">Standard Target</div>
+        <p class="text-sm">{{ week.standard_target or 'Complete the normal weekly goal' }}</p>
     </div>
-    <div class="card" style="border-left:3px solid var(--warning);">
-        <h3 class="text-sm" style="color:var(--warning);">Stretch</h3>
-        <p class="text-sm mt-1">{{ week.stretch_target or 'Optional extension for fast students' }}</p>
+    <div class="target-card stretch">
+        <div class="target-label">Stretch</div>
+        <p class="text-sm">{{ week.stretch_target or 'Optional extension for fast students' }}</p>
     </div>
 </div>
 
-<!-- Check Result -->
+<!-- Universal Check -->
 <div class="card mb-3">
     <div class="card-header">
         <h2>Universal Check</h2>
         {% if check %}
         <span class="badge {% if check.passed %}badge-success{% else %}badge-danger{% endif %}">
-            {{ 'PASSED' if check.passed else 'FAILED' }} ({{ check.passed_checks }}/{{ check.total_checks }})
+            {{ 'PASSED' if check.passed else 'FAILED' }} &middot; {{ check.passed_checks }}/{{ check.total_checks }}
         </span>
         {% else %}
         <span class="badge badge-muted">Not run yet</span>
         {% endif %}
     </div>
 
-    <form method="POST" action="{{ url_for('submit_check', week_id=week.id) }}" class="flex gap-2">
-        <select name="passed" class="btn btn-outline btn-sm" style="padding:6px 12px;">
+    <form method="POST" action="{{ url_for('submit_check', week_id=week.id) }}" class="inline-form">
+        <select name="passed">
             <option value="true">Passed</option>
             <option value="false">Failed</option>
         </select>
-        <input type="number" name="total_checks" placeholder="Total checks" class="btn btn-outline btn-sm" style="width:120px;padding:6px 12px;" value="10">
-        <input type="number" name="passed_checks" placeholder="Passed" class="btn btn-outline btn-sm" style="width:120px;padding:6px 12px;" value="10">
-        <button type="submit" class="btn btn-primary btn-sm">Record Result</button>
+        <input type="number" name="total_checks" placeholder="Total" value="10" style="width:80px">
+        <input type="number" name="passed_checks" placeholder="Passed" value="10" style="width:80px">
+        <button type="submit" class="btn btn-primary btn-sm">Record</button>
     </form>
 </div>
 
-<!-- Deliverables Checklist -->
+<!-- Deliverables -->
 <div class="card mb-3">
     <div class="card-header">
         <h2>Deliverables</h2>
@@ -79,31 +85,30 @@
     {% set sub = sub_status.get(d.id) %}
     <div class="deliverable-item">
         <div class="check-icon {% if sub and sub.status in ['submitted', 'passed'] %}done{% else %}pending{% endif %}">
-            {% if sub and sub.status in ['submitted', 'passed'] %}&#10003;{% else %}&middot;{% endif %}
+            {% if sub and sub.status in ['submitted', 'passed'] %}&#10003;{% else %}&#8226;{% endif %}
         </div>
         <div class="deliverable-info">
             <h5>{{ d.name }}</h5>
             <span class="type-tag">{{ d.deliverable_type }}</span>
             {% if sub %}
-            <span class="badge {% if sub.status == 'passed' %}badge-success{% elif sub.status == 'submitted' %}badge-info{% elif sub.status == 'failed' %}badge-danger{% else %}badge-muted{% endif %}" style="margin-left:8px;">
-                {{ sub.status }}
+            <span class="badge {% if sub.status == 'passed' %}badge-success{% elif sub.status == 'submitted' %}badge-info{% elif sub.status == 'failed' %}badge-danger{% else %}badge-muted{% endif %}" style="margin-left:6px;">
+                {{ sub.status }}{% if sub.grade %} &middot; {{ sub.grade }}{% endif %}
             </span>
-            {% if sub.grade %}<span class="text-sm text-muted">&middot; {{ sub.grade }}</span>{% endif %}
             {% endif %}
         </div>
-        <form method="POST" action="{{ url_for('submit_deliverable', deliverable_id=d.id) }}" class="flex gap-1">
-            <select name="status" class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:0.75rem;">
+        <form method="POST" action="{{ url_for('submit_deliverable', deliverable_id=d.id) }}" class="inline-form">
+            <select name="status">
                 <option value="submitted">Submitted</option>
                 <option value="passed">Passed</option>
                 <option value="failed">Needs Work</option>
             </select>
-            <select name="grade" class="btn btn-outline btn-sm" style="padding:4px 8px;font-size:0.75rem;">
+            <select name="grade">
                 <option value="">—</option>
                 <option value="core">Core</option>
                 <option value="standard">Standard</option>
                 <option value="stretch">Stretch</option>
             </select>
-            <button type="submit" class="btn btn-primary btn-sm" style="padding:4px 10px;">Save</button>
+            <button type="submit" class="btn btn-primary btn-sm">Save</button>
         </form>
     </div>
     {% endfor %}
@@ -113,30 +118,30 @@
 <div class="card mb-3">
     <div class="card-header">
         <h2>Weekly Reflection</h2>
-        {% if reflection %}
-        <span class="badge badge-success">Completed</span>
-        {% endif %}
+        {% if reflection %}<span class="badge badge-success">Completed</span>{% endif %}
     </div>
     <form method="POST" action="{{ url_for('submit_reflection', week_id=week.id) }}">
-        <div class="form-group">
-            <label>What I learned today:</label>
-            <textarea name="learned" rows="2">{{ reflection.learned if reflection else '' }}</textarea>
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label>What I learned today</label>
+                <textarea name="learned" rows="2">{{ reflection.learned if reflection else '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label>What was hardest</label>
+                <textarea name="hardest" rows="2">{{ reflection.hardest if reflection else '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label>What I still don't understand</label>
+                <textarea name="unclear" rows="2">{{ reflection.unclear if reflection else '' }}</textarea>
+            </div>
+            <div class="form-group">
+                <label>What I will review before next week</label>
+                <textarea name="next_review" rows="2">{{ reflection.next_review if reflection else '' }}</textarea>
+            </div>
         </div>
         <div class="form-group">
-            <label>What was hardest:</label>
-            <textarea name="hardest" rows="2">{{ reflection.hardest if reflection else '' }}</textarea>
-        </div>
-        <div class="form-group">
-            <label>What I still don't understand:</label>
-            <textarea name="unclear" rows="2">{{ reflection.unclear if reflection else '' }}</textarea>
-        </div>
-        <div class="form-group">
-            <label>What I will review before next week:</label>
-            <textarea name="next_review" rows="2">{{ reflection.next_review if reflection else '' }}</textarea>
-        </div>
-        <div class="form-group">
-            <label>AI tools used (if any):</label>
-            <textarea name="ai_usage" rows="2">{{ reflection.ai_usage if reflection else '' }}</textarea>
+            <label>AI tools used (if any)</label>
+            <textarea name="ai_usage" rows="1">{{ reflection.ai_usage if reflection else '' }}</textarea>
         </div>
         <button type="submit" class="btn btn-primary">Save Reflection</button>
     </form>
@@ -144,22 +149,22 @@
 
 <!-- Recovery Ticket -->
 {% if not check or not check.passed %}
-<div class="card mb-3" style="border-left: 3px solid var(--warning);">
+<div class="card recovery-card mb-3">
     <div class="card-header">
         <h2>Recovery Ticket</h2>
         {% if recovery %}
         <span class="badge badge-{{ 'success' if recovery.status == 'resolved' else 'warning' }}">{{ recovery.status }}</span>
         {% endif %}
     </div>
-    <p class="text-sm text-muted mb-2">Can't finish the must-pass core? Submit a recovery ticket so the instructor can help.</p>
+    <p class="text-sm text-muted mb-2">Can't finish the must-pass core? Submit a recovery ticket for instructor support.</p>
 
     {% if recovery %}
-    <div class="text-sm">
+    <div class="text-sm" style="line-height:1.8;">
         <strong>What failed:</strong> {{ recovery.what_failed }}<br>
         <strong>What you tried:</strong> {{ recovery.what_tried }}<br>
         <strong>Next steps:</strong> {{ recovery.next_steps }}
         {% if recovery.instructor_notes %}
-        <br><strong>Instructor notes:</strong> {{ recovery.instructor_notes }}
+        <br><br><strong>Instructor notes:</strong> {{ recovery.instructor_notes }}
         {% endif %}
     </div>
     {% else %}
@@ -170,11 +175,11 @@
         </div>
         <div class="form-group">
             <label>What did you try?</label>
-            <textarea name="what_tried" required rows="2" placeholder="What steps did you take..."></textarea>
+            <textarea name="what_tried" required rows="2" placeholder="Steps you took to fix it..."></textarea>
         </div>
         <div class="form-group">
             <label>What will you do next?</label>
-            <textarea name="next_steps" required rows="2" placeholder="Your plan to fix it..."></textarea>
+            <textarea name="next_steps" required rows="2" placeholder="Your plan to resolve this..."></textarea>
         </div>
         <button type="submit" class="btn btn-warning">Submit Recovery Ticket</button>
     </form>

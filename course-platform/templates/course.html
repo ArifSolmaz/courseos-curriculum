@@ -1,31 +1,35 @@
 {% extends "base.html" %}
 {% block title %}{{ course.code|upper }} — CourseOS{% endblock %}
 
+{% block breadcrumb %}
+<div class="breadcrumb">
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <span class="sep">/</span>
+    <span class="current">{{ course.code|upper }} — {{ course.name }}</span>
+</div>
+{% endblock %}
+
 {% block content %}
 <div class="page-header">
     <h1>{{ course.name }}</h1>
     <div class="subtitle">
         Year {{ course.year }}, Semester {{ course.semester }} &middot;
-        {{ course.hours_per_week }}h/week &middot;
-        14 weeks &middot;
+        {{ course.hours_per_week }}h / week &middot;
         Target: <strong>{{ course.version_target }}</strong>
     </div>
 </div>
 
 <!-- Course Progress -->
 <div class="card mb-3">
-    <div class="progress-label">
-        <span>Course Progress</span>
-        <span class="font-bold">
-            {{ weeks|selectattr('id', 'in', week_status.keys())|list|length }} weeks
-        </span>
-    </div>
     {% set passed_count = week_status.values()|selectattr('check_passed', 'true')|list|length %}
     {% set pct = (passed_count / (weeks|length) * 100)|round|int if weeks else 0 %}
+    <div class="progress-label">
+        <span>Course Progress</span>
+        <span>{{ passed_count }} of {{ weeks|length }} weeks passed</span>
+    </div>
     <div class="progress-bar" style="height:10px">
         <div class="progress-fill {% if pct == 100 %}success{% endif %}" style="width:{{ pct }}%"></div>
     </div>
-    <div class="text-sm text-muted mt-1">{{ passed_count }} of {{ weeks|length }} weeks passed</div>
 </div>
 
 <!-- Week List -->
@@ -45,7 +49,7 @@
             </div>
             <div class="week-meta">
                 {% if ws.submissions and ws.total %}
-                <span>{{ ws.submissions }}/{{ ws.total }} submitted</span>
+                <span class="text-sm">{{ ws.submissions }}/{{ ws.total }}</span>
                 {% endif %}
                 {% if ws.recovery %}
                 <span class="badge badge-warning">Recovery</span>
@@ -55,7 +59,7 @@
                 {% elif ws.check_passed == false %}
                 <span class="badge badge-danger">Failed</span>
                 {% else %}
-                <span class="badge badge-muted">Not checked</span>
+                <span class="badge badge-muted">Pending</span>
                 {% endif %}
             </div>
         </li>
