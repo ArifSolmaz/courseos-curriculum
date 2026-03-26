@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ course.code|upper }} — CourseOS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ course.name }}</h1>
+    <div class="subtitle">
+        Year {{ course.year }}, Semester {{ course.semester }} &middot;
+        {{ course.hours_per_week }}h/week &middot;
+        14 weeks &middot;
+        Target: <strong>{{ course.version_target }}</strong>
+    </div>
+</div>
+
+<!-- Course Progress -->
+<div class="card mb-3">
+    <div class="progress-label">
+        <span>Course Progress</span>
+        <span class="font-bold">
+            {{ weeks|selectattr('id', 'in', week_status.keys())|list|length }} weeks
+        </span>
+    </div>
+    {% set passed_count = week_status.values()|selectattr('check_passed', 'true')|list|length %}
+    {% set pct = (passed_count / (weeks|length) * 100)|round|int if weeks else 0 %}
+    <div class="progress-bar" style="height:10px">
+        <div class="progress-fill {% if pct == 100 %}success{% endif %}" style="width:{{ pct }}%"></div>
+    </div>
+    <div class="text-sm text-muted mt-1">{{ passed_count }} of {{ weeks|length }} weeks passed</div>
+</div>
+
+<!-- Week List -->
+<ul class="week-list">
+    {% for week in weeks %}
+    {% set ws = week_status.get(week.id, {}) %}
+    <a href="{{ url_for('week_view', code=course.code, week_num=week.week_num) }}" style="text-decoration:none;color:inherit;">
+        <li class="week-item">
+            <div class="week-num {% if ws.check_passed == true %}passed{% elif ws.check_passed == false %}failed{% endif %}">
+                {% if ws.check_passed == true %}&#10003;{% elif ws.check_passed == false %}&#10007;{% else %}{{ week.week_num }}{% endif %}
+            </div>
+            <div class="week-info">
+                <h4>Week {{ week.week_num }}: {{ week.title }}</h4>
+                {% if week.sprint %}
+                <span class="sprint-tag">Sprint {{ week.sprint }}</span>
+                {% endif %}
+            </div>
+            <div class="week-meta">
+                {% if ws.submissions and ws.total %}
+                <span>{{ ws.submissions }}/{{ ws.total }} submitted</span>
+                {% endif %}
+                {% if ws.recovery %}
+                <span class="badge badge-warning">Recovery</span>
+                {% endif %}
+                {% if ws.check_passed == true %}
+                <span class="badge badge-success">Passed</span>
+                {% elif ws.check_passed == false %}
+                <span class="badge badge-danger">Failed</span>
+                {% else %}
+                <span class="badge badge-muted">Not checked</span>
+                {% endif %}
+            </div>
+        </li>
+    </a>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — CourseOS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Welcome back, {{ current_user.name }}</h1>
+    <div class="subtitle">
+        Track: <strong>{{ tracks.get(current_user.track, {}).get('name', 'Not selected') }}</strong>
+        {% if current_user.track_confirmed %}
+            <span class="badge badge-success">Confirmed</span>
+        {% elif current_user.track != 'undecided' %}
+            <span class="badge badge-warning">Exploring</span>
+        {% else %}
+            <span class="badge badge-muted">Select a track</span>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Pipeline Evolution Overview -->
+<div class="card mb-3">
+    <div class="card-header">
+        <h2>Project Evolution</h2>
+        <a href="{{ url_for('project_view') }}" class="btn btn-outline btn-sm">View Details</a>
+    </div>
+
+    <div class="evolution-pipeline">
+        {% for c in courses %}
+        <div class="evo-stage {% if progress.get(c.code, 0) == 100 %}completed{% elif progress.get(c.code, 0) > 0 %}active{% endif %}">
+            <div class="evo-version">{{ c.version_target }}</div>
+            <h4>{{ c.code|upper }}</h4>
+            <div class="evo-desc">{{ c.description }}</div>
+            <div class="mt-1">
+                <div class="progress-bar" style="height:4px">
+                    <div class="progress-fill {% if progress.get(c.code, 0) == 100 %}success{% endif %}" style="width:{{ progress.get(c.code, 0) }}%"></div>
+                </div>
+                <div class="text-sm text-muted mt-1">{{ progress.get(c.code, 0) }}%</div>
+            </div>
+        </div>
+        {% if not loop.last %}
+        <div class="evo-arrow">&#10140;</div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="grid grid-4 mb-3">
+    <div class="card stat-card">
+        <div class="stat-value">{{ progress.values()|list|sum // (progress|length or 1) }}%</div>
+        <div class="stat-label">Overall Progress</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-value">{{ recent_checks|selectattr('passed')|list|length }}/{{ recent_checks|length }}</div>
+        <div class="stat-label">Recent Checks Passed</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-value">{{ open_recovery }}</div>
+        <div class="stat-label">Open Recovery Tickets</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-value">
+            {% if current_phase %}{{ current_phase.version }}{% else %}—{% endif %}
+        </div>
+        <div class="stat-label">Current Version</div>
+    </div>
+</div>
+
+<!-- Course Cards -->
+<h2 class="mb-2" style="font-size:1.1rem;">Your Courses</h2>
+<div class="grid grid-2">
+    {% for c in courses %}
+    <a href="{{ url_for('course_view', code=c.code) }}" style="text-decoration:none;color:inherit;">
+        <div class="card course-card">
+            <span class="version-badge">{{ c.version_target }}</span>
+            <div class="course-code">{{ c.code }}</div>
+            <h3>{{ c.name }}</h3>
+            <div class="course-desc">{{ c.description }}</div>
+            <div class="text-sm text-muted">Year {{ c.year }}, Semester {{ c.semester }} &middot; {{ c.hours_per_week }}h/week &middot; 14 weeks</div>
+            <div class="mt-2">
+                <div class="progress-label">
+                    <span>Progress</span>
+                    <span class="font-bold">{{ progress.get(c.code, 0) }}%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill {% if progress.get(c.code, 0) == 100 %}success{% endif %}" style="width:{{ progress.get(c.code, 0) }}%"></div>
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+<!-- Recent Activity -->
+{% if recent_checks %}
+<div class="card mt-3">
+    <div class="card-header">
+        <h2>Recent Check Results</h2>
+    </div>
+    {% for check in recent_checks %}
+    <div class="flex-between" style="padding:8px 0;border-bottom:1px solid var(--border);">
+        <div>
+            <span class="badge {% if check.passed %}badge-success{% else %}badge-danger{% endif %}">
+                {{ 'PASSED' if check.passed else 'FAILED' }}
+            </span>
+            <span class="text-sm" style="margin-left:8px;">
+                {{ check.week.course.code|upper }} Week {{ check.week.week_num }} — {{ check.week.title }}
+            </span>
+        </div>
+        <div class="text-sm text-muted">
+            {{ check.passed_checks }}/{{ check.total_checks }} checks
+            &middot; {{ check.timestamp.strftime('%b %d, %H:%M') }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Project Timeline -->
+{% if phases %}
+<div class="card mt-3">
+    <div class="card-header">
+        <h2>Project Timeline</h2>
+    </div>
+    <div class="timeline">
+        {% for phase in phases %}
+        <div class="timeline-item {{ phase.status }}">
+            <div class="timeline-date">{{ phase.created_at.strftime('%b %d, %Y') }}</div>
+            <div class="timeline-version">
+                {{ phase.version }}
+                <span class="badge {% if phase.status == 'approved' %}badge-success{% elif phase.status == 'in_progress' %}badge-warning{% else %}badge-info{% endif %}">
+                    {{ phase.status }}
+                </span>
+            </div>
+            {% if phase.description %}
+            <div class="text-sm text-muted">{{ phase.description }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

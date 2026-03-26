@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}My Project — CourseOS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>My Project — {{ tracks.get(current_user.track, {}).get('product', 'Select a track') }}</h1>
+    <div class="subtitle">Track: {{ tracks.get(current_user.track, {}).get('name', 'Undecided') }}</div>
+</div>
+
+<!-- Pipeline Evolution Diagram -->
+<div class="card mb-3">
+    <div class="card-header">
+        <h2>Pipeline Evolution</h2>
+    </div>
+
+    <div class="evolution-pipeline">
+        {% for evo in evolution %}
+        {% set is_completed = evo.progress == 100 %}
+        {% set is_active = evo.progress > 0 and evo.progress < 100 %}
+        <div class="evo-stage {% if is_completed %}completed{% elif is_active %}active{% endif %}">
+            <div class="evo-version">{{ evo.course.version_target }}</div>
+            <h4>{{ evo.course.code|upper }}</h4>
+            <div class="evo-desc">{{ evo.course.description }}</div>
+            <div class="mt-1">
+                <div class="progress-bar" style="height:4px">
+                    <div class="progress-fill {% if is_completed %}success{% endif %}" style="width:{{ evo.progress }}%"></div>
+                </div>
+                <div class="text-sm text-muted mt-1">{{ evo.progress }}%</div>
+            </div>
+            {% if evo.latest %}
+            <div class="mt-1">
+                <span class="badge {% if evo.latest.status == 'approved' %}badge-success{% elif evo.latest.status == 'in_progress' %}badge-warning{% else %}badge-info{% endif %}">
+                    {{ evo.latest.status }}
+                </span>
+            </div>
+            {% endif %}
+        </div>
+        {% if not loop.last %}
+        <div class="evo-arrow">&#10140;</div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<!-- What Each Version Means -->
+<div class="grid grid-2 mb-3">
+    <div class="card" style="border-top:3px solid var(--info);">
+        <h3>v1 — Functional Pipeline (CP1)</h3>
+        <ul class="text-sm" style="list-style:disc;margin-left:20px;color:var(--text-muted);">
+            <li>load_data() loads raw data</li>
+            <li>clean_data() filters invalid rows</li>
+            <li>analyze() computes summary stats</li>
+            <li>plot() creates at least 1 figure</li>
+            <li>export_results() writes files</li>
+            <li>self_check() passes</li>
+        </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--accent);">
+        <h3>v2 — Professional Tool (CP2)</h3>
+        <ul class="text-sm" style="list-style:disc;margin-left:20px;color:var(--text-muted);">
+            <li>Schema validation</li>
+            <li>Configurable cleaning pipeline</li>
+            <li>Professional plots with labels</li>
+            <li>JSON + Markdown reports</li>
+            <li>Code modularized in /src</li>
+            <li>Testing with golden outputs</li>
+        </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--success);">
+        <h3>v3 — Architecture (OOP)</h3>
+        <ul class="text-sm" style="list-style:disc;margin-left:20px;color:var(--text-muted);">
+            <li>DataSource, Cleaner, Analyzer, Plotter, Reporter</li>
+            <li>Strategy pattern for swappable algorithms</li>
+            <li>Factory/registry for config-driven creation</li>
+            <li>Custom domain exceptions</li>
+            <li>Full pytest suite</li>
+            <li>Plugin-ready architecture</li>
+        </ul>
+    </div>
+    <div class="card" style="border-top:3px solid var(--warning);">
+        <h3>v3 — Performance (DSA)</h3>
+        <ul class="text-sm" style="list-style:disc;margin-left:20px;color:var(--text-muted);">
+            <li>Optimized module in /src/dsa/</li>
+            <li>Baseline vs optimized benchmarks</li>
+            <li>Big-O complexity analysis</li>
+            <li>Benchmark plots + results JSON</li>
+            <li>1.5x+ speedup at largest n</li>
+            <li>Feature wired into product</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Update Project Phase -->
+<div class="card mb-3">
+    <div class="card-header">
+        <h2>Update Project Phase</h2>
+    </div>
+    <form method="POST" action="{{ url_for('update_project') }}">
+        <div class="grid grid-2">
+            <div class="form-group">
+                <label>Course</label>
+                <select name="course_code">
+                    {% for evo in evolution %}
+                    <option value="{{ evo.course.code }}">{{ evo.course.code|upper }} — {{ evo.course.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Version</label>
+                <select name="version">
+                    <option value="v1">v1 — Functional Pipeline</option>
+                    <option value="v2">v2 — Professional Tool</option>
+                    <option value="v3-arch">v3 — Architecture</option>
+                    <option value="v3-perf">v3 — Performance</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Status</label>
+                <select name="status">
+                    <option value="in_progress">In Progress</option>
+                    <option value="submitted">Submitted for Review</option>
+                    <option value="approved">Approved</option>
+                    <option value="needs_work">Needs Work</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Git Commit (optional)</label>
+                <input type="text" name="commit" placeholder="e.g. abc1234">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" rows="2" placeholder="What changed in this version..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Key Features Implemented</label>
+            <textarea name="features" rows="2" placeholder="List the main features..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Phase Update</button>
+    </form>
+</div>
+
+<!-- Project History -->
+{% set all_phases = [] %}
+{% for evo in evolution %}
+{% for p in evo.phases %}
+{% set _ = all_phases.append(p) %}
+{% endfor %}
+{% endfor %}
+
+{% if all_phases %}
+<div class="card">
+    <div class="card-header">
+        <h2>Project History</h2>
+    </div>
+    <div class="timeline">
+        {% for evo in evolution %}
+        {% for phase in evo.phases %}
+        <div class="timeline-item {{ phase.status }}">
+            <div class="timeline-date">
+                {{ phase.created_at.strftime('%b %d, %Y %H:%M') }}
+                &middot; {{ phase.course_code|upper }}
+            </div>
+            <div class="timeline-version">
+                {{ phase.version }}
+                <span class="badge {% if phase.status == 'approved' %}badge-success{% elif phase.status == 'in_progress' %}badge-warning{% elif phase.status == 'needs_work' %}badge-danger{% else %}badge-info{% endif %}">
+                    {{ phase.status }}
+                </span>
+            </div>
+            {% if phase.description %}
+            <div class="text-sm text-muted mt-1">{{ phase.description }}</div>
+            {% endif %}
+            {% if phase.features %}
+            <div class="text-sm mt-1">{{ phase.features }}</div>
+            {% endif %}
+            {% if phase.repo_commit %}
+            <div class="text-sm text-muted mt-1">Commit: <code>{{ phase.repo_commit }}</code></div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

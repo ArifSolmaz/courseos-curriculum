@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Select Track — CourseOS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Choose Your Track</h1>
+    <div class="subtitle">
+        All tracks follow the same contract and grading. Pick the domain that excites you most.
+        {% if not current_user.track_confirmed %}
+        <br>You can explore during Weeks 1-2 and must confirm by Week 3.
+        {% endif %}
+    </div>
+</div>
+
+<form method="POST" id="track-form">
+    <div class="grid grid-3 mb-3">
+        {% for key, track in tracks.items() %}
+        <label class="card track-card {% if current_user.track == key %}selected{% endif %}" onclick="selectTrack('{{ key }}')">
+            <input type="radio" name="track" value="{{ key }}" style="display:none;" {% if current_user.track == key %}checked{% endif %}>
+            <div class="track-icon">{{ track.icon }}</div>
+            <div class="track-name">{{ track.name }}</div>
+            <div class="track-product">{{ track.product }}</div>
+        </label>
+        {% endfor %}
+    </div>
+
+    <div class="card" id="track-details" style="display:none;">
+        <h3 id="detail-name"></h3>
+        <p id="detail-product" class="text-muted"></p>
+        <div class="mt-2">
+            {% if not current_user.track_confirmed %}
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="confirm" value="yes">
+                    I want to <strong>confirm</strong> this track (locked after confirmation)
+                </label>
+            </div>
+            {% endif %}
+            <button type="submit" class="btn btn-primary">
+                {% if current_user.track_confirmed %}Update Track{% else %}Set Track{% endif %}
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+const trackData = {{ tracks|tojson }};
+function selectTrack(key) {
+    document.querySelectorAll('.track-card').forEach(c => c.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+    document.getElementById('track-details').style.display = 'block';
+    document.getElementById('detail-name').textContent = trackData[key].name;
+    document.getElementById('detail-product').textContent = 'Product: ' + trackData[key].product;
+}
+</script>
+{% endblock %}

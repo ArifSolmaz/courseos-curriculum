@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel — CourseOS{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Instructor Admin Panel</h1>
+    <div class="subtitle">Manage students, track progress, identify at-risk students</div>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-4 mb-3">
+    <div class="card stat-card">
+        <div class="stat-value">{{ students|length }}</div>
+        <div class="stat-label">Total Students</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-value">{{ teams|length }}</div>
+        <div class="stat-label">Teams</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-value text-danger">{{ red_list|length }}</div>
+        <div class="stat-label">Red List</div>
+    </div>
+    <div class="card stat-card">
+        <div class="stat-value">{{ courses|length }}</div>
+        <div class="stat-label">Active Courses</div>
+    </div>
+</div>
+
+<!-- Red List (At-Risk Students) -->
+{% if red_list %}
+<div class="card mb-3" style="border-left:3px solid var(--danger);">
+    <div class="card-header">
+        <h2 style="color:var(--danger);">Red List — At-Risk Students</h2>
+    </div>
+    <p class="text-sm text-muted mb-2">Students with 2+ failed checks or 2+ open recovery tickets. Per policy: these students get rescue-lane tasks first and a mandatory instructor checkpoint.</p>
+
+    {% for item in red_list %}
+    <div class="deliverable-item">
+        <div class="check-icon" style="background:var(--danger);color:white;">!</div>
+        <div class="deliverable-info">
+            <h5>{{ item.student.name }} ({{ item.student.student_id }})</h5>
+            <span class="type-tag">{{ item.student.track }}</span>
+        </div>
+        <div class="flex gap-1">
+            <span class="badge badge-danger">{{ item.failed }} failed checks</span>
+            <span class="badge badge-warning">{{ item.recovery }} open recovery</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Track Distribution -->
+<div class="card mb-3">
+    <div class="card-header">
+        <h2>Track Distribution</h2>
+    </div>
+    <div class="grid grid-3">
+        {% for key, track in tracks.items() %}
+        {% set count = students|selectattr('track', 'equalto', key)|list|length %}
+        <div class="text-center" style="padding:12px;">
+            <div style="font-size:2rem;">{{ track.icon }}</div>
+            <div class="font-bold">{{ count }}</div>
+            <div class="text-sm text-muted">{{ track.name }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Student List -->
+<div class="card">
+    <div class="card-header">
+        <h2>All Students</h2>
+    </div>
+    <table style="width:100%;border-collapse:collapse;">
+        <thead>
+            <tr style="border-bottom:1px solid var(--border);">
+                <th style="text-align:left;padding:8px;font-size:0.8rem;color:var(--text-muted);">Student</th>
+                <th style="text-align:left;padding:8px;font-size:0.8rem;color:var(--text-muted);">Track</th>
+                <th style="text-align:center;padding:8px;font-size:0.8rem;color:var(--text-muted);">CP1</th>
+                <th style="text-align:center;padding:8px;font-size:0.8rem;color:var(--text-muted);">CP2</th>
+                <th style="text-align:center;padding:8px;font-size:0.8rem;color:var(--text-muted);">OOP</th>
+                <th style="text-align:center;padding:8px;font-size:0.8rem;color:var(--text-muted);">DSA</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in students %}
+            {% if not s.is_admin %}
+            <tr style="border-bottom:1px solid var(--border);">
+                <td style="padding:10px 8px;">
+                    <strong>{{ s.name }}</strong><br>
+                    <span class="text-sm text-muted">{{ s.student_id }}</span>
+                </td>
+                <td style="padding:10px 8px;">
+                    {% if s.track in tracks %}
+                    {{ tracks[s.track].icon }} {{ tracks[s.track].name }}
+                    {% if s.track_confirmed %}<span class="badge badge-success" style="margin-left:4px;">Locked</span>{% endif %}
+                    {% else %}
+                    <span class="text-muted">Undecided</span>
+                    {% endif %}
+                </td>
+                {% for code in ['cp1', 'cp2', 'oop', 'dsa'] %}
+                {% set pct = s.get_progress(code) %}
+                <td style="padding:10px 8px;text-align:center;">
+                    <div class="progress-bar" style="width:60px;margin:0 auto;">
+                        <div class="progress-fill {% if pct == 100 %}success{% elif pct > 0 %}{% else %}{% endif %}" style="width:{{ pct }}%"></div>
+                    </div>
+                    <div class="text-sm text-muted">{{ pct }}%</div>
+                </td>
+                {% endfor %}
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
