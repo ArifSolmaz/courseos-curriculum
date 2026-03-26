@@ -4126,6 +4126,2127 @@ WEEK_CORE_FUNCTIONS = {
 
 
 # ============================================================
+# CORE NOTEBOOK ENRICHMENT -- adds ~30 cells per week
+# ============================================================
+def enrich_core(week_num, title, cells):
+    """Add additional worked examples, exercises, debugging tips, etc.
+
+    Inserts extra cells before the Mini-Quiz / reflection section
+    to bring every core notebook to 60+ cells.
+    """
+    extra = []
+
+    # ---- Week-specific additional worked examples ----
+    if week_num == 2:
+        extra.append(md(
+            "---\n## Section 5: More Worked Examples\n\n"
+            "### Example 3: Dataset with Type Coercion\n\n"
+            "Real data often has string values that need to be converted. "
+            "Let us add a method that handles this."
+        ))
+        extra.append(code(
+            "class SmartDataset(Dataset):\n"
+            "    \"\"\"Dataset that can coerce column types.\"\"\"\n"
+            "\n"
+            "    def get_numeric_column(self, name):\n"
+            "        \"\"\"Get a column, converting strings to floats where possible.\"\"\"\n"
+            "        result = []\n"
+            "        for row in self.rows:\n"
+            "            val = row.get(name)\n"
+            "            if isinstance(val, (int, float)):\n"
+            "                result.append(float(val))\n"
+            "            elif isinstance(val, str):\n"
+            "                try:\n"
+            "                    result.append(float(val))\n"
+            "                except ValueError:\n"
+            "                    result.append(None)  # mark as missing\n"
+            "            else:\n"
+            "                result.append(None)\n"
+            "        return result\n"
+            "\n"
+            "\n"
+            "messy = SmartDataset([\n"
+            "    {\"id\": 1, \"value\": \"25.5\"},\n"
+            "    {\"id\": 2, \"value\": 30},\n"
+            "    {\"id\": 3, \"value\": \"abc\"},\n"
+            "    {\"id\": 4, \"value\": None},\n"
+            "], \"messy.csv\")\n"
+            "\n"
+            "print(\"Raw:\", messy.get_column(\"value\"))\n"
+            "print(\"Numeric:\", messy.get_numeric_column(\"value\"))"
+        ))
+        extra.append(expected_output(
+            "Raw: ['25.5', 30, 'abc', None]\n"
+            "Numeric: [25.5, 30.0, None, None]"
+        ))
+
+        extra.append(md(
+            "### Example 4: Chaining Operations\n\n"
+            "Because each method returns a new Dataset, we can chain "
+            "operations together."
+        ))
+        extra.append(code(
+            "# Chaining: load -> filter -> filter -> get_column\n"
+            "raw = Dataset([\n"
+            "    {\"id\": 1, \"value\": 25.0, \"category\": \"A\"},\n"
+            "    {\"id\": 2, \"value\": -5.0, \"category\": \"B\"},\n"
+            "    {\"id\": 3, \"value\": 88.0, \"category\": \"A\"},\n"
+            "    {\"id\": 4, \"value\": 42.0, \"category\": \"B\"},\n"
+            "    {\"id\": 5, \"value\": 200.0, \"category\": \"A\"},\n"
+            "], \"raw.csv\")\n"
+            "\n"
+            "# Chain: keep positive -> keep < 100 -> get values\n"
+            "result = (raw\n"
+            "    .filter_rows(\"value\", lambda v: isinstance(v, (int, float)) and v > 0)\n"
+            "    .filter_rows(\"value\", lambda v: v < 100))\n"
+            "\n"
+            "print(\"Original:\", len(raw), \"rows\")\n"
+            "print(\"After chain:\", len(result), \"rows\")\n"
+            "print(\"Values:\", result.get_column(\"value\"))"
+        ))
+        extra.append(expected_output(
+            "Original: 5 rows\n"
+            "After chain: 3 rows\n"
+            "Values: [25.0, 88.0, 42.0]"
+        ))
+
+        extra.append(debugging_tip(
+            "TypeError: 'NoneType' object is not iterable",
+            "This happens when a method returns None instead of a Dataset. "
+            "Check that every method that should return a Dataset actually "
+            "has a `return` statement. Common mistake:\n\n"
+            "```python\n"
+            "def filter_rows(self, column, condition):\n"
+            "    kept = [r for r in self.rows if condition(r.get(column))]\n"
+            "    Dataset(kept)  # BUG: missing 'return'!\n"
+            "```\n\n"
+            "Fix: `return Dataset(kept, self.source_path)`"
+        ))
+
+        extra.extend(try_it(
+            "Create a `merge_datasets(ds1, ds2)` function that combines "
+            "two Datasets into one new Dataset. The datasets must have "
+            "the same columns. Raise ValueError if they do not.\n\n"
+            "Test with:\n"
+            "```python\n"
+            "ds1 = Dataset([{\"x\": 1}, {\"x\": 2}])\n"
+            "ds2 = Dataset([{\"x\": 3}, {\"x\": 4}])\n"
+            "merged = merge_datasets(ds1, ds2)\n"
+            "print(len(merged))  # should be 4\n"
+            "```"
+        ))
+
+        extra.extend(common_mistake(
+            "Shallow copy trap with nested data",
+            (
+                "# BUG: rows share references to the same dicts!\n"
+                "original = Dataset([{\"value\": [1, 2, 3]}])\n"
+                "copy_rows = original.rows[:]  # shallow copy of list\n"
+                "copy_rows[0][\"value\"].append(999)  # modifies original too!\n"
+                "\n"
+                "print(\"Original:\", original.rows[0][\"value\"])\n"
+                "print(\"Oops! 999 leaked into the original.\")"
+            ),
+            (
+                "import copy\n"
+                "\n"
+                "original = Dataset([{\"value\": [1, 2, 3]}])\n"
+                "copy_rows = copy.deepcopy(original.rows)  # deep copy!\n"
+                "copy_rows[0][\"value\"].append(999)\n"
+                "\n"
+                "print(\"Original:\", original.rows[0][\"value\"])  # [1, 2, 3]\n"
+                "print(\"Copy:\", copy_rows[0][\"value\"])  # [1, 2, 3, 999]\n"
+                "print(\"Original is safe!\")"
+            ),
+            "When your data contains nested mutable objects (lists, dicts), "
+            "a shallow copy (slicing, list()) still shares the inner objects. "
+            "Use `copy.deepcopy()` for truly independent copies."
+        ))
+
+        extra.append(design_decision(
+            "When to use Dataset vs plain list",
+            "**Use Dataset** when:\n"
+            "- You need metadata (source path, column names, row count)\n"
+            "- You want helper methods (get_column, filter, describe)\n"
+            "- Data will pass through multiple components\n"
+            "- You want type safety (only Datasets enter the pipeline)\n\n"
+            "**Use plain list** when:\n"
+            "- Quick throwaway computation\n"
+            "- Simple scripts with no pipeline\n"
+            "- Performance-critical inner loops"
+        ))
+
+        extra.extend(try_it(
+            "Add a `sample(n)` method to Dataset that returns a NEW "
+            "Dataset with `n` random rows. Use `import random` and "
+            "`random.sample(self.rows, n)`. Handle the case where "
+            "`n > len(self.rows)`."
+        ))
+
+    elif week_num == 3:
+        extra.append(md(
+            "---\n## Section 4: More Cleaner Types"
+        ))
+        extra.append(md("### TypeCleaner -- drops rows with wrong types"))
+        extra.append(code(
+            "class TypeCleaner(BaseCleaner):\n"
+            "    \"\"\"Drop rows where a column is not the expected type.\"\"\"\n"
+            "\n"
+            "    def __init__(self, column, expected_type):\n"
+            "        super().__init__(\"type_\" + column)\n"
+            "        self.column = column\n"
+            "        self.expected_type = expected_type\n"
+            "\n"
+            "    def check(self, row):\n"
+            "        val = row.get(self.column)\n"
+            "        if not isinstance(val, self.expected_type):\n"
+            "            return \"wrong_type_\" + self.column\n"
+            "        return None\n"
+            "\n"
+            "\n"
+            "tc = TypeCleaner(\"value\", (int, float))\n"
+            "result = tc.clean(sample_data)\n"
+            "tc.report()\n"
+            "print(\"Kept values:\", result.get_column(\"value\"))"
+        ))
+        extra.append(expected_output(
+            "Cleaner: type_value\n"
+            "  Checked: 7\n"
+            "  Dropped: 1\n"
+            "    - wrong_type_value: 1\n"
+            "Kept values: [25.0, 30.0, 88.0, -5.0, 200.0, 42.0]"
+        ))
+
+        extra.append(md("### OutlierCleaner -- drops statistical outliers"))
+        extra.append(code(
+            "class OutlierCleaner(BaseCleaner):\n"
+            "    \"\"\"Drop rows where a value is more than N std devs from mean.\"\"\"\n"
+            "\n"
+            "    def __init__(self, column, n_std=2):\n"
+            "        super().__init__(\"outlier_\" + column)\n"
+            "        self.column = column\n"
+            "        self.n_std = n_std\n"
+            "        self._mean = 0\n"
+            "        self._std = 0\n"
+            "\n"
+            "    def clean(self, dataset):\n"
+            "        # Pre-compute stats before checking rows\n"
+            "        vals = [r.get(self.column) for r in dataset.rows\n"
+            "                if isinstance(r.get(self.column), (int, float))]\n"
+            "        if vals:\n"
+            "            self._mean = sum(vals) / len(vals)\n"
+            "            self._std = (sum((x - self._mean)**2 for x in vals) / len(vals)) ** 0.5\n"
+            "        return super().clean(dataset)\n"
+            "\n"
+            "    def check(self, row):\n"
+            "        val = row.get(self.column)\n"
+            "        if isinstance(val, (int, float)) and self._std > 0:\n"
+            "            z_score = abs(val - self._mean) / self._std\n"
+            "            if z_score > self.n_std:\n"
+            "                return \"outlier_\" + self.column\n"
+            "        return None\n"
+            "\n"
+            "\n"
+            "data_with_outlier = Dataset([\n"
+            "    {\"id\": 1, \"value\": 10.0},\n"
+            "    {\"id\": 2, \"value\": 12.0},\n"
+            "    {\"id\": 3, \"value\": 11.0},\n"
+            "    {\"id\": 4, \"value\": 13.0},\n"
+            "    {\"id\": 5, \"value\": 100.0},  # outlier!\n"
+            "], \"test.csv\")\n"
+            "\n"
+            "oc = OutlierCleaner(\"value\", n_std=2)\n"
+            "result = oc.clean(data_with_outlier)\n"
+            "oc.report()\n"
+            "print(\"Kept:\", result.get_column(\"value\"))"
+        ))
+        extra.append(expected_output(
+            "Cleaner: outlier_value\n"
+            "  Checked: 5\n"
+            "  Dropped: 1\n"
+            "    - outlier_value: 1\n"
+            "Kept: [10.0, 12.0, 11.0, 13.0]"
+        ))
+
+        extra.append(md(
+            "---\n## Section 5: Cleaning Pipeline with Full Report"
+        ))
+        extra.append(code(
+            "# Build a comprehensive pipeline\n"
+            "full_pipeline = CleaningPipeline()\n"
+            "full_pipeline.add(TypeCleaner(\"value\", (int, float)))\n"
+            "full_pipeline.add(MissingCleaner([\"status\"]))\n"
+            "full_pipeline.add(RangeCleaner(\"value\", 0, 100))\n"
+            "\n"
+            "print(\"Input:\", sample_data, \"-- values:\", sample_data.get_column(\"value\"))\n"
+            "print()\n"
+            "\n"
+            "clean = full_pipeline.clean(sample_data)\n"
+            "print()\n"
+            "print(\"Output:\", clean, \"-- values:\", clean.get_column(\"value\"))\n"
+            "print()\n"
+            "full_pipeline.report()"
+        ))
+        extra.append(expected_output(
+            "Input: Dataset(7 rows) -- values: [25.0, 30.0, 88.0, -5.0, None, 200.0, 42.0]\n\n"
+            "Output: Dataset(3 rows) -- values: [25.0, 30.0, 88.0]\n\n"
+            "Cleaner: type_value\n  Checked: 7\n  Dropped: 1\n"
+            "Cleaner: missing\n  Checked: 6\n  Dropped: 1\n"
+            "Cleaner: range_value\n  Checked: 5\n  Dropped: 2\n"
+            "Total dropped: 4"
+        ))
+
+        extra.extend(procedural_vs_oop(
+            "Data Cleaning",
+            (
+                "# PROCEDURAL: one big function with many if-statements\n"
+                "def clean_all(data, min_v, max_v, required_cols):\n"
+                "    result = []\n"
+                "    for row in data:\n"
+                "        # Check type\n"
+                "        if not isinstance(row.get('value'), (int, float)):\n"
+                "            continue\n"
+                "        # Check missing\n"
+                "        skip = False\n"
+                "        for col in required_cols:\n"
+                "            if row.get(col) is None or row.get(col) == '':\n"
+                "                skip = True\n"
+                "                break\n"
+                "        if skip:\n"
+                "            continue\n"
+                "        # Check range\n"
+                "        if row['value'] < min_v or row['value'] > max_v:\n"
+                "            continue\n"
+                "        result.append(row)\n"
+                "    return result\n"
+                "\n"
+                "# Hard to add new rules without modifying this function!"
+            ),
+            (
+                "# OOP: composable, each rule is independent\n"
+                "pipeline = CleaningPipeline()\n"
+                "pipeline.add(TypeCleaner('value', (int, float)))\n"
+                "pipeline.add(MissingCleaner(['status']))\n"
+                "pipeline.add(RangeCleaner('value', 0, 100))\n"
+                "# Easy to add new rules: pipeline.add(OutlierCleaner('value'))\n"
+                "\n"
+                "clean = pipeline.clean(dataset)\n"
+                "pipeline.report()  # detailed per-step reporting!"
+            ),
+            "The procedural version packs all rules into one function. "
+            "Adding a new rule means modifying that function (violating OCP). "
+            "The OOP version lets you add/remove/reorder rules without "
+            "touching any existing code."
+        ))
+
+        extra.append(debugging_tip(
+            "Cleaners running in wrong order",
+            "The order of cleaners matters! If you put RangeCleaner before "
+            "TypeCleaner, the RangeCleaner might crash on non-numeric values.\n\n"
+            "**Best practice:** Always put type/missing cleaners FIRST, "
+            "then range/logic cleaners SECOND.\n\n"
+            "```\n"
+            "Recommended order:\n"
+            "1. TypeCleaner (remove wrong types)\n"
+            "2. MissingCleaner (remove nulls/empties)\n"
+            "3. RangeCleaner (remove out-of-range)\n"
+            "4. OutlierCleaner (remove statistical outliers)\n"
+            "```"
+        ))
+
+        extra.extend(try_it(
+            "Create a `StatusCleaner(BaseCleaner)` that drops rows where "
+            "the `status` column contains `\"error\"`. Test it with the "
+            "sample data, then add it to the full pipeline."
+        ))
+
+        extra.extend(try_it(
+            "Create a `WhitespaceCleaner(BaseCleaner)` that drops rows "
+            "where a specified column is all whitespace. Test with:\n"
+            "```python\n"
+            "data = Dataset([\n"
+            "    {\"name\": \"Alice\", \"note\": \"good\"},\n"
+            "    {\"name\": \"Bob\", \"note\": \"   \"},  # whitespace only\n"
+            "    {\"name\": \"Charlie\", \"note\": \"\"},  # empty\n"
+            "])\n"
+            "```"
+        ))
+
+    elif week_num == 4:
+        extra.append(md(
+            "---\n## Section 4: More Analyzer Types"
+        ))
+        extra.append(md("### Example: CountAnalyzer"))
+        extra.append(code(
+            "class CountAnalyzer(AnalyzerBase):\n"
+            "    \"\"\"Counts values meeting various criteria.\"\"\"\n"
+            "    def analyze(self, values):\n"
+            "        if not values:\n"
+            "            return {\"count\": 0}\n"
+            "        positives = sum(1 for v in values if v > 0)\n"
+            "        negatives = sum(1 for v in values if v < 0)\n"
+            "        zeros = sum(1 for v in values if v == 0)\n"
+            "        return {\n"
+            "            \"count\": len(values),\n"
+            "            \"positives\": positives,\n"
+            "            \"negatives\": negatives,\n"
+            "            \"zeros\": zeros,\n"
+            "        }\n"
+            "\n"
+            "ca = CountAnalyzer()\n"
+            "test_vals = [10, -5, 0, 30, -2, 0, 15]\n"
+            "print(\"Count analysis:\", ca.analyze(test_vals))"
+        ))
+        extra.append(expected_output(
+            "Count analysis: {'count': 7, 'positives': 3, 'negatives': 2, 'zeros': 2}"
+        ))
+
+        extra.append(md("### Example: TrendAnalyzer"))
+        extra.append(code(
+            "class TrendAnalyzer(AnalyzerBase):\n"
+            "    \"\"\"Detects if values are trending up, down, or flat.\"\"\"\n"
+            "    def analyze(self, values):\n"
+            "        if len(values) < 2:\n"
+            "            return {\"trend\": \"insufficient_data\"}\n"
+            "        mid = len(values) // 2\n"
+            "        first_half = sum(values[:mid]) / mid\n"
+            "        second_half = sum(values[mid:]) / (len(values) - mid)\n"
+            "        diff = second_half - first_half\n"
+            "        if abs(diff) < 1.0:\n"
+            "            trend = \"flat\"\n"
+            "        elif diff > 0:\n"
+            "            trend = \"increasing\"\n"
+            "        else:\n"
+            "            trend = \"decreasing\"\n"
+            "        return {\n"
+            "            \"trend\": trend,\n"
+            "            \"first_half_mean\": round(first_half, 2),\n"
+            "            \"second_half_mean\": round(second_half, 2),\n"
+            "        }\n"
+            "\n"
+            "ta = TrendAnalyzer()\n"
+            "print(\"Increasing:\", ta.analyze([10, 12, 15, 20, 25, 30]))\n"
+            "print(\"Decreasing:\", ta.analyze([30, 25, 20, 15, 12, 10]))\n"
+            "print(\"Flat:      \", ta.analyze([20, 20, 20, 20, 20, 20]))"
+        ))
+        extra.append(expected_output(
+            "Increasing: {'trend': 'increasing', 'first_half_mean': 12.33, 'second_half_mean': 25.0}\n"
+            "Decreasing: {'trend': 'decreasing', 'first_half_mean': 25.0, 'second_half_mean': 12.33}\n"
+            "Flat:       {'trend': 'flat', 'first_half_mean': 20.0, 'second_half_mean': 20.0}"
+        ))
+
+        extra.append(md(
+            "---\n## Section 5: Running All Analyzers Together"
+        ))
+        extra.append(code(
+            "def run_all_analyzers(analyzers, values):\n"
+            "    \"\"\"Run all analyzers and merge results.\"\"\"\n"
+            "    combined = {}\n"
+            "    for a in analyzers:\n"
+            "        name = type(a).__name__\n"
+            "        result = a.analyze(values)\n"
+            "        combined[name] = result\n"
+            "        print(name + \":\", result)\n"
+            "    return combined\n"
+            "\n"
+            "all_analyzers = [\n"
+            "    MeanAnalyzer(),\n"
+            "    StdAnalyzer(),\n"
+            "    EventAnalyzer(50),\n"
+            "    RangeAnalyzer(),\n"
+            "    CountAnalyzer(),\n"
+            "    TrendAnalyzer(),\n"
+            "]\n"
+            "\n"
+            "values = [15, 25, 30, 42, 67, 88]\n"
+            "print(\"=== Running 6 analyzers ===\")\n"
+            "results = run_all_analyzers(all_analyzers, values)"
+        ))
+        extra.append(expected_output(
+            "=== Running 6 analyzers ===\n"
+            "MeanAnalyzer: {'mean': 44.5}\n"
+            "StdAnalyzer: {'std': 25.133}\n"
+            "EventAnalyzer: {'events_above': 2, 'threshold': 50}\n"
+            "RangeAnalyzer: {'min': 15, 'max': 88, 'range': 73}\n"
+            "CountAnalyzer: {'count': 6, 'positives': 6, 'negatives': 0, 'zeros': 0}\n"
+            "TrendAnalyzer: {'trend': 'increasing', ...}"
+        ))
+
+        extra.append(debugging_tip(
+            "KeyError when accessing results",
+            "If your analyzer returns `{\"mean\": 20}` but your reporter "
+            "tries `results[\"avg\"]`, you get a KeyError. This is why a "
+            "**stable schema** matters -- everyone agrees on the key names.\n\n"
+            "**Fix:** Document the exact keys each analyzer returns. "
+            "Write tests that assert the expected keys exist."
+        ))
+
+        extra.extend(try_it(
+            "Create a `PercentileAnalyzer(AnalyzerBase)` that takes a list "
+            "of percentiles (e.g., [25, 50, 75]) and returns them as "
+            "`{\"p25\": ..., \"p50\": ..., \"p75\": ...}`. Test with the "
+            "sample data."
+        ))
+
+        extra.extend(try_it(
+            "Create a `HistogramAnalyzer(AnalyzerBase)` that bins values "
+            "into ranges and counts them. For example, with bins of width 20:\n"
+            "`{\"0-20\": 1, \"20-40\": 2, \"40-60\": 1, \"60-80\": 1, \"80-100\": 1}`"
+        ))
+
+    elif week_num == 5:
+        extra.append(md(
+            "---\n## Section 4: More Plot Types"
+        ))
+        extra.append(code(
+            "class EnhancedPlotter(Plotter):\n"
+            "    \"\"\"Plotter with additional chart types.\"\"\"\n"
+            "\n"
+            "    def plot_boxplot(self, dataset, col):\n"
+            "        \"\"\"Create a box plot.\"\"\"\n"
+            "        try:\n"
+            "            import matplotlib\n"
+            "            matplotlib.use('Agg')\n"
+            "            import matplotlib.pyplot as plt\n"
+            "        except ImportError:\n"
+            "            print('matplotlib not available')\n"
+            "            return None\n"
+            "\n"
+            "        values = [v for v in dataset.get_column(col)\n"
+            "                  if isinstance(v, (int, float))]\n"
+            "        if not values:\n"
+            "            return None\n"
+            "\n"
+            "        fig, ax = plt.subplots(figsize=(6, 4))\n"
+            "        ax.boxplot(values, vert=True)\n"
+            "        ax.set_title('Box Plot of ' + col)\n"
+            "        ax.set_ylabel(col)\n"
+            "        ax.grid(True, alpha=0.3)\n"
+            "        plt.close(fig)\n"
+            "        print('Created box plot for ' + col)\n"
+            "        return fig\n"
+            "\n"
+            "    def plot_bar(self, labels, values, title='Bar Chart'):\n"
+            "        \"\"\"Create a bar chart.\"\"\"\n"
+            "        try:\n"
+            "            import matplotlib\n"
+            "            matplotlib.use('Agg')\n"
+            "            import matplotlib.pyplot as plt\n"
+            "        except ImportError:\n"
+            "            print('matplotlib not available')\n"
+            "            return None\n"
+            "\n"
+            "        fig, ax = plt.subplots(figsize=(8, 4))\n"
+            "        ax.bar(labels, values, color='#2196F3')\n"
+            "        ax.set_title(title)\n"
+            "        ax.grid(True, alpha=0.3, axis='y')\n"
+            "        plt.close(fig)\n"
+            "        print('Created bar chart: ' + title)\n"
+            "        return fig\n"
+            "\n"
+            "\n"
+            "ep = EnhancedPlotter({\n"
+            "    'project_name': 'Demo',\n"
+            "    'value_column': 'value',\n"
+            "    'figures_dir': '/tmp/oop_demo/figures',\n"
+            "})\n"
+            "\n"
+            "# Box plot\n"
+            "box_fig = ep.plot_boxplot(clean_data, 'value')\n"
+            "\n"
+            "# Bar chart from analysis results\n"
+            "bar_fig = ep.plot_bar(\n"
+            "    ['Mean', 'Std', 'Min', 'Max'],\n"
+            "    [52.4, 25.5, 15.0, 91.0],\n"
+            "    'Analysis Summary'\n"
+            ")"
+        ))
+        extra.append(expected_output(
+            "Created box plot for value\n"
+            "Created bar chart: Analysis Summary"
+        ))
+
+        extra.append(md(
+            "---\n## Section 5: Reporter Formats"
+        ))
+        extra.append(code(
+            "class EnhancedReporter(Reporter):\n"
+            "    \"\"\"Reporter with multiple output formats.\"\"\"\n"
+            "\n"
+            "    def export_text_summary(self, results, path):\n"
+            "        \"\"\"Export a human-readable text summary.\"\"\"\n"
+            "        os.makedirs(os.path.dirname(path), exist_ok=True)\n"
+            "        lines = []\n"
+            "        lines.append('=== Analysis Report ===')\n"
+            "        lines.append('')\n"
+            "        summary = results.get('analysis_summary', {})\n"
+            "        for key, val in summary.items():\n"
+            "            if isinstance(val, float):\n"
+            "                lines.append(key + ': ' + str(round(val, 4)))\n"
+            "            else:\n"
+            "                lines.append(key + ': ' + str(val))\n"
+            "        text = chr(10).join(lines)\n"
+            "        with open(path, 'w') as f:\n"
+            "            f.write(text)\n"
+            "        print('Exported text summary: ' + path)\n"
+            "        return path\n"
+            "\n"
+            "\n"
+            "er = EnhancedReporter({\n"
+            "    'project_name': 'Demo',\n"
+            "    'track': 'data',\n"
+            "    'cleaned_data_path': '/tmp/oop_demo/data/cleaned.csv',\n"
+            "    'report_path': '/tmp/oop_demo/reports/report.json',\n"
+            "})\n"
+            "er.export_text_summary(sample_results, '/tmp/oop_demo/reports/summary.txt')"
+        ))
+        extra.append(expected_output(
+            "Exported text summary: /tmp/oop_demo/reports/summary.txt"
+        ))
+
+        extra.extend(procedural_vs_oop(
+            "Report Generation",
+            (
+                "# PROCEDURAL\n"
+                "def export_report(data, results, csv_path, json_path):\n"
+                "    # Save CSV\n"
+                "    import csv\n"
+                "    with open(csv_path, 'w') as f:\n"
+                "        w = csv.DictWriter(f, fieldnames=data[0].keys())\n"
+                "        w.writeheader()\n"
+                "        w.writerows(data)\n"
+                "    # Save JSON\n"
+                "    import json\n"
+                "    with open(json_path, 'w') as f:\n"
+                "        json.dump(results, f)\n"
+                "    # Add a new format? Modify this function!\n"
+                "    return {'csv': csv_path, 'json': json_path}"
+            ),
+            (
+                "# OOP\n"
+                "reporter = Reporter(config)\n"
+                "exports = reporter.export(dataset, results, figures)\n"
+                "# reporter.exported tracks what was created\n"
+                "# Adding new format = add new method or subclass\n"
+                "# No existing code changes needed"
+            ),
+            "The Reporter class tracks its own state (what was exported), "
+            "can be configured once and used repeatedly, and can be extended "
+            "with new formats via subclassing (OCP)."
+        ))
+
+        extra.append(design_decision(
+            "Graceful degradation for optional dependencies",
+            "Notice how Plotter wraps matplotlib in try/except. This is "
+            "**graceful degradation** -- the program still works without "
+            "matplotlib, it just skips the plots.\n\n"
+            "This is important because:\n"
+            "- Not every environment has matplotlib installed\n"
+            "- Tests should run without GUI dependencies\n"
+            "- Server environments often lack display capabilities\n\n"
+            "**Pattern:** Wrap optional imports in try/except at the point "
+            "of use, not at the top of the file."
+        ))
+
+        extra.extend(try_it(
+            "Add a `export_markdown(self, results, path)` method to "
+            "EnhancedReporter that outputs the analysis as a Markdown table. "
+            "Example output:\n"
+            "```\n"
+            "| Metric | Value |\n"
+            "|--------|-------|\n"
+            "| mean   | 52.4  |\n"
+            "| std    | 25.5  |\n"
+            "```"
+        ))
+
+        extra.extend(try_it(
+            "Modify the full pipeline to take a single config dict and "
+            "run all 5 components automatically. The config should specify "
+            "data path, cleaning rules, analysis types, and output paths."
+        ))
+
+    elif week_num == 6:
+        extra.append(md(
+            "---\n## Section 4: Exception-Aware Components"
+        ))
+        extra.append(code(
+            "class ValidatingDataSource:\n"
+            "    \"\"\"DataSource that raises domain exceptions.\"\"\"\n"
+            "\n"
+            "    def __init__(self, path, required_columns=None):\n"
+            "        self.path = path\n"
+            "        self.required_columns = required_columns or []\n"
+            "\n"
+            "    def load(self):\n"
+            "        # Simulate loading\n"
+            "        raw = [\n"
+            "            {\"id\": 1, \"value\": 25.0},\n"
+            "            {\"id\": 2, \"value\": 30.0},\n"
+            "        ]\n"
+            "\n"
+            "        if not raw:\n"
+            "            raise EmptyDataError(\"load\")\n"
+            "\n"
+            "        if self.required_columns:\n"
+            "            actual = list(raw[0].keys())\n"
+            "            missing = set(self.required_columns) - set(actual)\n"
+            "            if missing:\n"
+            "                raise SchemaError(list(missing), actual)\n"
+            "\n"
+            "        print(\"Loaded \" + str(len(raw)) + \" rows\")\n"
+            "        return raw\n"
+            "\n"
+            "\n"
+            "# Happy path\n"
+            "vds = ValidatingDataSource(\"data.csv\", required_columns=[\"id\", \"value\"])\n"
+            "data = vds.load()\n"
+            "print(\"Success:\", data)\n"
+            "\n"
+            "# Error path\n"
+            "try:\n"
+            "    bad = ValidatingDataSource(\"data.csv\", required_columns=[\"temperature\"])\n"
+            "    bad.load()\n"
+            "except SchemaError as e:\n"
+            "    print(\"Caught: \" + str(e))\n"
+            "    print(\"Missing columns:\", e.missing)"
+        ))
+        extra.append(expected_output(
+            "Loaded 2 rows\n"
+            "Success: [{'id': 1, 'value': 25.0}, {'id': 2, 'value': 30.0}]\n"
+            "Caught: Schema mismatch: missing ['temperature']. Available: ['id', 'value']\n"
+            "Missing columns: ['temperature']"
+        ))
+
+        extra.append(md(
+            "---\n## Section 5: Exception-Safe Pipeline"
+        ))
+        extra.append(code(
+            "class SafePipeline:\n"
+            "    \"\"\"Pipeline that handles exceptions gracefully.\"\"\"\n"
+            "\n"
+            "    def __init__(self, source, cleaner):\n"
+            "        self.source = source\n"
+            "        self.cleaner = cleaner\n"
+            "        self.errors = []\n"
+            "\n"
+            "    def run(self):\n"
+            "        \"\"\"Run pipeline, collecting errors instead of crashing.\"\"\"\n"
+            "        self.errors = []\n"
+            "\n"
+            "        # Step 1: Load\n"
+            "        try:\n"
+            "            data = self.source.load()\n"
+            "        except PipelineError as e:\n"
+            "            self.errors.append((\"load\", e))\n"
+            "            print(\"LOAD FAILED: \" + str(e))\n"
+            "            return None\n"
+            "\n"
+            "        # Step 2: Clean\n"
+            "        try:\n"
+            "            clean = self.cleaner(data)\n"
+            "        except PipelineError as e:\n"
+            "            self.errors.append((\"clean\", e))\n"
+            "            print(\"CLEAN FAILED: \" + str(e))\n"
+            "            return None\n"
+            "\n"
+            "        print(\"Pipeline completed successfully\")\n"
+            "        return clean\n"
+            "\n"
+            "    def report_errors(self):\n"
+            "        if not self.errors:\n"
+            "            print(\"No errors\")\n"
+            "            return\n"
+            "        for stage, error in self.errors:\n"
+            "            print(\"Error at \" + stage + \": \" + type(error).__name__\n"
+            "                  + \" -- \" + str(error))\n"
+            "\n"
+            "\n"
+            "# Test: successful run\n"
+            "source = ValidatingDataSource(\"data.csv\", [\"id\", \"value\"])\n"
+            "pipeline = SafePipeline(source, lambda d: [r for r in d if r.get('value', 0) > 0])\n"
+            "result = pipeline.run()\n"
+            "print(\"Result:\", result)\n"
+            "print()\n"
+            "\n"
+            "# Test: error run\n"
+            "bad_source = ValidatingDataSource(\"data.csv\", [\"temperature\"])\n"
+            "bad_pipeline = SafePipeline(bad_source, lambda d: d)\n"
+            "result = bad_pipeline.run()\n"
+            "bad_pipeline.report_errors()"
+        ))
+        extra.append(expected_output(
+            "Loaded 2 rows\n"
+            "Pipeline completed successfully\n"
+            "Result: [{'id': 1, 'value': 25.0}, {'id': 2, 'value': 30.0}]\n\n"
+            "Loaded 2 rows\n"
+            "LOAD FAILED: Schema mismatch: missing ['temperature']. ...\n"
+            "Error at load: SchemaError -- ..."
+        ))
+
+        extra.extend(common_mistake(
+            "Swallowing exceptions silently",
+            (
+                "# BAD: exception is caught but nothing is done about it!\n"
+                "try:\n"
+                "    data = validate_and_clean([], {})\n"
+                "except:\n"
+                "    pass  # silent failure -- data is undefined!\n"
+                "\n"
+                "try:\n"
+                "    print(\"Data:\", data)  # NameError!\n"
+                "except NameError as e:\n"
+                "    print(\"ERROR: data was never defined because exception was swallowed\")"
+            ),
+            (
+                "# GOOD: handle the exception properly\n"
+                "try:\n"
+                "    data = validate_and_clean([], {})\n"
+                "except EmptyDataError as e:\n"
+                "    print(\"Cannot proceed: \" + str(e))\n"
+                "    data = []  # provide a fallback\n"
+                "\n"
+                "print(\"Data:\", data)  # safe: data is always defined"
+            ),
+            "Catching an exception with `except: pass` is the worst pattern. "
+            "It hides bugs, makes debugging impossible, and can leave variables "
+            "undefined. Always either handle the exception (log, fallback) or "
+            "let it propagate."
+        ))
+
+        extra.append(debugging_tip(
+            "Reading exception tracebacks",
+            "When you see an error traceback, read it **bottom to top**:\n\n"
+            "1. The LAST line tells you what went wrong (the exception type and message)\n"
+            "2. The lines ABOVE show where it happened (file, line number, function)\n"
+            "3. Follow the chain upward to find the ROOT cause\n\n"
+            "Custom exceptions make step 1 much more informative:\n"
+            "- `ValueError: bad data` -- useless\n"
+            "- `SchemaError: missing ['temperature']. Available: ['id', 'value']` -- actionable!"
+        ))
+
+        extra.extend(try_it(
+            "Add a `ConfigError` to the hierarchy. It should store "
+            "the config key that is problematic and a description. "
+            "Use it in a `validate_config(config)` function."
+        ))
+
+        extra.extend(try_it(
+            "Create a `RetryablePipeline` that, when a load fails, "
+            "waits and retries up to 3 times before giving up. "
+            "Hint: use a for loop with try/except inside."
+        ))
+
+    elif week_num == 7:
+        extra.append(md(
+            "---\n## Section 3: SRP Case Study -- Refactoring"
+        ))
+        extra.append(md(
+            "Here is a real refactoring example. We start with a class "
+            "that violates SRP and split it into proper components."
+        ))
+        extra.append(code(
+            "# BEFORE: One class does loading AND cleaning AND reporting\n"
+            "class MessyProcessor:\n"
+            "    def __init__(self, path):\n"
+            "        self.path = path\n"
+            "        self.data = None\n"
+            "        self.clean_data = None\n"
+            "        self.report = None\n"
+            "\n"
+            "    def process(self):\n"
+            "        # Loading (responsibility 1)\n"
+            "        self.data = [{\"v\": 10}, {\"v\": -5}, {\"v\": 30}, {\"v\": None}]\n"
+            "        print(\"Loaded\")\n"
+            "\n"
+            "        # Cleaning (responsibility 2)\n"
+            "        self.clean_data = [r for r in self.data\n"
+            "                           if isinstance(r.get(\"v\"), (int, float)) and r[\"v\"] >= 0]\n"
+            "        print(\"Cleaned\")\n"
+            "\n"
+            "        # Reporting (responsibility 3)\n"
+            "        vals = [r[\"v\"] for r in self.clean_data]\n"
+            "        self.report = {\"count\": len(vals), \"mean\": sum(vals)/len(vals)}\n"
+            "        print(\"Report:\", self.report)\n"
+            "\n"
+            "m = MessyProcessor(\"data.csv\")\n"
+            "m.process()\n"
+            "print(\"\\n3 responsibilities in 1 class = SRP violation!\")"
+        ))
+        extra.append(expected_output(
+            "Loaded\n"
+            "Cleaned\n"
+            "Report: {'count': 2, 'mean': 20.0}\n\n"
+            "3 responsibilities in 1 class = SRP violation!"
+        ))
+
+        extra.append(md("### AFTER: Refactored into 3 classes"))
+        extra.append(code(
+            "# AFTER: Each class has ONE responsibility\n"
+            "class Loader:\n"
+            "    def load(self, path):\n"
+            "        data = [{\"v\": 10}, {\"v\": -5}, {\"v\": 30}, {\"v\": None}]\n"
+            "        print(\"Loaded \" + str(len(data)) + \" rows\")\n"
+            "        return data\n"
+            "\n"
+            "class Cleaner:\n"
+            "    def clean(self, data):\n"
+            "        result = [r for r in data\n"
+            "                  if isinstance(r.get(\"v\"), (int, float)) and r[\"v\"] >= 0]\n"
+            "        print(\"Cleaned: \" + str(len(data)) + \" -> \" + str(len(result)))\n"
+            "        return result\n"
+            "\n"
+            "class Reporter:\n"
+            "    def report(self, data):\n"
+            "        vals = [r[\"v\"] for r in data]\n"
+            "        result = {\"count\": len(vals), \"mean\": sum(vals)/len(vals)} if vals else {}\n"
+            "        print(\"Report: \" + str(result))\n"
+            "        return result\n"
+            "\n"
+            "# Compose\n"
+            "raw = Loader().load(\"data.csv\")\n"
+            "clean = Cleaner().clean(raw)\n"
+            "report = Reporter().report(clean)\n"
+            "print(\"\\n3 classes, 3 responsibilities = SRP satisfied!\")"
+        ))
+        extra.append(expected_output(
+            "Loaded 4 rows\n"
+            "Cleaned: 4 -> 2\n"
+            "Report: {'count': 2, 'mean': 20.0}\n\n"
+            "3 classes, 3 responsibilities = SRP satisfied!"
+        ))
+
+        extra.append(md(
+            "---\n## Section 4: OCP Case Study -- Adding Features"
+        ))
+        extra.append(code(
+            "# OCP in action: add new analysis types without changing existing code\n"
+            "\n"
+            "class AnalyzerBase:\n"
+            "    def analyze(self, values):\n"
+            "        raise NotImplementedError\n"
+            "\n"
+            "class SumAnalyzer(AnalyzerBase):\n"
+            "    def analyze(self, values):\n"
+            "        return {\"sum\": sum(values)} if values else {}\n"
+            "\n"
+            "class ProductAnalyzer(AnalyzerBase):\n"
+            "    def analyze(self, values):\n"
+            "        if not values:\n"
+            "            return {}\n"
+            "        result = 1\n"
+            "        for v in values:\n"
+            "            result *= v\n"
+            "        return {\"product\": result}\n"
+            "\n"
+            "# Each new analyzer = new class, zero changes to existing code\n"
+            "values = [2, 3, 5]\n"
+            "for a in [SumAnalyzer(), ProductAnalyzer()]:\n"
+            "    print(type(a).__name__ + \":\", a.analyze(values))\n"
+            "\n"
+            "print(\"\\nAdded 2 analyzers. Existing code: untouched.\")"
+        ))
+        extra.append(expected_output(
+            "SumAnalyzer: {'sum': 10}\n"
+            "ProductAnalyzer: {'product': 30}\n\n"
+            "Added 2 analyzers. Existing code: untouched."
+        ))
+
+        extra.extend(procedural_vs_oop(
+            "Adding New Analysis Types",
+            (
+                "# PROCEDURAL: must modify existing function\n"
+                "def analyze(values, analysis_type):\n"
+                "    if analysis_type == 'mean':\n"
+                "        return sum(values) / len(values)\n"
+                "    elif analysis_type == 'sum':\n"
+                "        return sum(values)\n"
+                "    # Adding 'product' means adding ANOTHER elif here!\n"
+                "    # elif analysis_type == 'product':\n"
+                "    #     ...\n"
+                "    else:\n"
+                "        raise ValueError('Unknown: ' + analysis_type)\n"
+                "\n"
+                "print(analyze([2, 3, 5], 'mean'))"
+            ),
+            (
+                "# OOP (OCP): new class, no changes to existing code\n"
+                "class ProductAnalyzer(AnalyzerBase):\n"
+                "    def analyze(self, values):\n"
+                "        result = 1\n"
+                "        for v in values:\n"
+                "            result *= v\n"
+                "        return {'product': result}\n"
+                "\n"
+                "# Just add to the list!\n"
+                "analyzers.append(ProductAnalyzer())"
+            ),
+            "In the procedural version, every new analysis type requires "
+            "modifying the existing `analyze()` function. With OCP, you "
+            "create a new class and the existing code never changes."
+        ))
+
+        extra.extend(try_it(
+            "Identify which SOLID principle is violated in this code and fix it:\n\n"
+            "```python\n"
+            "class UserManager:\n"
+            "    def create_user(self, name, email): ...\n"
+            "    def delete_user(self, user_id): ...\n"
+            "    def send_welcome_email(self, email): ...  # ???\n"
+            "    def generate_report(self): ...  # ???\n"
+            "```"
+        ))
+
+        extra.extend(try_it(
+            "Refactor this code to satisfy SRP:\n"
+            "```python\n"
+            "class FileProcessor:\n"
+            "    def read_file(self, path): ...\n"
+            "    def parse_csv(self, text): ...\n"
+            "    def validate_data(self, data): ...\n"
+            "    def save_to_database(self, data): ...\n"
+            "    def send_notification(self, message): ...\n"
+            "```\n"
+            "How many classes should this be? What should each one do?"
+        ))
+
+        extra.append(debugging_tip(
+            "How to spot SRP violations",
+            "Ask yourself: **'If I need to change X, do I also need to change Y?'**\n\n"
+            "If changing the email format requires touching the same class "
+            "that does data analysis, that class has multiple responsibilities.\n\n"
+            "**Red flags:**\n"
+            "- Class has more than ~5 public methods\n"
+            "- Class name includes 'And' (e.g., LoaderAndCleaner)\n"
+            "- Class has methods that do not use the same attributes\n"
+            "- You cannot describe the class's job in one sentence"
+        ))
+
+    elif week_num == 8:
+        extra.append(md(
+            "---\n## Section 5: Advanced Strategy Composition"
+        ))
+        extra.append(code(
+            "# Strategies can be combined in different ways\n"
+            "\n"
+            "# OR logic: keep if ANY strategy says keep\n"
+            "class OrCleaner:\n"
+            "    \"\"\"Keep rows that pass ANY strategy (instead of ALL).\"\"\"\n"
+            "    def __init__(self, strategies=None):\n"
+            "        self.strategies = strategies or []\n"
+            "\n"
+            "    def clean(self, data):\n"
+            "        return [row for row in data\n"
+            "                if any(s.should_keep(row) for s in self.strategies)]\n"
+            "\n"
+            "\n"
+            "# Example: keep rows that are EITHER in range OR have status 'ok'\n"
+            "class KeepStatus(CleaningStrategy):\n"
+            "    def __init__(self, column, value):\n"
+            "        self.column = column\n"
+            "        self.value = value\n"
+            "    def should_keep(self, row):\n"
+            "        return row.get(self.column) == self.value\n"
+            "\n"
+            "\n"
+            "data = [\n"
+            "    {\"id\": 1, \"value\": 50, \"status\": \"ok\"},\n"
+            "    {\"id\": 2, \"value\": 200, \"status\": \"ok\"},     # out of range but ok status\n"
+            "    {\"id\": 3, \"value\": 30, \"status\": \"error\"},    # in range but error status\n"
+            "    {\"id\": 4, \"value\": 200, \"status\": \"error\"},   # both bad\n"
+            "]\n"
+            "\n"
+            "# AND logic (default): must pass BOTH\n"
+            "and_cleaner = ConfigurableCleaner([\n"
+            "    DropOutOfRange(\"value\", 0, 100),\n"
+            "    KeepStatus(\"status\", \"ok\"),\n"
+            "])\n"
+            "print(\"AND (must pass both):\")\n"
+            "and_result = and_cleaner.clean(data)\n"
+            "for r in and_result:\n"
+            "    print(\"  \", r)\n"
+            "\n"
+            "# OR logic: must pass at least one\n"
+            "or_cleaner = OrCleaner([\n"
+            "    DropOutOfRange(\"value\", 0, 100),\n"
+            "    KeepStatus(\"status\", \"ok\"),\n"
+            "])\n"
+            "print(\"\\nOR (must pass at least one):\")\n"
+            "or_result = or_cleaner.clean(data)\n"
+            "for r in or_result:\n"
+            "    print(\"  \", r)"
+        ))
+        extra.append(expected_output(
+            "AND (must pass both):\n"
+            "   {'id': 1, 'value': 50, 'status': 'ok'}\n\n"
+            "OR (must pass at least one):\n"
+            "   {'id': 1, 'value': 50, 'status': 'ok'}\n"
+            "   {'id': 2, 'value': 200, 'status': 'ok'}\n"
+            "   {'id': 3, 'value': 30, 'status': 'error'}"
+        ))
+
+        extra.append(ascii_diagram(
+            "Strategy Pattern Structure",
+            "    +---------------------+\n"
+            "    | ConfigurableCleaner |\n"
+            "    +---------------------+\n"
+            "    | - strategies: list  |\n"
+            "    +---------------------+\n"
+            "    | + add_strategy(s)   |\n"
+            "    | + clean(data)       |\n"
+            "    +---------------------+\n"
+            "              |\n"
+            "              | has-many\n"
+            "              v\n"
+            "    +---------------------+\n"
+            "    | CleaningStrategy    |  <--- interface\n"
+            "    +---------------------+\n"
+            "    | + should_keep(row)  |\n"
+            "    +---------------------+\n"
+            "        /    |    \\\\\n"
+            "       /     |     \\\\\n"
+            "  +--------+ +-------+ +-----------+\n"
+            "  |DropMiss| |DropOOR| |DropDupes  |\n"
+            "  +--------+ +-------+ +-----------+"
+        ))
+
+        extra.extend(try_it(
+            "Create a `NegatingStrategy` that wraps any other strategy "
+            "and reverses its decision:\n"
+            "```python\n"
+            "keep_low = DropOutOfRange('value', 0, 50)  # keeps 0-50\n"
+            "keep_high = NegatingStrategy(keep_low)      # keeps everything EXCEPT 0-50\n"
+            "```"
+        ))
+
+        extra.extend(common_mistake(
+            "Strategy with mutable state between runs",
+            (
+                "class BuggyDedup(CleaningStrategy):\n"
+                "    def __init__(self, column):\n"
+                "        self.column = column\n"
+                "        self._seen = set()  # shared across all runs!\n"
+                "\n"
+                "    def should_keep(self, row):\n"
+                "        val = row.get(self.column)\n"
+                "        if val in self._seen:\n"
+                "            return False\n"
+                "        self._seen.add(val)\n"
+                "        return True\n"
+                "\n"
+                "dedup = BuggyDedup('id')\n"
+                "data = [{\"id\": 1}, {\"id\": 2}]\n"
+                "\n"
+                "# First run\n"
+                "cleaner = ConfigurableCleaner([dedup])\n"
+                "print(\"Run 1:\", len(cleaner.clean(data)), \"rows\")\n"
+                "\n"
+                "# Second run -- BUG: _seen still has {1, 2} from first run!\n"
+                "print(\"Run 2:\", len(cleaner.clean(data)), \"rows\")  # 0!"
+            ),
+            (
+                "class FixedDedup(CleaningStrategy):\n"
+                "    def __init__(self, column):\n"
+                "        self.column = column\n"
+                "        self._seen = set()\n"
+                "\n"
+                "    def reset(self):\n"
+                "        self._seen = set()\n"
+                "\n"
+                "    def should_keep(self, row):\n"
+                "        val = row.get(self.column)\n"
+                "        if val in self._seen:\n"
+                "            return False\n"
+                "        self._seen.add(val)\n"
+                "        return True\n"
+                "\n"
+                "# Or better: reset in the cleaner before each run\n"
+                "print(\"Fix: add reset() method and call it before each clean run\")"
+            ),
+            "Strategies with mutable state (sets, counters) must be reset "
+            "between runs. Otherwise, the second run 'remembers' the first "
+            "run's state. Either add a `reset()` method or create a new "
+            "strategy instance for each run."
+        ))
+
+    elif week_num == 9:
+        extra.append(md(
+            "---\n## Section 5: Registry with Metadata"
+        ))
+        extra.append(code(
+            "class EnhancedFactory:\n"
+            "    \"\"\"Factory that stores metadata about registered classes.\"\"\"\n"
+            "\n"
+            "    _registry = {}\n"
+            "\n"
+            "    @classmethod\n"
+            "    def register(cls, name, klass, description=\"\", author=\"\"):\n"
+            "        cls._registry[name] = {\n"
+            "            \"class\": klass,\n"
+            "            \"description\": description,\n"
+            "            \"author\": author,\n"
+            "        }\n"
+            "\n"
+            "    @classmethod\n"
+            "    def create(cls, name, **kwargs):\n"
+            "        if name not in cls._registry:\n"
+            "            raise ValueError(\"Unknown: \" + name)\n"
+            "        return cls._registry[name][\"class\"](**kwargs)\n"
+            "\n"
+            "    @classmethod\n"
+            "    def describe(cls):\n"
+            "        for name, info in cls._registry.items():\n"
+            "            print(name + \" (\" + info[\"class\"].__name__ + \")\")\n"
+            "            if info[\"description\"]:\n"
+            "                print(\"  \" + info[\"description\"])\n"
+            "\n"
+            "\n"
+            "EnhancedFactory.register(\"mean\", MeanAnalyzer,\n"
+            "    description=\"Computes arithmetic mean\", author=\"core\")\n"
+            "EnhancedFactory.register(\"std\", StdAnalyzer,\n"
+            "    description=\"Computes standard deviation\", author=\"core\")\n"
+            "EnhancedFactory.register(\"events\", EventAnalyzer,\n"
+            "    description=\"Counts events above threshold\", author=\"core\")\n"
+            "\n"
+            "print(\"=== Registered Analyzers ===\")\n"
+            "EnhancedFactory.describe()"
+        ))
+        extra.append(expected_output(
+            "=== Registered Analyzers ===\n"
+            "mean (MeanAnalyzer)\n"
+            "  Computes arithmetic mean\n"
+            "std (StdAnalyzer)\n"
+            "  Computes standard deviation\n"
+            "events (EventAnalyzer)\n"
+            "  Counts events above threshold"
+        ))
+
+        extra.append(md(
+            "---\n## Section 6: Decorator-Based Registration"
+        ))
+        extra.append(code(
+            "# Advanced: register using a decorator\n"
+            "class DecoratorFactory:\n"
+            "    _registry = {}\n"
+            "\n"
+            "    @classmethod\n"
+            "    def register(cls, name):\n"
+            "        \"\"\"Decorator that registers a class.\"\"\"\n"
+            "        def decorator(klass):\n"
+            "            cls._registry[name] = klass\n"
+            "            return klass\n"
+            "        return decorator\n"
+            "\n"
+            "    @classmethod\n"
+            "    def create(cls, name, **kw):\n"
+            "        return cls._registry[name](**kw)\n"
+            "\n"
+            "\n"
+            "# Usage: just add the decorator!\n"
+            "@DecoratorFactory.register(\"quick_mean\")\n"
+            "class QuickMeanAnalyzer:\n"
+            "    def analyze(self, values):\n"
+            "        return {\"mean\": sum(values)/len(values)} if values else {}\n"
+            "\n"
+            "\n"
+            "@DecoratorFactory.register(\"quick_count\")\n"
+            "class QuickCountAnalyzer:\n"
+            "    def analyze(self, values):\n"
+            "        return {\"count\": len(values)}\n"
+            "\n"
+            "\n"
+            "# No explicit register call needed!\n"
+            "print(\"Registered:\", list(DecoratorFactory._registry.keys()))\n"
+            "a = DecoratorFactory.create(\"quick_mean\")\n"
+            "print(\"Result:\", a.analyze([10, 20, 30]))"
+        ))
+        extra.append(expected_output(
+            "Registered: ['quick_mean', 'quick_count']\n"
+            "Result: {'mean': 20.0}"
+        ))
+
+        extra.extend(try_it(
+            "Create a `CleanerFactory` that works the same way as "
+            "AnalyzerFactory but for cleaning strategies. Register "
+            "`DropMissing`, `DropOutOfRange`, and `DropDuplicates`."
+        ))
+
+        extra.extend(common_mistake(
+            "Factory returning class instead of instance",
+            (
+                "class BadFactory:\n"
+                "    _registry = {\"mean\": MeanAnalyzer}\n"
+                "\n"
+                "    @classmethod\n"
+                "    def create(cls, name):\n"
+                "        return cls._registry[name]  # BUG: returns the CLASS, not an instance!\n"
+                "\n"
+                "result = BadFactory.create(\"mean\")\n"
+                "print(type(result))  # <class 'type'> -- it's the class itself!\n"
+                "# result.analyze([1,2,3])  # TypeError: missing self!"
+            ),
+            (
+                "class GoodFactory:\n"
+                "    _registry = {\"mean\": MeanAnalyzer}\n"
+                "\n"
+                "    @classmethod\n"
+                "    def create(cls, name, **kw):\n"
+                "        return cls._registry[name](**kw)  # FIXED: call the class!\n"
+                "\n"
+                "result = GoodFactory.create(\"mean\")\n"
+                "print(type(result))  # MeanAnalyzer instance\n"
+                "print(result.analyze([1, 2, 3]))"
+            ),
+            "The registry stores CLASSES, not instances. You must CALL the "
+            "class (with parentheses and arguments) to create an instance. "
+            "`cls._registry[name]` gives you the class; "
+            "`cls._registry[name](**kw)` gives you an instance."
+        ))
+
+    elif week_num == 10:
+        extra.append(md(
+            "---\n## Section 5: Test-Driven Development (TDD)\n\n"
+            "TDD means writing the TEST first, THEN writing the code to "
+            "make it pass. The cycle is:\n\n"
+            "1. **Red:** Write a test that fails\n"
+            "2. **Green:** Write the minimum code to pass\n"
+            "3. **Refactor:** Clean up the code\n\n"
+            "Let us practice with a new feature."
+        ))
+        extra.append(md("### TDD Example: Building a RangeChecker"))
+        extra.append(code(
+            "# Step 1 (RED): Write the test FIRST\n"
+            "def test_range_checker_in_range():\n"
+            "    checker = RangeChecker(0, 100)\n"
+            "    assert checker.check(50) == True\n"
+            "\n"
+            "def test_range_checker_below():\n"
+            "    checker = RangeChecker(0, 100)\n"
+            "    assert checker.check(-10) == False\n"
+            "\n"
+            "def test_range_checker_above():\n"
+            "    checker = RangeChecker(0, 100)\n"
+            "    assert checker.check(200) == False\n"
+            "\n"
+            "def test_range_checker_boundary():\n"
+            "    checker = RangeChecker(0, 100)\n"
+            "    assert checker.check(0) == True    # inclusive\n"
+            "    assert checker.check(100) == True   # inclusive\n"
+            "\n"
+            "# These tests FAIL because RangeChecker doesn't exist yet!\n"
+            "try:\n"
+            "    test_range_checker_in_range()\n"
+            "except NameError:\n"
+            "    print(\"RED: RangeChecker not defined yet (expected!)\")"
+        ))
+        extra.append(expected_output("RED: RangeChecker not defined yet (expected!)"))
+
+        extra.append(code(
+            "# Step 2 (GREEN): Write minimum code to pass\n"
+            "class RangeChecker:\n"
+            "    def __init__(self, low, high):\n"
+            "        self.low = low\n"
+            "        self.high = high\n"
+            "\n"
+            "    def check(self, value):\n"
+            "        return self.low <= value <= self.high\n"
+            "\n"
+            "\n"
+            "# Run tests\n"
+            "test_range_checker_in_range()\n"
+            "print(\"[PASS] test_range_checker_in_range\")\n"
+            "test_range_checker_below()\n"
+            "print(\"[PASS] test_range_checker_below\")\n"
+            "test_range_checker_above()\n"
+            "print(\"[PASS] test_range_checker_above\")\n"
+            "test_range_checker_boundary()\n"
+            "print(\"[PASS] test_range_checker_boundary\")\n"
+            "print(\"\\nGREEN: All tests pass!\")"
+        ))
+        extra.append(expected_output(
+            "[PASS] test_range_checker_in_range\n"
+            "[PASS] test_range_checker_below\n"
+            "[PASS] test_range_checker_above\n"
+            "[PASS] test_range_checker_boundary\n\n"
+            "GREEN: All tests pass!"
+        ))
+
+        extra.append(md(
+            "---\n## Section 6: Testing Edge Cases\n\n"
+            "Good tests cover edge cases. Think about:\n"
+            "- Empty input\n"
+            "- None/null values\n"
+            "- Boundary values (exactly at min/max)\n"
+            "- Very large/small numbers\n"
+            "- Wrong types"
+        ))
+        extra.append(code(
+            "def test_edge_empty():\n"
+            "    cleaner = ConfigurableCleaner()\n"
+            "    assert cleaner.clean([]) == []\n"
+            "\n"
+            "def test_edge_all_filtered():\n"
+            "    cleaner = ConfigurableCleaner([DropOutOfRange(\"value\", 0, 10)])\n"
+            "    data = [{\"value\": 100}, {\"value\": 200}]\n"
+            "    assert cleaner.clean(data) == []\n"
+            "\n"
+            "def test_edge_none_filtered():\n"
+            "    cleaner = ConfigurableCleaner([DropOutOfRange(\"value\", 0, 1000)])\n"
+            "    data = [{\"value\": 50}, {\"value\": 100}]\n"
+            "    result = cleaner.clean(data)\n"
+            "    assert len(result) == 2\n"
+            "\n"
+            "def test_edge_missing_column():\n"
+            "    s = DropOutOfRange(\"value\", 0, 100)\n"
+            "    # Row without 'value' column -- should it be kept or dropped?\n"
+            "    result = s.should_keep({\"other\": 50})\n"
+            "    print(\"Missing column result:\", result)\n"
+            "\n"
+            "test_edge_empty()\n"
+            "print(\"[PASS] test_edge_empty\")\n"
+            "test_edge_all_filtered()\n"
+            "print(\"[PASS] test_edge_all_filtered\")\n"
+            "test_edge_none_filtered()\n"
+            "print(\"[PASS] test_edge_none_filtered\")\n"
+            "test_edge_missing_column()\n"
+            "print(\"[PASS] test_edge_missing_column\")"
+        ))
+        extra.append(expected_output(
+            "[PASS] test_edge_empty\n"
+            "[PASS] test_edge_all_filtered\n"
+            "[PASS] test_edge_none_filtered\n"
+            "Missing column result: True\n"
+            "[PASS] test_edge_missing_column"
+        ))
+
+        extra.extend(try_it(
+            "Use TDD to build a `Validator` class:\n"
+            "1. Write 3 tests first (for valid input, empty input, invalid input)\n"
+            "2. Then implement the Validator to make them pass\n"
+            "3. Add 2 more edge case tests"
+        ))
+
+        extra.append(design_decision(
+            "What to test and what not to test",
+            "**Test:**\n"
+            "- Public methods (the API your other code calls)\n"
+            "- Edge cases (empty, None, boundaries)\n"
+            "- Error conditions (exceptions should be raised)\n"
+            "- Integration (components working together)\n\n"
+            "**Do not test:**\n"
+            "- Private methods (starting with _) directly\n"
+            "- Third-party libraries (matplotlib, json)\n"
+            "- Trivial getters/setters\n"
+            "- Implementation details that might change"
+        ))
+
+    elif week_num == 11:
+        extra.append(md(
+            "---\n## Section 5: Relative Imports"
+        ))
+        extra.append(code(
+            "# Inside a package, use RELATIVE imports\n"
+            "\n"
+            "# In core/cleaner.py:\n"
+            "# from .dataset import Dataset        # from same package\n"
+            "# from .exceptions import PipelineError  # from same package\n"
+            "\n"
+            "# In core/__init__.py:\n"
+            "# from .cleaner import BaseCleaner    # from same package\n"
+            "\n"
+            "# NEVER use absolute paths to import siblings:\n"
+            "# BAD: from project_name.core.dataset import Dataset\n"
+            "# GOOD: from .dataset import Dataset\n"
+            "\n"
+            "print(\"Relative import rules:\")\n"
+            "print(\"  . = current package\")\n"
+            "print(\"  .. = parent package\")\n"
+            "print(\"  .module = sibling module\")\n"
+            "print(\"  ..other = uncle module\")"
+        ))
+        extra.append(expected_output(
+            "Relative import rules:\n"
+            "  . = current package\n"
+            "  .. = parent package\n"
+            "  .module = sibling module\n"
+            "  ..other = uncle module"
+        ))
+
+        extra.append(md(
+            "---\n## Section 6: Common Import Mistakes"
+        ))
+        extra.extend(common_mistake(
+            "Circular imports",
+            (
+                "# BAD: circular dependency\n"
+                "# In cleaner.py: from .analyzer import Analyzer\n"
+                "# In analyzer.py: from .cleaner import Cleaner\n"
+                "# -> ImportError: cannot import name 'Analyzer'\n"
+                "\n"
+                "print(\"Circular import: A imports B, B imports A\")\n"
+                "print(\"Python cannot resolve this!\")"
+            ),
+            (
+                "# FIXES for circular imports:\n"
+                "\n"
+                "# Fix 1: Import inside the function that needs it\n"
+                "# def my_method(self):\n"
+                "#     from .analyzer import Analyzer\n"
+                "#     ...\n"
+                "\n"
+                "# Fix 2: Restructure so the shared type is in a separate module\n"
+                "# Put Dataset in dataset.py, import it from both cleaner.py and analyzer.py\n"
+                "\n"
+                "# Fix 3: Use __init__.py to control import order\n"
+                "\n"
+                "print(\"Best fix: restructure to eliminate circular dependency\")"
+            ),
+            "Circular imports happen when two modules import each other. "
+            "The best fix is to restructure: extract shared classes into "
+            "a separate module that both can import."
+        ))
+
+        extra.extend(try_it(
+            "Design the `__init__.py` for a `strategies/` sub-package that "
+            "contains `cleaning.py` and `analysis.py`. What should be "
+            "exported? What should stay internal?"
+        ))
+
+        extra.extend(try_it(
+            "Sketch (as comments) the ideal file structure for your track's "
+            "project. Include `src/`, `tests/`, and `notebooks/`. Mark "
+            "which files have `__init__.py`."
+        ))
+
+        extra.append(design_decision(
+            "Flat vs nested package structure",
+            "**Flat** (few modules, simple project):\n"
+            "```\n"
+            "src/project/\n"
+            "    __init__.py\n"
+            "    loader.py\n"
+            "    cleaner.py\n"
+            "    analyzer.py\n"
+            "```\n\n"
+            "**Nested** (many modules, complex project):\n"
+            "```\n"
+            "src/project/\n"
+            "    __init__.py\n"
+            "    core/\n"
+            "        __init__.py\n"
+            "        ...\n"
+            "    strategies/\n"
+            "        __init__.py\n"
+            "        ...\n"
+            "```\n\n"
+            "**Rule of thumb:** Start flat. Only nest when a directory has "
+            "more than ~8 files or when you have clear sub-domains."
+        ))
+
+    elif week_num == 12:
+        extra.append(md(
+            "---\n## Section 3: Your Turn -- Second Plugin\n\n"
+            "Now add a SECOND plugin: a `VarianceAnalyzer`."
+        ))
+        extra.append(code(
+            "# YOUR TASK: Create VarianceAnalyzer\n"
+            "# 1. Inherit from AnalyzerBase\n"
+            "# 2. Implement analyze(values) -> {\"variance\": ...}\n"
+            "# 3. Register with factory\n"
+            "# 4. Write 3 tests\n"
+            "\n"
+            "# YOUR CODE HERE\n"
+        ))
+
+        extra.append(md("### Solution"))
+        extra.append(code(
+            "class VarianceAnalyzer(AnalyzerBase):\n"
+            "    def analyze(self, values):\n"
+            "        if not values:\n"
+            "            return {}\n"
+            "        m = sum(values) / len(values)\n"
+            "        var = sum((x - m) ** 2 for x in values) / len(values)\n"
+            "        return {\"variance\": round(var, 4)}\n"
+            "\n"
+            "AnalyzerFactory.register(\"variance\", VarianceAnalyzer)\n"
+            "\n"
+            "# Tests\n"
+            "def test_variance_normal():\n"
+            "    va = VarianceAnalyzer()\n"
+            "    r = va.analyze([10, 20, 30])\n"
+            "    assert \"variance\" in r\n"
+            "    assert r[\"variance\"] > 0\n"
+            "\n"
+            "def test_variance_empty():\n"
+            "    assert VarianceAnalyzer().analyze([]) == {}\n"
+            "\n"
+            "def test_variance_uniform():\n"
+            "    r = VarianceAnalyzer().analyze([5, 5, 5])\n"
+            "    assert r[\"variance\"] == 0\n"
+            "\n"
+            "test_variance_normal()\n"
+            "print(\"[PASS] test_variance_normal\")\n"
+            "test_variance_empty()\n"
+            "print(\"[PASS] test_variance_empty\")\n"
+            "test_variance_uniform()\n"
+            "print(\"[PASS] test_variance_uniform\")\n"
+            "print()\n"
+            "print(\"Available:\", AnalyzerFactory.list_available())"
+        ))
+        extra.append(expected_output(
+            "[PASS] test_variance_normal\n"
+            "[PASS] test_variance_empty\n"
+            "[PASS] test_variance_uniform\n\n"
+            "Available: ['mean', 'std', 'events', 'percentile', 'variance']"
+        ))
+
+        extra.append(md(
+            "---\n## Section 4: Full Pipeline with Plugins"
+        ))
+        extra.append(code(
+            "# Run ALL registered analyzers on sample data\n"
+            "values = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]\n"
+            "\n"
+            "print(\"=== Running all registered analyzers ===\")\n"
+            "all_results = {}\n"
+            "for name in AnalyzerFactory.list_available():\n"
+            "    try:\n"
+            "        a = AnalyzerFactory.create(name)\n"
+            "        result = a.analyze(values)\n"
+            "        all_results[name] = result\n"
+            "        print(name + \": \" + str(result))\n"
+            "    except TypeError:\n"
+            "        # Some analyzers need params (like EventAnalyzer)\n"
+            "        print(name + \": (needs parameters, skipping)\")\n"
+            "\n"
+            "print()\n"
+            "print(\"Total analyzers:\", len(AnalyzerFactory.list_available()))\n"
+            "print(\"All added without modifying core!\")"
+        ))
+        extra.append(expected_output(
+            "=== Running all registered analyzers ===\n"
+            "mean: {'mean': 55.0}\n"
+            "std: {'std': 28.7228}\n"
+            "events: {'events_above': 5}\n"
+            "percentile: {'p25': 30, 'p50': 60, 'p75': 80}\n"
+            "variance: {'variance': 825.0}\n\n"
+            "Total analyzers: 5\n"
+            "All added without modifying core!"
+        ))
+
+        extra.extend(try_it(
+            "Create a third plugin: `MedianAnalyzer`. Register it, test it, "
+            "and verify the total count increases."
+        ))
+
+    elif week_num == 13:
+        extra.append(md(
+            "---\n## Section 5: Docstring Standards\n\n"
+            "Every public class and method should have a docstring. "
+            "Follow this format:"
+        ))
+        extra.append(code(
+            "class ExampleComponent:\n"
+            "    \"\"\"One-line summary of the class.\n"
+            "\n"
+            "    Longer description if needed. Explains the purpose,\n"
+            "    when to use it, and any important behavior.\n"
+            "\n"
+            "    Attributes:\n"
+            "        config (dict): Configuration dictionary.\n"
+            "        results (dict): Analysis results after run.\n"
+            "    \"\"\"\n"
+            "\n"
+            "    def __init__(self, config):\n"
+            "        \"\"\"Initialize the component.\n"
+            "\n"
+            "        Args:\n"
+            "            config (dict): Configuration with keys:\n"
+            "                - 'value_column' (str): Column to analyze.\n"
+            "                - 'threshold' (float, optional): Event threshold.\n"
+            "        \"\"\"\n"
+            "        self.config = config\n"
+            "        self.results = {}\n"
+            "\n"
+            "    def run(self, dataset):\n"
+            "        \"\"\"Run analysis on the dataset.\n"
+            "\n"
+            "        Args:\n"
+            "            dataset (Dataset): Clean dataset to analyze.\n"
+            "\n"
+            "        Returns:\n"
+            "            dict: Analysis results with guaranteed keys:\n"
+            "                - 'count' (int): Number of values analyzed.\n"
+            "                - 'mean' (float): Arithmetic mean.\n"
+            "\n"
+            "        Raises:\n"
+            "            EmptyDataError: If dataset has no rows.\n"
+            "        \"\"\"\n"
+            "        pass\n"
+            "\n"
+            "\n"
+            "# Check docstrings\n"
+            "print(ExampleComponent.__doc__)\n"
+            "print()\n"
+            "print(ExampleComponent.__init__.__doc__)"
+        ))
+
+        extra.append(md(
+            "---\n## Section 6: API Stability Rules"
+        ))
+        extra.append(code(
+            "rules = [\n"
+            "    \"1. Do NOT rename public methods\",\n"
+            "    \"2. Do NOT change method signatures (parameter names/order)\",\n"
+            "    \"3. Do NOT change return types\",\n"
+            "    \"4. Do NOT remove dictionary keys from results\",\n"
+            "    \"5. You CAN add new optional parameters (with defaults)\",\n"
+            "    \"6. You CAN add new keys to result dictionaries\",\n"
+            "    \"7. You CAN add new methods\",\n"
+            "    \"8. You CAN fix bugs in existing methods\",\n"
+            "    \"9. You CAN improve performance\",\n"
+            "    \"10. You CAN add new classes/plugins\",\n"
+            "]\n"
+            "\n"
+            "print(\"=== API Stability Rules (Post-Freeze) ===\")\n"
+            "for rule in rules:\n"
+            "    print(\"  \" + rule)"
+        ))
+        extra.append(expected_output(
+            "=== API Stability Rules (Post-Freeze) ===\n"
+            "  1. Do NOT rename public methods\n"
+            "  2. Do NOT change method signatures ...\n"
+            "  ... (10 rules)"
+        ))
+
+        extra.extend(try_it(
+            "Review your project's public API. For each component, write:\n"
+            "1. The method signature\n"
+            "2. The expected input type\n"
+            "3. The expected output type\n"
+            "4. Any exceptions it can raise"
+        ))
+
+    elif week_num == 14:
+        extra.append(md(
+            "---\n## Section 5: Live Coding Demo Script\n\n"
+            "Follow this script during your demo presentation."
+        ))
+        extra.append(code(
+            "demo_script = \"\"\"\n"
+            "=== v3 Demo Script ===\n"
+            "\n"
+            "1. SHOW: Project structure (ls -R src/)\n"
+            "2. SHOW: Config file (cat config.yaml or config.json)\n"
+            "3. RUN: Full pipeline (python -m project_name)\n"
+            "4. SHOW: Output files (data/cleaned/, reports/)\n"
+            "5. LIVE CODE: Add a new analyzer plugin\n"
+            "   a. Create the class\n"
+            "   b. Register with factory\n"
+            "   c. Update config\n"
+            "   d. Run pipeline again\n"
+            "   e. Show new results in report\n"
+            "6. RUN: Test suite (pytest tests/ -v)\n"
+            "7. EXPLAIN: One design decision\n"
+            "8. Q&A\n"
+            "\n"
+            "Time: ~10 minutes per student\n"
+            "\"\"\"\n"
+            "print(demo_script)"
+        ))
+
+        extra.append(md(
+            "---\n## Section 6: Architecture Comparison: v2 vs v3"
+        ))
+        extra.append(code(
+            "comparison = {\n"
+            "    \"Code organization\": {\n"
+            "        \"v2\": \"Functions in one file\",\n"
+            "        \"v3\": \"Classes in separate modules\",\n"
+            "    },\n"
+            "    \"Adding features\": {\n"
+            "        \"v2\": \"Modify existing functions\",\n"
+            "        \"v3\": \"Add new classes (OCP)\",\n"
+            "    },\n"
+            "    \"Error handling\": {\n"
+            "        \"v2\": \"Generic ValueError/print\",\n"
+            "        \"v3\": \"Domain exceptions with context\",\n"
+            "    },\n"
+            "    \"Testing\": {\n"
+            "        \"v2\": \"Manual print checking\",\n"
+            "        \"v3\": \"pytest with fixtures and parametrize\",\n"
+            "    },\n"
+            "    \"Configuration\": {\n"
+            "        \"v2\": \"Hardcoded values\",\n"
+            "        \"v3\": \"Config-driven, factory pattern\",\n"
+            "    },\n"
+            "    \"Reusability\": {\n"
+            "        \"v2\": \"Copy-paste between projects\",\n"
+            "        \"v3\": \"Import and configure\",\n"
+            "    },\n"
+            "}\n"
+            "\n"
+            "print(\"=== v2 vs v3 Comparison ===\")\n"
+            "for aspect, versions in comparison.items():\n"
+            "    print()\n"
+            "    print(aspect + \":\")\n"
+            "    print(\"  v2: \" + versions[\"v2\"])\n"
+            "    print(\"  v3: \" + versions[\"v3\"])"
+        ))
+        extra.append(expected_output(
+            "=== v2 vs v3 Comparison ===\n\n"
+            "Code organization:\n"
+            "  v2: Functions in one file\n"
+            "  v3: Classes in separate modules\n"
+            "(... more aspects ...)"
+        ))
+
+        extra.append(md(
+            "---\n## Section 7: What Comes Next?\n\n"
+            "Congratulations! You have built a professional-grade "
+            "architecture. Next semester's topics will build on this:\n\n"
+            "- **Data Structures & Algorithms** -- efficient implementations\n"
+            "- **Advanced Patterns** -- Observer, Decorator, Command\n"
+            "- **Concurrency** -- async, threading\n"
+            "- **Deployment** -- packaging, CI/CD, Docker\n\n"
+            "Everything you learned this semester -- classes, composition, "
+            "SOLID, patterns, testing, packaging -- is the foundation for "
+            "ALL of these topics."
+        ))
+
+        extra.extend(try_it(
+            "Write a short 'retrospective' covering:\n"
+            "1. Your biggest technical achievement this semester\n"
+            "2. The concept that was hardest to learn\n"
+            "3. How your code has changed since Week 1\n"
+            "4. One thing you would do differently if starting over"
+        ))
+
+    # ---- Additional exercises for ALL weeks (brings count up) ----
+
+    # Add a "Build from Scratch" exercise for every week
+    extra.append(md(
+        "---\n## Build from Scratch Exercise\n\n"
+        "This exercise tests whether you truly understand this week's "
+        "concepts. Complete it without looking at the examples above."
+    ))
+
+    build_prompts = {
+        1: "Build a `TodoList` class with: items (list), add_item(text), "
+           "remove_item(index), show(), count(). Test with 3 items.",
+        2: "Build a `ShoppingCart` (has-a list of `CartItem` objects). "
+           "CartItem has name, price, quantity. Cart has add_item(), total(), "
+           "remove_item(). Demonstrate composition.",
+        3: "Build a cleaning pipeline with 3 custom cleaners for student "
+           "grade data: RemoveFailing (< 0), RemoveOutliers (> 100), "
+           "RemoveIncomplete (None grades). Use BaseCleaner pattern.",
+        4: "Build an AnalyzerSuite that runs GPA analysis: MeanGPA, "
+           "MedianGPA, HighestGPA, LowestGPA. Each inherits from "
+           "AnalyzerBase. Combine results into one dict.",
+        5: "Build a SimpleReporter that takes analysis results and "
+           "exports them as both CSV and JSON. Include a text summary method.",
+        6: "Build an exception hierarchy for a web API: ApiError (base), "
+           "AuthenticationError, NotFoundError, ValidationError. Each "
+           "carries relevant context (status code, endpoint, etc).",
+        7: "Take a 'God class' (one that loads, cleans, analyzes, and "
+           "exports data) and refactor it into 4 separate classes. "
+           "Show before and after.",
+        8: "Build a sorting system with 3 interchangeable strategies: "
+           "BubbleSort, InsertionSort, QuickSort. Each has a sort(data) "
+           "method. Use a Sorter class that accepts a strategy.",
+        9: "Build a ShapeFactory that creates Circle, Rectangle, and "
+           "Triangle from a config dict. Register each shape. Create "
+           "shapes from: [{\"type\": \"circle\", \"radius\": 5}, ...]",
+        10: "Write a complete test suite (8+ tests) for a Stack class "
+            "with push(), pop(), peek(), is_empty(), size(). Use TDD: "
+            "write all tests first, then implement Stack.",
+        11: "Design the package structure for a weather app: data loading, "
+            "cleaning, analysis, visualization. Write all __init__.py files. "
+            "Show the import statements users would use.",
+        12: "Starting with the AnalyzerFactory from today, add TWO new "
+            "plugins: MovingAverageAnalyzer and ZScoreAnalyzer. Write "
+            "tests for both. Do NOT modify existing code.",
+        13: "Create a complete interface contract document for a Calculator "
+            "class. Include method signatures, input types, output types, "
+            "exceptions, and examples for add, subtract, multiply, divide.",
+        14: "Write a 2-minute demo script for your v3 pipeline. Include "
+            "what to show, what to say, and anticipated questions.",
+    }
+    prompt = build_prompts.get(week_num, "Build a class that demonstrates this week's concept.")
+    extra.append(code("# BUILD FROM SCRATCH:\n# " + prompt + "\n\n# YOUR CODE HERE\n"))
+    extra.append(code("# TEST your build-from-scratch code:\n\n# YOUR TESTS HERE\n"))
+
+    # Add a "Connect the Dots" exercise for weeks 2+
+    if week_num >= 2:
+        extra.append(md(
+            "---\n## Connect the Dots\n\n"
+            "How does this week's concept connect to previous weeks?"
+        ))
+        connections = {
+            2: "How does composition (has-a) relate to the classes you built in Week 1?",
+            3: "How does the Cleaner use composition (Week 2) and classes (Week 1)?",
+            4: "How is the Analyzer similar to the Cleaner (Week 3)? How is it different?",
+            5: "Draw the full pipeline showing how DataSource, Cleaner, Analyzer, "
+               "Plotter, and Reporter connect.",
+            6: "Where in the pipeline (Week 5) should each exception type be raised?",
+            7: "Review your pipeline components -- do any violate SRP? Fix them.",
+            8: "How is Strategy Pattern different from what we did in Week 3 with cleaners?",
+            9: "How does the Factory Pattern build on the Strategy Pattern (Week 8)?",
+            10: "Write tests for components from Weeks 2-5. Which are easiest to test? Why?",
+            11: "Organize your Weeks 1-10 code into a proper package structure.",
+            12: "How does the Plugin Exercise prove that our architecture follows OCP (Week 7)?",
+            13: "Which of your components have the strongest interface contracts? The weakest?",
+            14: "Map each week's concept to a specific file/class in your final project.",
+        }
+        extra.append(code(
+            "# " + connections.get(week_num, "Explain the connection.") + "\n"
+            "\n"
+            "# YOUR ANSWER (as comments or code):\n"
+        ))
+
+    # Add "Real-World Spotting" exercise
+    extra.append(md(
+        "---\n## Real-World Spotting\n\n"
+        "OOP patterns are everywhere in real software. Can you spot them?"
+    ))
+
+    spotting = {
+        1: "Open Python and type `help(str)`. How many methods does the `str` class have? "
+           "Pick 3 and explain what state and behavior they represent.",
+        2: "Think about a smartphone. List 5 'has-a' composition relationships "
+           "(e.g., Phone has-a Camera, Camera has-a Sensor).",
+        3: "Think about a mail sorting system. What 'cleaning' rules would you apply? "
+           "How would you compose them?",
+        4: "Think about a fitness tracker. What analyses would it run on step data? "
+           "Design 3 analyzer classes.",
+        5: "Think about a social media app. What would its Reporter export? "
+           "(profile data, activity stats, media files?)",
+        6: "Visit any Python library's GitHub and find their custom exceptions. "
+           "How are they organized? (e.g., requests library has ConnectionError, Timeout, etc.)",
+        7: "Open any popular Python package (requests, flask, django) and look at "
+           "their module structure. How do they apply SRP?",
+        8: "Think about a music player. What strategies could it use for shuffle? "
+           "(random, weighted by preference, alphabetical, etc.)",
+        9: "Think about a restaurant ordering system. How would a Factory pattern "
+           "help create different meal objects from a menu?",
+        10: "Look at any open-source Python project's test suite. How are the tests organized?",
+        11: "Run `import this` in Python. How do the 'Zen of Python' principles relate "
+            "to package hygiene?",
+        12: "Think about browser extensions. How are they 'plugins'? What interface "
+            "do they implement?",
+        13: "Think about USB. Why is it an 'interface contract'? What guarantees does "
+            "it make? What happens when a device violates the contract?",
+        14: "Think about your favorite app. What would its v1, v2, v3 look like? "
+            "What patterns would improve each version?",
+    }
+    extra.append(code(
+        "# " + spotting.get(week_num, "Find this pattern in real software.") + "\n"
+        "\n"
+        "# YOUR ANSWER:\n"
+    ))
+
+    # Add a "Diagram It" exercise
+    extra.append(md(
+        "---\n## Diagram It\n\n"
+        "Draw an ASCII class diagram for the main classes from this week. "
+        "Include:\n"
+        "- Class names\n"
+        "- Key attributes\n"
+        "- Key methods\n"
+        "- Relationships (has-a, is-a)"
+    ))
+    extra.append(code(
+        "# Draw your ASCII diagram here:\n"
+        "# +------------------+\n"
+        "# |   ClassName      |\n"
+        "# +------------------+\n"
+        "# | - attribute      |\n"
+        "# +------------------+\n"
+        "# | + method()       |\n"
+        "# +------------------+\n"
+        "\n"
+        "# YOUR DIAGRAM:\n"
+    ))
+
+    # ---- Universal enrichment for ALL weeks ----
+
+    # Add a "Key Vocabulary" section for all weeks
+    vocab = _get_week_vocabulary(week_num)
+    if vocab:
+        extra.append(md(
+            "---\n## Key Vocabulary\n\n"
+            "| Term | Definition |\n"
+            "|------|------------|\n" + vocab
+        ))
+
+    # Add a recap exercise
+    extra.append(md(
+        "---\n## Recap Exercise\n\n"
+        "Without looking at the code above, try to:"
+    ))
+    extra.append(code(
+        "# 1. Write one class from this week FROM MEMORY\n"
+        "#    (it does not need to be perfect)\n"
+        "\n"
+        "# YOUR CODE HERE\n"
+        "\n"
+        "\n"
+        "# 2. Create an instance and call at least one method\n"
+        "\n"
+        "# YOUR CODE HERE\n"
+        "\n"
+        "\n"
+        "# 3. Write one test for your class\n"
+        "\n"
+        "# YOUR CODE HERE\n"
+    ))
+
+    # Add "What to Review" section
+    extra.append(md(
+        "---\n## What to Review Before Next Week\n\n"
+        "Before the next session, make sure you can:\n\n"
+        "1. Explain this week's main concept in your own words\n"
+        "2. Write a simple example from memory\n"
+        "3. Identify this pattern in existing code\n"
+        "4. Explain WHY this pattern is useful (not just HOW)"
+    ))
+
+    # Insert extra cells before Mini-Quiz / reflection
+    # Find the Mini-Quiz cell and insert before it
+    quiz_index = None
+    for i, cell in enumerate(cells):
+        if cell.get("cell_type") == "markdown":
+            source = "".join(cell.get("source", []))
+            if "Mini-Quiz" in source or "Final Quiz" in source:
+                quiz_index = i
+                break
+
+    if quiz_index is not None:
+        for i, cell in enumerate(extra):
+            cells.insert(quiz_index + i, cell)
+    else:
+        # No quiz found, insert before reflection
+        refl_index = None
+        for i, cell in enumerate(cells):
+            if cell.get("cell_type") == "markdown":
+                source = "".join(cell.get("source", []))
+                if "Reflection" in source:
+                    refl_index = i
+                    break
+        if refl_index is not None:
+            for i, cell in enumerate(extra):
+                cells.insert(refl_index + i, cell)
+        else:
+            cells.extend(extra)
+
+    return cells
+
+
+def _get_week_vocabulary(week_num):
+    """Return vocabulary table rows for a given week."""
+    vocab_map = {
+        1: (
+            "| **Class** | A blueprint/template for creating objects |\n"
+            "| **Object** | An instance created from a class |\n"
+            "| **Instance** | Same as object -- one specific thing built from a class |\n"
+            "| **Attribute** | A variable that belongs to an object (state) |\n"
+            "| **Method** | A function that belongs to a class (behavior) |\n"
+            "| **`__init__`** | The constructor -- runs when an object is created |\n"
+            "| **`self`** | Reference to the current object inside a method |\n"
+            "| **State** | The data an object holds (its attributes) |\n"
+            "| **Behavior** | What an object can do (its methods) |"
+        ),
+        2: (
+            "| **Composition** | One object contains another ('has-a') |\n"
+            "| **Has-a** | A relationship where one object owns another |\n"
+            "| **Is-a** | An inheritance relationship (subclass IS-A parent) |\n"
+            "| **Dataset** | An object that wraps raw data with metadata |\n"
+            "| **DataSource** | An object that loads data and creates Datasets |\n"
+            "| **Immutable** | Cannot be changed after creation |\n"
+            "| **Non-destructive** | Returns new objects instead of modifying originals |"
+        ),
+        3: (
+            "| **Template Method** | Base class defines algorithm skeleton, subclasses fill in details |\n"
+            "| **Override** | Subclass provides its own version of a parent method |\n"
+            "| **`super()`** | Call the parent class version of a method |\n"
+            "| **Pipeline** | A sequence of processing steps |\n"
+            "| **Drop reason** | Why a row was removed during cleaning |"
+        ),
+        4: (
+            "| **Schema** | The expected structure of data (column names, types) |\n"
+            "| **Stable schema** | A schema that does not change between versions |\n"
+            "| **Guard clause** | An early return that handles edge cases |\n"
+            "| **NotImplementedError** | Raised when a base class method must be overridden |"
+        ),
+        5: (
+            "| **Component** | A self-contained object with a clear interface |\n"
+            "| **Graceful degradation** | Continuing to work when optional features are missing |\n"
+            "| **Export** | Writing data to external files (CSV, JSON, PNG) |"
+        ),
+        6: (
+            "| **Exception hierarchy** | A tree of exception classes (base -> specific) |\n"
+            "| **Raise** | Create and throw an exception |\n"
+            "| **Catch** | Handle an exception with try/except |\n"
+            "| **Propagate** | Let an exception pass up to the caller |\n"
+            "| **Context** | Extra information attached to an exception |"
+        ),
+        7: (
+            "| **SRP** | Single Responsibility Principle -- one class, one job |\n"
+            "| **OCP** | Open/Closed Principle -- open for extension, closed for modification |\n"
+            "| **SOLID** | Five design principles (SRP, OCP, LSP, ISP, DIP) |\n"
+            "| **God class** | A class that does too many things (SRP violation) |\n"
+            "| **Refactor** | Restructure code without changing behavior |"
+        ),
+        8: (
+            "| **Strategy Pattern** | Define a family of interchangeable algorithms |\n"
+            "| **Interface** | A shared set of methods that all strategies implement |\n"
+            "| **Config-driven** | Behavior determined by configuration, not code changes |\n"
+            "| **Composable** | Can be combined with other strategies |"
+        ),
+        9: (
+            "| **Factory** | An object that creates other objects |\n"
+            "| **Registry** | A mapping from names to classes |\n"
+            "| **Plugin** | A new component added without modifying core code |\n"
+            "| **`@classmethod`** | A method that belongs to the class, not instances |\n"
+            "| **Decorator** | A function/class that wraps another to add behavior |"
+        ),
+        10: (
+            "| **pytest** | Python's standard testing framework |\n"
+            "| **Fixture** | Reusable test setup code |\n"
+            "| **Parametrize** | Run one test function with multiple inputs |\n"
+            "| **TDD** | Test-Driven Development -- write tests before code |\n"
+            "| **Assert** | A statement that verifies a condition is True |\n"
+            "| **Edge case** | An unusual input that might break the code |"
+        ),
+        11: (
+            "| **Module** | A single .py file |\n"
+            "| **Package** | A directory with __init__.py |\n"
+            "| **`__init__.py`** | File that makes a directory a package and controls exports |\n"
+            "| **`__all__`** | List of names exported by `from package import *` |\n"
+            "| **Relative import** | Import using `.` notation within a package |\n"
+            "| **Circular import** | Two modules importing each other (causes errors) |"
+        ),
+        12: (
+            "| **Plugin architecture** | A system where new features are added without modifying core |\n"
+            "| **Extension point** | A place in the code where plugins can hook in |\n"
+            "| **Registration** | Adding a new class to the factory/registry |"
+        ),
+        13: (
+            "| **Architecture freeze** | Locking the public API from further changes |\n"
+            "| **Interface contract** | A promise about what a method accepts and returns |\n"
+            "| **Public API** | The set of classes and methods intended for external use |\n"
+            "| **Backward compatible** | New version works with old code without changes |"
+        ),
+        14: (
+            "| **Demo** | A live presentation of working software |\n"
+            "| **Release** | A stable version ready for use |\n"
+            "| **Architecture review** | Evaluating code structure against design principles |"
+        ),
+    }
+    return vocab_map.get(week_num, "")
+
+
+# ============================================================
 # STUDIO NOTEBOOK GENERATOR
 # ============================================================
 def make_studio(week_num, title, track_key):
@@ -4202,6 +6323,135 @@ def make_studio(week_num, title, track_key):
     ))
     cells.append(code(studio_content["stretch_code"]))
 
+    # Additional studio exercises to bring count to 30+
+    cells.append(md(
+        "---\n## Additional Practice\n\n"
+        "Complete these exercises to deepen your understanding."
+    ))
+
+    # Exercise: Refactoring practice
+    cells.append(md(
+        "### Exercise: Refactoring Check\n\n"
+        "Review the code you wrote above. Ask yourself:\n"
+        "1. Does each class have exactly ONE responsibility?\n"
+        "2. Are all attributes initialized in `__init__`?\n"
+        "3. Do methods that transform data return NEW objects?\n"
+        "4. Are there any 'magic numbers' that should be parameters?"
+    ))
+    cells.append(code(
+        "# Refactoring notes:\n"
+        "# - Things I would change:\n"
+        "# - Why:\n"
+        "# - Improved version (if needed):\n"
+    ))
+
+    # Exercise: Edge cases
+    cells.append(md(
+        "### Exercise: Edge Case Testing\n\n"
+        "Write tests for edge cases specific to " + product + "."
+    ))
+    cells.append(code(
+        "# Edge case tests for " + product + "\n"
+        "\n"
+        "def test_empty_input():\n"
+        "    # What happens with no data?\n"
+        "    # YOUR CODE HERE\n"
+        "    print(\"[PASS] test_empty_input\")\n"
+        "\n"
+        "def test_invalid_input():\n"
+        "    # What happens with wrong type/format?\n"
+        "    # YOUR CODE HERE\n"
+        "    print(\"[PASS] test_invalid_input\")\n"
+        "\n"
+        "def test_boundary_values():\n"
+        "    # What happens at the limits?\n"
+        "    # YOUR CODE HERE\n"
+        "    print(\"[PASS] test_boundary_values\")\n"
+        "\n"
+        "# Run tests\n"
+        "test_empty_input()\n"
+        "test_invalid_input()\n"
+        "test_boundary_values()"
+    ))
+
+    # Exercise: Documentation
+    cells.append(md(
+        "### Exercise: Write Documentation\n\n"
+        "Add proper docstrings to all your classes and methods. "
+        "Include:\n"
+        "- One-line summary\n"
+        "- Parameters (with types)\n"
+        "- Return values\n"
+        "- Example usage"
+    ))
+    cells.append(code(
+        "# Copy your main class here with FULL docstrings:\n"
+        "\n"
+        "# YOUR CODE HERE\n"
+    ))
+
+    # Exercise: Design diagram
+    cells.append(md(
+        "### Exercise: Design Diagram\n\n"
+        "Draw an ASCII class diagram showing ALL the classes you "
+        "created today and their relationships."
+    ))
+    cells.append(code(
+        "# ASCII Class Diagram for " + product + "\n"
+        "# \n"
+        "# +------------------+     +------------------+\n"
+        "# |   ClassName1     |---->|   ClassName2     |\n"
+        "# +------------------+     +------------------+\n"
+        "# | - attributes     |     | - attributes     |\n"
+        "# +------------------+     +------------------+\n"
+        "# | + methods        |     | + methods        |\n"
+        "# +------------------+     +------------------+\n"
+        "# \n"
+        "# YOUR DIAGRAM:\n"
+    ))
+
+    # Exercise: Integration plan
+    cells.append(md(
+        "### Exercise: Integration Plan\n\n"
+        "How will today's code integrate with the rest of your "
+        + product + " pipeline? Write a brief plan."
+    ))
+    cells.append(code(
+        "# Integration plan:\n"
+        "# 1. Which existing components will use today's code?\n"
+        "#    Answer: \n"
+        "# \n"
+        "# 2. What interface (method signatures) will they need?\n"
+        "#    Answer: \n"
+        "# \n"
+        "# 3. What tests should I add to verify integration?\n"
+        "#    Answer: \n"
+        "# \n"
+        "# 4. Any potential conflicts or breaking changes?\n"
+        "#    Answer: \n"
+    ))
+
+    # Self-assessment
+    cells.append(md(
+        "---\n## Self-Assessment\n\n"
+        "Rate your understanding of this week's concepts:"
+    ))
+    cells.append(code(
+        "# Rate 1-5 (1=confused, 5=confident)\n"
+        "understanding = {\n"
+        "    \"Main concept\": 0,        # Rate yourself\n"
+        "    \"Implementation\": 0,       # Could you build it from scratch?\n"
+        "    \"Testing\": 0,              # Can you write good tests?\n"
+        "    \"Connection to pipeline\": 0, # See how it fits?\n"
+        "}\n"
+        "\n"
+        "for topic, rating in understanding.items():\n"
+        "    print(topic + \": \" + str(rating) + \"/5\")\n"
+        "\n"
+        "# What would help you improve?\n"
+        "# Answer: "
+    ))
+
     # Checklist
     cells.append(md(
         "---\n## Completion Checklist\n\n"
@@ -4211,7 +6461,10 @@ def make_studio(week_num, title, track_key):
         "- [ ] Standard: " + studio_content["check2"] + "\n"
         "- [ ] Stretch: " + studio_content["check3"] + " (optional)\n"
         "- [ ] Code has docstrings on all classes and methods\n"
-        "- [ ] No logic copied from core notebook (you adapted it)"
+        "- [ ] No logic copied from core notebook (you adapted it)\n"
+        "- [ ] Edge case tests written\n"
+        "- [ ] Design diagram drawn\n"
+        "- [ ] Self-assessment completed"
     ))
 
     cells.append(reflection_cell())
@@ -4684,6 +6937,9 @@ for week_num, title, focus in WEEKS:
         core_cells = WEEK_CORE_FUNCTIONS[week_num]()
     else:
         core_cells = WEEK_CORE_FUNCTIONS[1]()  # fallback
+
+    # Enrich with additional examples, exercises, debugging tips
+    core_cells = enrich_core(week_num, title, core_cells)
 
     save_notebook(
         notebook(core_cells, "OOP " + wk + " Core -- " + title),

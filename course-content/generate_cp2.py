@@ -2826,12 +2826,160 @@ def make_core_w06():
         expected_output("Based on 80 clean records:\n"
                         "- Data is highly variable (CV=58.5%)"),
 
+        md("---\n## Part 4: Complete export_results() Function\n\n"
+           "This function ties everything together: it creates the JSON report, "
+           "Markdown report, and interpretation text in one call."),
+
+        code('def export_results(clean_data, results, figures, config):\n'
+             '    """Export all results: JSON report, Markdown report, interpretation.\n'
+             '    \n'
+             '    Args:\n'
+             '        clean_data: cleaned data rows\n'
+             '        results: dict with analysis_summary, cleaning_summary\n'
+             '        figures: list of figure file paths\n'
+             '        config: pipeline configuration\n'
+             '    \n'
+             '    Returns:\n'
+             '        dict with paths to all exported files\n'
+             '    """\n'
+             '    import json, os\n'
+             '    from datetime import datetime\n'
+             '    \n'
+             '    # Build report\n'
+             '    report = {\n'
+             '        "project_name": config.get("project_name", "unknown"),\n'
+             '        "track": config.get("track", "unknown"),\n'
+             '        "version": config.get("version", "v2"),\n'
+             '        "generated_at": datetime.now().isoformat(),\n'
+             '        "dataset": {\n'
+             '            "n_raw": config.get("n_raw", 0),\n'
+             '            "n_clean": len(clean_data),\n'
+             '        },\n'
+             '        "cleaning_summary": results.get("cleaning_summary", {}),\n'
+             '        "analysis_summary": results.get("analysis_summary", {}),\n'
+             '        "figures": figures,\n'
+             '    }\n'
+             '    \n'
+             '    # Save JSON\n'
+             '    json_path = config.get("report_path", "reports/report.json")\n'
+             '    os.makedirs(os.path.dirname(json_path), exist_ok=True)\n'
+             '    with open(json_path, "w") as f:\n'
+             '        json.dump(report, f, indent=2)\n'
+             '    print("Saved JSON: " + json_path)\n'
+             '    \n'
+             '    # Save Markdown\n'
+             '    md_text = generate_markdown_report(report)\n'
+             '    md_path = json_path.replace(".json", ".md")\n'
+             '    with open(md_path, "w") as f:\n'
+             '        f.write(md_text)\n'
+             '    print("Saved Markdown: " + md_path)\n'
+             '    \n'
+             '    # Add interpretation\n'
+             '    interp = interpret_results(results.get("analysis_summary", {}))\n'
+             '    print("\\nInterpretation:")\n'
+             '    print(interp)\n'
+             '    \n'
+             '    return {"json": json_path, "markdown": md_path}\n'
+             '\n'
+             '# Demo\n'
+             'config = {"project_name": "demo", "track": "data", "version": "v2",\n'
+             '          "n_raw": 100, "report_path": "reports/report.json"}\n'
+             'clean = [{"v": i} for i in range(80)]\n'
+             'results = {\n'
+             '    "analysis_summary": {"mean": 39.5, "std": 23.1, "count": 80},\n'
+             '    "cleaning_summary": {"missing": 10, "outlier": 10},\n'
+             '}\n'
+             'exported = export_results(clean, results, ["timeseries.png"], config)'),
+        expected_output("Saved JSON: reports/report.json\n"
+                        "Saved Markdown: reports/report.md\n\n"
+                        "Interpretation:\n"
+                        "Based on 80 clean records:\n"
+                        "- Data is highly variable (CV=58.5%)"),
+
+        md("---\n## Part 5: Report Tables\n\n"
+           "Add formatted tables to your Markdown report for cleaner presentation."),
+
+        code('def format_as_table(headers, rows):\n'
+             '    """Format data as a Markdown table.\"\"\"\n'
+             '    # Calculate column widths\n'
+             '    widths = [len(h) for h in headers]\n'
+             '    for row in rows:\n'
+             '        for i, val in enumerate(row):\n'
+             '            widths[i] = max(widths[i], len(str(val)))\n'
+             '    \n'
+             '    # Build table\n'
+             '    lines = []\n'
+             '    # Header row\n'
+             '    header = "| " + " | ".join(h.ljust(widths[i]) for i, h in enumerate(headers)) + " |"\n'
+             '    lines.append(header)\n'
+             '    # Separator\n'
+             '    sep = "| " + " | ".join("-" * widths[i] for i in range(len(headers))) + " |"\n'
+             '    lines.append(sep)\n'
+             '    # Data rows\n'
+             '    for row in rows:\n'
+             '        line = "| " + " | ".join(str(v).ljust(widths[i]) for i, v in enumerate(row)) + " |"\n'
+             '        lines.append(line)\n'
+             '    \n'
+             '    return "\\n".join(lines)\n'
+             '\n'
+             '# Demo: cleaning summary table\n'
+             'table = format_as_table(\n'
+             '    ["Reason", "Count", "Percent"],\n'
+             '    [\n'
+             '        ["Missing values", "10", "10.0%"],\n'
+             '        ["Non-numeric", "5", "5.0%"],\n'
+             '        ["Out of range", "5", "5.0%"],\n'
+             '    ]\n'
+             ')\n'
+             'print(table)'),
+        expected_output("| Reason         | Count | Percent |\n"
+                        "| -------------- | ----- | ------- |\n"
+                        "| Missing values | 10    | 10.0%   |\n"
+                        "| Non-numeric    | 5     | 5.0%    |\n"
+                        "| Out of range   | 5     | 5.0%    |"),
+
+        try_it("Create a table showing your analysis results (mean, std, min, max, count). "
+               "Use format_as_table."),
+        code('# Try it: create an analysis results table\n'
+             '# TODO: use format_as_table to show your results\n'),
+
+        common_mistakes("Report Generation", [
+            ("Not including timestamp -- you cannot tell when the report was created.",
+             "Always include datetime.now().isoformat() in your report."),
+            ("Forgetting os.makedirs -- report saving crashes if directory does not exist.",
+             "Always call os.makedirs(dir, exist_ok=True) before writing files."),
+            ("Putting raw data in the report -- reports should be summaries, not data dumps.",
+             "Reports contain summary statistics, not individual rows."),
+        ]),
+
+        debugging_tip("Report Generation", [
+            "If json.dump fails, check that all values are JSON-serializable (no sets, no custom objects)",
+            "If Markdown looks wrong, check for missing newlines between sections",
+            "If datetime is wrong, make sure you import from datetime, not import datetime",
+            "Use json.dumps(report, indent=2) to preview before saving",
+        ]),
+
         key_takeaway([
             "JSON reports are machine-readable, Markdown reports are human-readable",
             "Your pipeline should generate BOTH",
             "Add interpretation text that explains what the numbers mean",
             "Always include metadata: project name, track, version, timestamp",
+            "Use tables in Markdown for cleaner data presentation",
+            "export_results() is the single function that saves everything",
         ]),
+
+        md("---\n## Mini-Quiz"),
+        code('# Q1: What is the difference between JSON and Markdown reports?\n'
+             '# Answer: \n'
+             '\n'
+             '# Q2: What metadata should every report include?\n'
+             '# Answer: \n'
+             '\n'
+             '# Q3: Why add interpretation text to analysis results?\n'
+             '# Answer: \n'
+             '\n'
+             '# Q4: What does CV (coefficient of variation) tell you?\n'
+             '# Answer: '),
 
         md("---\n## Homework: 12 Exercises\n\n### Review (1-4)"),
         code('# HW1: Generate a JSON report for your project.\n'),
@@ -2972,12 +3120,89 @@ def make_core_w07():
         expected_output("Loop:  ~30 ms\nNumPy: ~1 ms\nNumPy is ~30x faster!\n"
                         "(actual times depend on your machine)"),
 
+        md("---\n## Part 4: NumPy in Your Pipeline\n\n"
+           "Let us see how to use NumPy inside your actual pipeline functions."),
+
+        code('import numpy as np\n'
+             '\n'
+             'def analyze_with_numpy(clean_data, value_col="value"):\n'
+             '    """Analyze data using NumPy for speed and convenience.\n'
+             '    \n'
+             '    Args:\n'
+             '        clean_data: list of dicts with numeric values\n'
+             '        value_col: which column to analyze\n'
+             '    \n'
+             '    Returns:\n'
+             '        dict with analysis_summary\n'
+             '    """\n'
+             '    # Extract values into a NumPy array\n'
+             '    values = np.array([row[value_col] for row in clean_data])\n'
+             '    \n'
+             '    summary = {\n'
+             '        "count": len(values),\n'
+             '        "mean": round(float(np.mean(values)), 2),\n'
+             '        "std": round(float(np.std(values)), 2),\n'
+             '        "median": round(float(np.median(values)), 2),\n'
+             '        "min": round(float(np.min(values)), 2),\n'
+             '        "max": round(float(np.max(values)), 2),\n'
+             '        "q25": round(float(np.percentile(values, 25)), 2),\n'
+             '        "q75": round(float(np.percentile(values, 75)), 2),\n'
+             '    }\n'
+             '    \n'
+             '    print("Analysis (NumPy):")\n'
+             '    for k, v in summary.items():\n'
+             '        print("  " + k + ": " + str(v))\n'
+             '    \n'
+             '    return {"analysis_summary": summary}\n'
+             '\n'
+             '# Test with sample data\n'
+             'import random\n'
+             'random.seed(42)\n'
+             'clean_data = [{"id": i, "value": round(random.gauss(50, 15), 2)} for i in range(100)]\n'
+             'results = analyze_with_numpy(clean_data)'),
+        expected_output("Analysis (NumPy):\n  count: 100\n  mean: ~50\n  std: ~15\n"
+                        "  median: ~50\n  min: ~10\n  max: ~90\n"
+                        "  q25: ~40\n  q75: ~60\n(approximate)"),
+
+        md("### NumPy Filtering vs. Loop Filtering"),
+        code('# Compare filtering approaches\n'
+             'values = np.array([row["value"] for row in clean_data])\n'
+             '\n'
+             '# NumPy way: boolean indexing\n'
+             'mask = (values >= 30) & (values <= 70)  # both conditions at once\n'
+             'filtered_np = values[mask]\n'
+             'print("NumPy filtered: " + str(len(filtered_np)) + " values in [30, 70]")\n'
+             'print("  Mean of filtered:", round(float(np.mean(filtered_np)), 2))\n'
+             '\n'
+             '# How many are outliers? (beyond 2 std from mean)\n'
+             'mean_v = np.mean(values)\n'
+             'std_v = np.std(values)\n'
+             'outlier_mask = np.abs(values - mean_v) > 2 * std_v\n'
+             'print("\\nOutliers (>2 std):", int(np.sum(outlier_mask)))\n'
+             'if np.any(outlier_mask):\n'
+             '    print("  Values:", values[outlier_mask].round(2).tolist())'),
+
+        try_it("Use NumPy to find the 5 largest values in your data. "
+               "Hint: use np.argsort or np.partition."),
+        code('# Try it: find top 5 values with NumPy\n'
+             '# TODO: extract and display the 5 largest values\n'),
+
+        common_mistakes("NumPy", [
+            ("Mixing Python lists and NumPy arrays -- np.array([1,2]) + [3,4] works but may surprise you.",
+             "Convert to NumPy early and stay in NumPy for all calculations."),
+            ("Using Python sum() instead of np.sum() -- Python sum is slower on arrays.",
+             "Always use np.sum, np.mean, etc. for NumPy arrays."),
+            ("Forgetting to convert back to Python float for JSON -- np.float64 is not JSON-serializable.",
+             "Use float(np_value) before putting NumPy results into JSON reports."),
+        ]),
+
         key_takeaway([
             "NumPy arrays do math on ALL elements at once (vectorization)",
             "No loops needed for element-wise operations",
             "NumPy is 10-100x faster than Python loops for numeric work",
             "Use np.mean, np.std, np.median for statistics",
             "Boolean indexing (arr[mask]) replaces filter loops",
+            "Convert np.float64 to float() before JSON serialization",
         ]),
 
         md("---\n## Homework: 12 Exercises\n\n### Review (1-4)"),
@@ -3393,11 +3618,160 @@ def make_core_w09():
              'test_type_conversion()'),
         expected_output("[PASS] Type conversion works"),
 
+        md("---\n## Part 3: Testing Error Handling\n\n"
+           "Your tests should verify that bad inputs produce clear errors, "
+           "not crashes."),
+
+        code('def test_error_handling():\n'
+             '    """Test that pipeline gives clear errors for bad input.\"\"\"\n'
+             '    print("--- Error Handling Tests ---")\n'
+             '    passed = 0\n'
+             '    failed = 0\n'
+             '    \n'
+             '    # Test: None input gives clear error\n'
+             '    try:\n'
+             '        # Your validate_schema should handle this\n'
+             '        data = None\n'
+             '        if data is None:\n'
+             '            raise ValueError("Data cannot be None")\n'
+             '        print("[FAIL] Should have raised ValueError")\n'
+             '        failed += 1\n'
+             '    except ValueError as e:\n'
+             '        assert "None" in str(e) or "empty" in str(e).lower() or "cannot" in str(e).lower()\n'
+             '        print("[PASS] None input gives clear error")\n'
+             '        passed += 1\n'
+             '    except Exception as e:\n'
+             '        print("[FAIL] Wrong error type: " + type(e).__name__)\n'
+             '        failed += 1\n'
+             '    \n'
+             '    # Test: wrong type gives clear error\n'
+             '    try:\n'
+             '        data = "not a list"\n'
+             '        if not isinstance(data, list):\n'
+             '            raise TypeError("Expected list, got " + type(data).__name__)\n'
+             '        print("[FAIL] Should have raised TypeError")\n'
+             '        failed += 1\n'
+             '    except TypeError as e:\n'
+             '        print("[PASS] Wrong type gives clear error")\n'
+             '        passed += 1\n'
+             '    \n'
+             '    # Test: missing config key gives clear error\n'
+             '    try:\n'
+             '        config = {}  # missing required keys\n'
+             '        required_key = "required_columns"\n'
+             '        if required_key not in config:\n'
+             '            raise KeyError("Config missing required key: " + required_key)\n'
+             '        failed += 1\n'
+             '    except KeyError as e:\n'
+             '        print("[PASS] Missing config key gives clear error")\n'
+             '        passed += 1\n'
+             '    \n'
+             '    print("\\n" + str(passed) + " passed, " + str(failed) + " failed")\n'
+             '    return failed == 0\n'
+             '\n'
+             'test_error_handling()'),
+        expected_output("--- Error Handling Tests ---\n"
+                        "[PASS] None input gives clear error\n"
+                        "[PASS] Wrong type gives clear error\n"
+                        "[PASS] Missing config key gives clear error\n\n"
+                        "3 passed, 0 failed"),
+
+        md("---\n## Part 4: Organizing Tests\n\n"
+           "Group your tests into categories for clarity."),
+
+        code('def run_all_tests():\n'
+             '    """Run all test categories and print a summary.\"\"\"\n'
+             '    print("=" * 50)\n'
+             '    print("  v2 PIPELINE TEST SUITE")\n'
+             '    print("=" * 50)\n'
+             '    \n'
+             '    all_passed = 0\n'
+             '    all_failed = 0\n'
+             '    \n'
+             '    # Category 1: Happy path\n'
+             '    print("\\n[Category 1: Happy Path]")\n'
+             '    tests = [\n'
+             '        ("data loads", True),\n'
+             '        ("cleaning works", True),\n'
+             '        ("analysis produces results", True),\n'
+             '    ]\n'
+             '    for name, result in tests:\n'
+             '        status = "[PASS]" if result else "[FAIL]"\n'
+             '        print("  " + status + " " + name)\n'
+             '        if result:\n'
+             '            all_passed += 1\n'
+             '        else:\n'
+             '            all_failed += 1\n'
+             '    \n'
+             '    # Category 2: Edge cases\n'
+             '    print("\\n[Category 2: Edge Cases]")\n'
+             '    tests = [\n'
+             '        ("empty input", True),\n'
+             '        ("single row", True),\n'
+             '        ("all same values", True),\n'
+             '        ("all missing values", True),\n'
+             '    ]\n'
+             '    for name, result in tests:\n'
+             '        status = "[PASS]" if result else "[FAIL]"\n'
+             '        print("  " + status + " " + name)\n'
+             '        if result:\n'
+             '            all_passed += 1\n'
+             '        else:\n'
+             '            all_failed += 1\n'
+             '    \n'
+             '    # Category 3: Output format\n'
+             '    print("\\n[Category 3: Output Format]")\n'
+             '    tests = [\n'
+             '        ("results has analysis_summary", True),\n'
+             '        ("3+ numeric metrics", True),\n'
+             '    ]\n'
+             '    for name, result in tests:\n'
+             '        status = "[PASS]" if result else "[FAIL]"\n'
+             '        print("  " + status + " " + name)\n'
+             '        if result:\n'
+             '            all_passed += 1\n'
+             '        else:\n'
+             '            all_failed += 1\n'
+             '    \n'
+             '    print("\\n" + "=" * 50)\n'
+             '    print("  TOTAL: " + str(all_passed) + " passed, "\n'
+             '          + str(all_failed) + " failed")\n'
+             '    print("=" * 50)\n'
+             '    \n'
+             '    if all_failed == 0:\n'
+             '        print("  ALL TESTS PASSED!")\n'
+             '    return all_failed == 0\n'
+             '\n'
+             'run_all_tests()'),
+        expected_output("==================================================\n"
+                        "  v2 PIPELINE TEST SUITE\n"
+                        "==================================================\n\n"
+                        "[Category 1: Happy Path]\n  [PASS] data loads\n"
+                        "  [PASS] cleaning works\n  [PASS] analysis produces results\n\n"
+                        "[Category 2: Edge Cases]\n  [PASS] empty input\n"
+                        "  [PASS] single row\n  [PASS] all same values\n"
+                        "  [PASS] all missing values\n\n"
+                        "[Category 3: Output Format]\n  [PASS] results has analysis_summary\n"
+                        "  [PASS] 3+ numeric metrics\n\n"
+                        "==================================================\n"
+                        "  TOTAL: 9 passed, 0 failed\n"
+                        "==================================================\n"
+                        "  ALL TESTS PASSED!"),
+
+        debugging_tip("Testing", [
+            "If a test fails, read the assertion message -- it tells you what went wrong",
+            "Print the actual vs expected values when debugging failing tests",
+            "Run tests one at a time to isolate failures",
+            "A test that never fails is not testing anything useful",
+            "If you fix a bug, write a test for it BEFORE fixing it",
+        ]),
+
         key_takeaway([
             "Test happy path, edge cases, and error handling",
             "Use Arrange-Act-Assert pattern for clear test structure",
             "Name your tests clearly (test_what_when_then)",
             "Run self_check() after EVERY change to catch regressions",
+            "Organize tests into categories for readability",
         ]),
 
         md("---\n## Homework: 12 Exercises\n\n### Review (1-4)"),
@@ -3530,11 +3904,157 @@ def make_core_w10():
                         "[PASS] min = 10.0\n[PASS] max = 50.0\n\n"
                         "Golden test PASSED!"),
 
+        md("---\n## Part 2: Golden Tests for Groups\n\n"
+           "Test that group-level results are also correct."),
+
+        code('def test_golden_groups():\n'
+             '    """Test group-level results against golden expected.\"\"\"\n'
+             '    print("=== Golden Group Test ===\\n")\n'
+             '    data = create_golden_dataset()\n'
+             '    \n'
+             '    # Clean\n'
+             '    clean = []\n'
+             '    for row in data:\n'
+             '        try:\n'
+             '            val = float(row["value"])\n'
+             '            if val >= 0:\n'
+             '                clean.append({**row, "value": val})\n'
+             '        except (ValueError, TypeError):\n'
+             '            pass\n'
+             '    \n'
+             '    # Group by category\n'
+             '    groups = {}\n'
+             '    for row in clean:\n'
+             '        cat = row["category"]\n'
+             '        if cat not in groups:\n'
+             '            groups[cat] = []\n'
+             '        groups[cat].append(row["value"])\n'
+             '    \n'
+             '    # Expected group results (calculated by hand)\n'
+             '    # A: [10, 20, 50] -> mean = 26.67\n'
+             '    # B: [30, 40] -> mean = 35.0\n'
+             '    expected_groups = {\n'
+             '        "A": {"count": 3, "mean": 26.67},\n'
+             '        "B": {"count": 2, "mean": 35.0},\n'
+             '    }\n'
+             '    \n'
+             '    for cat, expected in expected_groups.items():\n'
+             '        actual_count = len(groups.get(cat, []))\n'
+             '        actual_vals = groups.get(cat, [])\n'
+             '        actual_mean = sum(actual_vals) / len(actual_vals) if actual_vals else 0\n'
+             '        \n'
+             '        assert actual_count == expected["count"], \\\n'
+             '            "Group " + cat + " count: expected " + str(expected["count"]) + ", got " + str(actual_count)\n'
+             '        assert abs(actual_mean - expected["mean"]) < 0.1, \\\n'
+             '            "Group " + cat + " mean: expected " + str(expected["mean"]) + ", got " + str(round(actual_mean, 2))\n'
+             '        \n'
+             '        print("[PASS] Group " + cat + ": count=" + str(actual_count)\n'
+             '              + ", mean=" + str(round(actual_mean, 2)))\n'
+             '    \n'
+             '    print("\\nGolden group test PASSED!")\n'
+             '\n'
+             'test_golden_groups()'),
+        expected_output("=== Golden Group Test ===\n\n"
+                        "[PASS] Group A: count=3, mean=26.67\n"
+                        "[PASS] Group B: count=2, mean=35.0\n\n"
+                        "Golden group test PASSED!"),
+
+        md("---\n## Part 3: Saving Golden Expected Results\n\n"
+           "Save your expected results to a JSON file so they are version-controlled."),
+
+        code('import json, os\n'
+             '\n'
+             'def save_golden_expected(expected, filepath="tests/golden_expected.json"):\n'
+             '    """Save golden expected results to JSON.\"\"\"\n'
+             '    os.makedirs(os.path.dirname(filepath), exist_ok=True)\n'
+             '    with open(filepath, "w") as f:\n'
+             '        json.dump(expected, f, indent=2)\n'
+             '    print("Saved golden expected: " + filepath)\n'
+             '\n'
+             'def load_golden_expected(filepath="tests/golden_expected.json"):\n'
+             '    """Load golden expected from JSON.\"\"\"\n'
+             '    with open(filepath) as f:\n'
+             '        return json.load(f)\n'
+             '\n'
+             '# Save\n'
+             'save_golden_expected(GOLDEN_EXPECTED)\n'
+             '\n'
+             '# Load and verify\n'
+             'loaded = load_golden_expected()\n'
+             'print("Loaded:", loaded)\n'
+             'assert loaded == GOLDEN_EXPECTED\n'
+             'print("Verified: loaded matches original!")'),
+        expected_output("Saved golden expected: tests/golden_expected.json\n"
+                        "Loaded: {'n_raw': 8, 'n_clean': 5, 'n_dropped': 3, 'mean': 30.0, 'min': 10.0, 'max': 50.0}\n"
+                        "Verified: loaded matches original!"),
+
+        md("---\n## Part 4: Regression Testing\n\n"
+           "A **regression** is when code that used to work stops working. "
+           "Golden tests catch regressions automatically."),
+
+        code('def regression_test():\n'
+             '    """Run full regression test suite.\"\"\"\n'
+             '    print("=== Regression Test Suite ===\\n")\n'
+             '    all_pass = True\n'
+             '    \n'
+             '    # Test 1: Golden dataset\n'
+             '    try:\n'
+             '        test_golden()\n'
+             '    except AssertionError as e:\n'
+             '        print("[REGRESSION] Golden test failed: " + str(e))\n'
+             '        all_pass = False\n'
+             '    \n'
+             '    # Test 2: Golden groups\n'
+             '    try:\n'
+             '        test_golden_groups()\n'
+             '    except AssertionError as e:\n'
+             '        print("[REGRESSION] Group test failed: " + str(e))\n'
+             '        all_pass = False\n'
+             '    \n'
+             '    # Test 3: Output format\n'
+             '    try:\n'
+             '        data = create_golden_dataset()\n'
+             '        clean = []\n'
+             '        for row in data:\n'
+             '            try:\n'
+             '                val = float(row["value"])\n'
+             '                if val >= 0:\n'
+             '                    clean.append({**row, "value": val})\n'
+             '            except (ValueError, TypeError):\n'
+             '                pass\n'
+             '        assert len(clean) > 0, "No clean data"\n'
+             '        assert all("value" in r for r in clean), "Missing value column"\n'
+             '        assert all(isinstance(r["value"], float) for r in clean), "Values not converted"\n'
+             '        print("[PASS] Output format correct")\n'
+             '    except AssertionError as e:\n'
+             '        print("[REGRESSION] Format test failed: " + str(e))\n'
+             '        all_pass = False\n'
+             '    \n'
+             '    if all_pass:\n'
+             '        print("\\n=== All regression tests PASSED ===")\n'
+             '    else:\n'
+             '        print("\\n=== REGRESSION DETECTED -- fix before committing ===")\n'
+             '    return all_pass\n'
+             '\n'
+             'regression_test()'),
+        expected_output("=== Regression Test Suite ===\n\n"
+                        "=== Golden Output Test ===\n"
+                        "[PASS] n_clean = 5\n[PASS] mean = 30.0\n"
+                        "[PASS] min = 10.0\n[PASS] max = 50.0\n"
+                        "Golden test PASSED!\n\n"
+                        "=== Golden Group Test ===\n"
+                        "[PASS] Group A: count=3, mean=26.67\n"
+                        "[PASS] Group B: count=2, mean=35.0\n"
+                        "Golden group test PASSED!\n\n"
+                        "[PASS] Output format correct\n\n"
+                        "=== All regression tests PASSED ==="),
+
         key_takeaway([
             "Golden datasets are small, hand-crafted, with known correct results",
             "Run golden tests after EVERY code change to catch regressions",
             "Include edge cases in golden data (missing, non-numeric, out of range)",
             "Golden tests document what your pipeline SHOULD do",
+            "Save expected results to JSON for version control",
         ]),
 
         md("---\n## Homework: 12 Exercises\n\n### Review (1-4)"),
@@ -3659,11 +4179,136 @@ def make_core_w11():
              'print("Example notebook usage:")\n'
              'print(notebook_code)'),
 
+        md("---\n## Part 3: Example Module Files\n\n"
+           "Here is what each module file should look like:"),
+
+        code('# Example: config.py\n'
+             'config_py_example = """\n'
+             'import os\n'
+             '\n'
+             'def get_config(base_dir=None):\n'
+             '    if base_dir is None:\n'
+             '        for candidate in [\".\", \"..\", \"../..\"]:\n'
+             '            if os.path.exists(os.path.join(candidate, \"src\")):\n'
+             '                base_dir = candidate\n'
+             '                break\n'
+             '        else:\n'
+             '            base_dir = \".\"\n'
+             '    return {\n'
+             '        \"project_name\": \"my_project\",\n'
+             '        \"track\": \"data\",\n'
+             '        \"version\": \"v2\",\n'
+             '        \"raw_data_path\": os.path.join(base_dir, \"data/raw/sample.csv\"),\n'
+             '        \"required_columns\": [\"id\", \"value\"],\n'
+             '        \"numeric_columns\": [\"value\"],\n'
+             '        \"value_ranges\": {\"value\": (0, 100)},\n'
+             '    }\n'
+             '"""\n'
+             'print("=== config.py ===")\n'
+             'print(config_py_example)'),
+
+        code('# Example: cleaning.py\n'
+             'cleaning_py_example = """\n'
+             'def validate_schema(data, config):\n'
+             '    if not data:\n'
+             '        raise ValueError(\"Data is empty\")\n'
+             '    required = config.get(\"required_columns\", [])\n'
+             '    actual = set(data[0].keys())\n'
+             '    missing = set(required) - actual\n'
+             '    if missing:\n'
+             '        raise ValueError(\"Missing columns: \" + str(sorted(missing)))\n'
+             '    return True\n'
+             '\n'
+             'def clean_data(data, config):\n'
+             '    cleaned = []\n'
+             '    for row in data:\n'
+             '        try:\n'
+             '            for col in config.get(\"numeric_columns\", []):\n'
+             '                val = float(row.get(col, \"\"))\n'
+             '                ranges = config.get(\"value_ranges\", {})\n'
+             '                if col in ranges:\n'
+             '                    low, high = ranges[col]\n'
+             '                    if val < low or val > high:\n'
+             '                        break\n'
+             '                row[col] = val\n'
+             '            else:\n'
+             '                cleaned.append(row)\n'
+             '        except (ValueError, TypeError):\n'
+             '            pass\n'
+             '    return cleaned\n'
+             '"""\n'
+             'print("=== cleaning.py ===")\n'
+             'print(cleaning_py_example)'),
+
+        md("---\n## Part 4: Testing Your Modules\n\n"
+           "After migrating, verify everything still works."),
+
+        code('# Test: simulate importing from modules\n'
+             '# (In real code: from project_name import get_config, load_data, ...)\n'
+             '\n'
+             'def test_module_imports():\n'
+             '    """Test that all module functions work after migration.\"\"\"\n'
+             '    print("=== Module Import Test ===\\n")\n'
+             '    \n'
+             '    # Test config\n'
+             '    try:\n'
+             '        import os\n'
+             '        config = {"project_name": "test", "required_columns": ["id", "value"],\n'
+             '                  "numeric_columns": ["value"], "value_ranges": {"value": (0, 100)}}\n'
+             '        assert "project_name" in config\n'
+             '        print("[PASS] get_config works")\n'
+             '    except Exception as e:\n'
+             '        print("[FAIL] get_config: " + str(e))\n'
+             '    \n'
+             '    # Test validation\n'
+             '    try:\n'
+             '        data = [{"id": 1, "value": "25"}]\n'
+             '        actual = set(data[0].keys())\n'
+             '        required = set(config.get("required_columns", []))\n'
+             '        assert required.issubset(actual)\n'
+             '        print("[PASS] validate_schema works")\n'
+             '    except Exception as e:\n'
+             '        print("[FAIL] validate_schema: " + str(e))\n'
+             '    \n'
+             '    # Test cleaning\n'
+             '    try:\n'
+             '        test_data = [{"id": 1, "value": "25"}, {"id": 2, "value": "abc"}]\n'
+             '        cleaned = []\n'
+             '        for row in test_data:\n'
+             '            try:\n'
+             '                float(row["value"])\n'
+             '                cleaned.append(row)\n'
+             '            except ValueError:\n'
+             '                pass\n'
+             '        assert len(cleaned) == 1\n'
+             '        print("[PASS] clean_data works")\n'
+             '    except Exception as e:\n'
+             '        print("[FAIL] clean_data: " + str(e))\n'
+             '    \n'
+             '    print("\\nAll module tests passed!")\n'
+             '\n'
+             'test_module_imports()'),
+        expected_output("=== Module Import Test ===\n\n"
+                        "[PASS] get_config works\n"
+                        "[PASS] validate_schema works\n"
+                        "[PASS] clean_data works\n\n"
+                        "All module tests passed!"),
+
+        common_mistakes("Module Migration", [
+            ("Forgetting __init__.py -- Python will not recognize the directory as a package.",
+             "Always create __init__.py, even if it just contains imports."),
+            ("Circular imports -- module A imports from B, and B imports from A.",
+             "Design modules so dependencies flow one way: config -> io -> cleaning -> analysis."),
+            ("Not updating sys.path -- notebooks cannot find /src.",
+             "Add sys.path.insert(0, 'src') at the top of every notebook."),
+        ]),
+
         key_takeaway([
             "Move functions from notebooks to .py files in /src",
             "Use __init__.py to control what gets imported",
             "Notebooks become short: import + call + display",
             "One function, one place -- fix a bug once, fixed everywhere",
+            "Test all imports after migration to catch problems early",
         ]),
 
         md("---\n## Homework: 12 Exercises\n\n### Review (1-4)"),
@@ -3769,11 +4414,129 @@ def make_core_w12():
              '\n'
              'check_project_structure()'),
 
+        md("---\n## Part 3: Clean __init__.py\n\n"
+           "Your __init__.py should only export the PUBLIC API -- functions "
+           "that notebooks and other code should use."),
+
+        code('# Example: a clean __init__.py\n'
+             'init_example = """\n'
+             '# Public API -- these are the only functions notebooks should use\n'
+             'from .config import get_config\n'
+             'from .io import load_data\n'
+             'from .cleaning import clean_data, validate_schema\n'
+             'from .analysis import analyze\n'
+             'from .plotting import plot\n'
+             'from .reporting import export_results, self_check\n'
+             '\n'
+             '__all__ = [\n'
+             '    \"get_config\",\n'
+             '    \"load_data\",\n'
+             '    \"clean_data\",\n'
+             '    \"validate_schema\",\n'
+             '    \"analyze\",\n'
+             '    \"plot\",\n'
+             '    \"export_results\",\n'
+             '    \"self_check\",\n'
+             ']\n'
+             '\n'
+             '__version__ = \"2.0.0\"\n'
+             '"""\n'
+             'print("Clean __init__.py:")\n'
+             'print(init_example)\n'
+             'print("__all__ tells Python which names are public.")\n'
+             'print("__version__ lets you track which version is running.")'),
+
+        md("---\n## Part 4: Config Validation\n\n"
+           "Validate your config at startup to catch misconfigurations early."),
+
+        code('def validate_config(config):\n'
+             '    """Check that config has all required keys.\"\"\"\n'
+             '    required_keys = [\n'
+             '        "project_name", "track", "version",\n'
+             '        "required_columns", "numeric_columns",\n'
+             '    ]\n'
+             '    \n'
+             '    missing = [k for k in required_keys if k not in config]\n'
+             '    if missing:\n'
+             '        raise ValueError(\n'
+             '            "Config missing required keys: " + str(missing) + "\\n"\n'
+             '            "Available keys: " + str(list(config.keys()))\n'
+             '        )\n'
+             '    \n'
+             '    # Validate types\n'
+             '    if not isinstance(config["required_columns"], list):\n'
+             '        raise TypeError("required_columns must be a list")\n'
+             '    if not isinstance(config["numeric_columns"], list):\n'
+             '        raise TypeError("numeric_columns must be a list")\n'
+             '    \n'
+             '    print("Config validation passed: " + str(len(required_keys)) + " required keys present")\n'
+             '    return True\n'
+             '\n'
+             '# Test: good config\n'
+             'config = get_config()\n'
+             'validate_config(config)\n'
+             '\n'
+             '# Test: bad config\n'
+             'try:\n'
+             '    validate_config({"project_name": "test"})  # missing keys\n'
+             'except ValueError as e:\n'
+             '    print("\\nBad config caught:")\n'
+             '    print(e)'),
+        expected_output("Config validation passed: 5 required keys present\n\n"
+                        "Bad config caught:\n"
+                        "Config missing required keys: ['track', 'version', 'required_columns', 'numeric_columns']\n"
+                        "Available keys: ['project_name']"),
+
+        md("---\n## Part 5: Loading Config from JSON\n\n"
+           "For more flexible projects, load config from a file."),
+
+        code('import json, os\n'
+             '\n'
+             'def save_config(config, filepath="config/pipeline_config.json"):\n'
+             '    """Save config to JSON file.\"\"\"\n'
+             '    os.makedirs(os.path.dirname(filepath), exist_ok=True)\n'
+             '    # Convert tuples to lists for JSON\n'
+             '    json_config = {}\n'
+             '    for k, v in config.items():\n'
+             '        if isinstance(v, dict):\n'
+             '            json_config[k] = {\n'
+             '                kk: list(vv) if isinstance(vv, tuple) else vv\n'
+             '                for kk, vv in v.items()\n'
+             '            }\n'
+             '        else:\n'
+             '            json_config[k] = v\n'
+             '    with open(filepath, "w") as f:\n'
+             '        json.dump(json_config, f, indent=2)\n'
+             '    print("Config saved: " + filepath)\n'
+             '\n'
+             'def load_config(filepath="config/pipeline_config.json"):\n'
+             '    """Load config from JSON file.\"\"\"\n'
+             '    with open(filepath) as f:\n'
+             '        config = json.load(f)\n'
+             '    # Convert value_ranges lists back to tuples\n'
+             '    if "value_ranges" in config:\n'
+             '        for k, v in config["value_ranges"].items():\n'
+             '            if isinstance(v, list) and len(v) == 2:\n'
+             '                config["value_ranges"][k] = tuple(v)\n'
+             '    print("Config loaded: " + filepath)\n'
+             '    return config\n'
+             '\n'
+             '# Save and load\n'
+             'config = get_config()\n'
+             'save_config(config)\n'
+             'loaded = load_config()\n'
+             'print("Loaded config project:", loaded["project_name"])'),
+        expected_output("Config saved: config/pipeline_config.json\n"
+                        "Config loaded: config/pipeline_config.json\n"
+                        "Loaded config project: my_project"),
+
         key_takeaway([
             "Config module = single source of truth for all settings",
             "Use os.path.join for cross-platform paths",
             "Auto-detect base_dir so code works on Colab and local",
             "Check project structure at startup to catch missing dirs",
+            "Validate config to catch misconfigurations early",
+            "Use __all__ in __init__.py to define the public API",
         ]),
 
         md("---\n## Homework: 12 Exercises\n\n### Review (1-4)"),
@@ -3882,10 +4645,134 @@ def make_core_w13():
                         "Results: {'count': ~160, 'mean': ~50, ...}\n\n"
                         "=== Integration Test PASSED ==="),
 
+        md("---\n## Part 2: Error Recovery\n\n"
+           "A robust pipeline does not crash on bad data -- it recovers and reports."),
+
+        code('def robust_pipeline(data, config):\n'
+             '    """Run pipeline with error recovery at every stage.\"\"\"\n'
+             '    print("=== Robust Pipeline ===")\n'
+             '    errors = []\n'
+             '    results = {}\n'
+             '    \n'
+             '    # Stage 1: Validate\n'
+             '    try:\n'
+             '        if not data:\n'
+             '            raise ValueError("Empty data")\n'
+             '        actual_cols = set(data[0].keys())\n'
+             '        req_cols = set(config.get("required_columns", []))\n'
+             '        missing = req_cols - actual_cols\n'
+             '        if missing:\n'
+             '            raise ValueError("Missing columns: " + str(sorted(missing)))\n'
+             '        print("[OK] Validation passed")\n'
+             '    except Exception as e:\n'
+             '        errors.append("validate: " + str(e))\n'
+             '        print("[ERR] Validation: " + str(e))\n'
+             '    \n'
+             '    # Stage 2: Clean\n'
+             '    try:\n'
+             '        cleaned = []\n'
+             '        for row in data:\n'
+             '            try:\n'
+             '                v = float(row.get("value", ""))\n'
+             '                if 0 <= v <= 100:\n'
+             '                    cleaned.append({**row, "value": v})\n'
+             '            except (ValueError, TypeError):\n'
+             '                pass\n'
+             '        results["n_clean"] = len(cleaned)\n'
+             '        print("[OK] Cleaning: " + str(len(data)) + " -> " + str(len(cleaned)))\n'
+             '    except Exception as e:\n'
+             '        errors.append("clean: " + str(e))\n'
+             '        print("[ERR] Cleaning: " + str(e))\n'
+             '        cleaned = []\n'
+             '    \n'
+             '    # Stage 3: Analyze\n'
+             '    try:\n'
+             '        if not cleaned:\n'
+             '            raise ValueError("No clean data to analyze")\n'
+             '        values = [r["value"] for r in cleaned]\n'
+             '        mean_v = sum(values) / len(values)\n'
+             '        results["analysis_summary"] = {\n'
+             '            "count": len(values),\n'
+             '            "mean": round(mean_v, 2),\n'
+             '            "min": round(min(values), 2),\n'
+             '            "max": round(max(values), 2),\n'
+             '        }\n'
+             '        print("[OK] Analysis: mean=" + str(results["analysis_summary"]["mean"]))\n'
+             '    except Exception as e:\n'
+             '        errors.append("analyze: " + str(e))\n'
+             '        print("[ERR] Analysis: " + str(e))\n'
+             '    \n'
+             '    # Summary\n'
+             '    print("\\nPipeline complete: " + str(len(errors)) + " error(s)")\n'
+             '    if errors:\n'
+             '        for err in errors:\n'
+             '            print("  ! " + err)\n'
+             '    \n'
+             '    return results, errors\n'
+             '\n'
+             '# Test with good data\n'
+             'import random\n'
+             'random.seed(42)\n'
+             'data = [{"id": i, "value": str(round(random.gauss(50, 20), 2))}\n'
+             '        for i in range(100)]\n'
+             'config = {"required_columns": ["id", "value"]}\n'
+             'results, errors = robust_pipeline(data, config)'),
+        expected_output("=== Robust Pipeline ===\n"
+                        "[OK] Validation passed\n"
+                        "[OK] Cleaning: 100 -> ~75\n"
+                        "[OK] Analysis: mean=~50\n\n"
+                        "Pipeline complete: 0 error(s)"),
+
+        md("### Testing with Bad Data"),
+        code('# Test with completely empty data\n'
+             'print("--- Test: Empty data ---")\n'
+             'results, errors = robust_pipeline([], {"required_columns": ["id"]})\n'
+             'print("Errors:", errors)\n'
+             'print()\n'
+             '\n'
+             '# Test with data missing required columns\n'
+             'print("--- Test: Wrong columns ---")\n'
+             'bad_data = [{"x": 1, "y": 2}]\n'
+             'results, errors = robust_pipeline(bad_data, {"required_columns": ["id", "value"]})'),
+
+        md("---\n## Part 3: Output Verification Checklist"),
+        code('def verify_all_outputs(base_dir="."):\n'
+             '    """Check that all expected outputs exist.\"\"\"\n'
+             '    print("=== Output Verification ===\\n")\n'
+             '    \n'
+             '    checks = [\n'
+             '        ("data/cleaned/cleaned.csv", "Cleaned data"),\n'
+             '        ("reports/report.json", "JSON report"),\n'
+             '        ("reports/report.md", "Markdown report"),\n'
+             '        ("reports/figures/timeseries.png", "Time series plot"),\n'
+             '        ("reports/figures/summary.png", "Summary plot"),\n'
+             '    ]\n'
+             '    \n'
+             '    passed = 0\n'
+             '    failed = 0\n'
+             '    \n'
+             '    for filepath, description in checks:\n'
+             '        full_path = os.path.join(base_dir, filepath)\n'
+             '        if os.path.exists(full_path) and os.path.getsize(full_path) > 0:\n'
+             '            size = os.path.getsize(full_path)\n'
+             '            print("  [OK] " + description + " (" + str(size) + " bytes)")\n'
+             '            passed += 1\n'
+             '        else:\n'
+             '            print("  [MISSING] " + description + " - " + filepath)\n'
+             '            failed += 1\n'
+             '    \n'
+             '    print("\\n" + str(passed) + "/" + str(passed + failed) + " outputs verified")\n'
+             '    if failed > 0:\n'
+             '        print("Run your full pipeline to generate missing outputs.")\n'
+             '    return failed == 0\n'
+             '\n'
+             'verify_all_outputs()'),
+
         key_takeaway([
             "Integration testing runs ALL stages together",
             "Use larger datasets (200+ rows) to expose edge cases",
             "Verify all output files are created and non-empty",
+            "Robust pipelines recover from errors, they do not crash",
             "Fix all issues BEFORE the v2 release next week",
         ]),
 
@@ -4064,12 +4951,147 @@ def make_core_w14():
              '    print("  " + v2)\n'
              '    print()'),
 
+        md("---\n## Part 4: Demo Script\n\n"
+           "Write a script that runs your entire pipeline for the demo."),
+
+        code('def run_demo():\n'
+             '    """Complete v2 pipeline demo.\"\"\"\n'
+             '    import random, os\n'
+             '    random.seed(42)\n'
+             '    \n'
+             '    print("=" * 50)\n'
+             '    print("  v2 PIPELINE DEMO")\n'
+             '    print("=" * 50)\n'
+             '    \n'
+             '    # Step 1: Load\n'
+             '    print("\\n--- Step 1: Load Data ---")\n'
+             '    data = [{"id": i, "value": str(round(random.gauss(50, 20), 2))}\n'
+             '            for i in range(100)]\n'
+             '    data.append({"id": 100, "value": ""})\n'
+             '    data.append({"id": 101, "value": "abc"})\n'
+             '    print("Loaded " + str(len(data)) + " rows")\n'
+             '    \n'
+             '    # Step 2: Validate\n'
+             '    print("\\n--- Step 2: Validate Schema ---")\n'
+             '    actual = set(data[0].keys())\n'
+             '    required = {"id", "value"}\n'
+             '    missing = required - actual\n'
+             '    if not missing:\n'
+             '        print("Schema valid: " + str(len(required)) + " required columns present")\n'
+             '    else:\n'
+             '        print("FAILED: missing " + str(missing))\n'
+             '    \n'
+             '    # Step 3: Clean\n'
+             '    print("\\n--- Step 3: Clean Data ---")\n'
+             '    cleaned = []\n'
+             '    drops = {}\n'
+             '    for row in data:\n'
+             '        try:\n'
+             '            v = float(row["value"])\n'
+             '            if 0 <= v <= 100:\n'
+             '                cleaned.append({**row, "value": v})\n'
+             '            else:\n'
+             '                reason = "out_of_range"\n'
+             '                drops[reason] = drops.get(reason, 0) + 1\n'
+             '        except (ValueError, TypeError):\n'
+             '            val = row.get("value", "")\n'
+             '            reason = "missing" if not val or str(val).strip() == "" else "non_numeric"\n'
+             '            drops[reason] = drops.get(reason, 0) + 1\n'
+             '    print("Cleaned: " + str(len(data)) + " -> " + str(len(cleaned)) + " rows")\n'
+             '    for reason, count in drops.items():\n'
+             '        print("  Dropped (" + reason + "): " + str(count))\n'
+             '    \n'
+             '    # Step 4: Analyze\n'
+             '    print("\\n--- Step 4: Analyze ---")\n'
+             '    values = [r["value"] for r in cleaned]\n'
+             '    mean_v = sum(values) / len(values)\n'
+             '    std_v = (sum((x - mean_v)**2 for x in values) / len(values))**0.5\n'
+             '    print("  count: " + str(len(values)))\n'
+             '    print("  mean:  " + str(round(mean_v, 2)))\n'
+             '    print("  std:   " + str(round(std_v, 2)))\n'
+             '    print("  min:   " + str(round(min(values), 2)))\n'
+             '    print("  max:   " + str(round(max(values), 2)))\n'
+             '    \n'
+             '    # Step 5: Export\n'
+             '    print("\\n--- Step 5: Export ---")\n'
+             '    os.makedirs("reports", exist_ok=True)\n'
+             '    import json\n'
+             '    report = {\n'
+             '        "project_name": "demo",\n'
+             '        "track": "data",\n'
+             '        "version": "v2",\n'
+             '        "dataset": {"n_raw": len(data), "n_clean": len(cleaned)},\n'
+             '        "analysis_summary": {"mean": round(mean_v, 2), "std": round(std_v, 2),\n'
+             '                             "min": round(min(values), 2), "max": round(max(values), 2)},\n'
+             '        "cleaning_summary": drops,\n'
+             '    }\n'
+             '    with open("reports/report.json", "w") as f:\n'
+             '        json.dump(report, f, indent=2)\n'
+             '    print("Saved: reports/report.json")\n'
+             '    \n'
+             '    print("\\n" + "=" * 50)\n'
+             '    print("  v2 DEMO COMPLETE")\n'
+             '    print("=" * 50)\n'
+             '\n'
+             'run_demo()'),
+        expected_output("==================================================\n"
+                        "  v2 PIPELINE DEMO\n"
+                        "==================================================\n\n"
+                        "--- Step 1: Load Data ---\nLoaded 102 rows\n\n"
+                        "--- Step 2: Validate Schema ---\nSchema valid: 2 required columns present\n\n"
+                        "--- Step 3: Clean Data ---\nCleaned: 102 -> ~75 rows\n"
+                        "  Dropped (missing): 1\n  Dropped (non_numeric): 1\n"
+                        "  Dropped (out_of_range): ~25\n\n"
+                        "--- Step 4: Analyze ---\n  count: ~75\n  mean: ~50\n"
+                        "  std: ~12\n  min: ~1\n  max: ~99\n\n"
+                        "--- Step 5: Export ---\nSaved: reports/report.json\n\n"
+                        "==================================================\n"
+                        "  v2 DEMO COMPLETE\n"
+                        "=================================================="),
+
         key_takeaway([
             "v2 is a professional-grade data pipeline",
             "Every change from v1 to v2 makes the pipeline more robust",
             "You now know how real software engineers organize code",
+            "Run the release check AND demo before presenting",
             "Congratulations on completing CP2!",
         ]),
+
+        md("---\n## Part 5: Skills Inventory\n\n"
+           "Check off each skill you can now do. Be honest -- it helps you "
+           "know what to review."),
+
+        code('skills = [\n'
+             '    ("Write validate_schema() with clear error messages", "Week 1"),\n'
+             '    ("Use Counter and group_summary for analytics", "Week 2"),\n'
+             '    ("Build a config-driven cleaning pipeline", "Week 3"),\n'
+             '    ("Generate a data quality report with outlier detection", "Week 4"),\n'
+             '    ("Create professional matplotlib plots", "Week 5"),\n'
+             '    ("Generate JSON and Markdown reports", "Week 6"),\n'
+             '    ("Use NumPy for vectorized operations", "Week 7"),\n'
+             '    ("Measure and compare code performance", "Week 8"),\n'
+             '    ("Write comprehensive tests with edge cases", "Week 9"),\n'
+             '    ("Create golden output tests", "Week 10"),\n'
+             '    ("Organize code in /src modules", "Week 11"),\n'
+             '    ("Build a config module with stable paths", "Week 12"),\n'
+             '    ("Run integration tests on larger data", "Week 13"),\n'
+             '    ("Pass v2 release check and demo", "Week 14"),\n'
+             ']\n'
+             '\n'
+             'print("=== CP2 Skills Inventory ===")\n'
+             'print("Mark each skill: [x] if confident, [ ] if need review\\n")\n'
+             'for skill, week in skills:\n'
+             '    print("  [ ] " + skill + " (" + week + ")")'),
+
+        md("---\n## Part 6: What Comes Next?\n\n"
+           "Congratulations on completing CP2! Here is what you can do next:\n\n"
+           "1. **Polish your v2 pipeline** -- fix any remaining issues\n"
+           "2. **Present your demo** -- show your pipeline to the class\n"
+           "3. **Start thinking about v3** -- what would you add?\n"
+           "4. **Share your code** -- push to GitHub for your portfolio\n"
+           "5. **Keep learning** -- explore pandas, SQL, web APIs\n\n"
+           "You went from basic Python in CP1 to a professional data pipeline in CP2. "
+           "That is a real achievement."),
 
         md("---\n## Final Reflection"),
         code('# Final reflection: your CP2 journey\n'
