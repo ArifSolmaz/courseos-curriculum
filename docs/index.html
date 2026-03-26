@@ -7,212 +7,81 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            color: #1a1d26;
-            line-height: 1.65;
-            background: #fff;
-            -webkit-font-smoothing: antialiased;
-        }
-
+        body { font-family: 'Inter', -apple-system, sans-serif; color: #1a1d26; line-height: 1.65; background: #fff; -webkit-font-smoothing: antialiased; }
         a { color: #4f6df5; text-decoration: none; }
         a:hover { text-decoration: underline; }
-
         .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
 
-        /* ── Hero ──────────────────────────────────── */
-
-        .hero {
-            padding: 80px 0 48px;
-            text-align: center;
-        }
-        .hero h1 {
-            font-size: 2.6rem;
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            line-height: 1.15;
-            color: #111;
-        }
+        .hero { padding: 80px 0 48px; text-align: center; }
+        .hero h1 { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.15; color: #111; }
         .hero h1 span { color: #4f6df5; }
-        .hero p {
-            font-size: 1.1rem;
-            color: #6b7280;
-            margin-top: 14px;
-            max-width: 540px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+        .hero p { font-size: 1.1rem; color: #6b7280; margin-top: 14px; max-width: 540px; margin-left: auto; margin-right: auto; }
 
-        /* ── Pipeline ──────────────────────────────── */
-
-        .pipeline {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-            margin: 48px auto 0;
-            max-width: 720px;
-        }
-        .pipe-stage {
-            flex: 1;
-            text-align: center;
-            padding: 22px 12px;
-            border: 2px solid #e5e7eb;
-            background: #fafbfc;
-            transition: all 0.2s;
-        }
+        .pipeline { display: flex; align-items: center; justify-content: center; gap: 0; margin: 48px auto 0; max-width: 720px; }
+        .pipe-stage { flex: 1; text-align: center; padding: 22px 12px; border: 2px solid #e5e7eb; background: #fafbfc; transition: all 0.2s; }
         .pipe-stage:first-child { border-radius: 14px 0 0 14px; }
         .pipe-stage:last-child { border-radius: 0 14px 14px 0; }
         .pipe-stage:hover { border-color: #4f6df5; background: #f0f2ff; }
-        .pipe-version {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #4f6df5;
-            letter-spacing: -0.03em;
-        }
+        .pipe-version { font-size: 1.8rem; font-weight: 800; color: #4f6df5; letter-spacing: -0.03em; }
         .pipe-label { font-size: 0.78rem; font-weight: 600; color: #374151; margin-top: 2px; }
         .pipe-sub { font-size: 0.68rem; color: #9ca3af; margin-top: 2px; }
         .pipe-arrow { color: #d1d5db; font-size: 1.2rem; flex-shrink: 0; }
 
-        /* ── Divider ───────────────────────────────── */
-
         hr { border: none; border-top: 1px solid #f0f0f0; margin: 56px 0; }
 
-        /* ── Courses ───────────────────────────────── */
-
-        .section-title {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #9ca3af;
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
+        .section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #9ca3af; font-weight: 600; margin-bottom: 20px; }
 
         .course-list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-        .course {
-            padding: 22px 24px;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            transition: all 0.2s;
-            cursor: default;
-        }
+        .course { padding: 22px 24px; border: 1px solid #e5e7eb; border-radius: 12px; transition: all 0.2s; }
         .course:hover { border-color: #4f6df5; box-shadow: 0 2px 12px rgba(79,109,245,0.08); }
-        .course-code {
-            font-size: 0.68rem;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: #4f6df5;
-            font-weight: 700;
-        }
+        .course-code { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.2px; color: #4f6df5; font-weight: 700; }
         .course h3 { font-size: 1rem; font-weight: 650; margin: 4px 0 6px; }
         .course p { font-size: 0.85rem; color: #6b7280; }
-        .course .meta {
-            font-size: 0.75rem;
-            color: #9ca3af;
-            margin-top: 10px;
-            display: flex;
-            gap: 12px;
-        }
-
-        /* ── Tracks ────────────────────────────────── */
+        .course .meta { font-size: 0.75rem; color: #9ca3af; margin-top: 10px; display: flex; gap: 12px; }
 
         .tracks { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-        .track {
-            text-align: center;
-            padding: 20px 10px;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            transition: all 0.2s;
-        }
+        .track { text-align: center; padding: 20px 10px; border: 1px solid #e5e7eb; border-radius: 12px; transition: all 0.2s; }
         .track:hover { border-color: #4f6df5; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
         .track-icon { font-size: 2rem; margin-bottom: 6px; }
         .track-name { font-size: 0.78rem; font-weight: 600; color: #374151; }
         .track-product { font-size: 0.68rem; color: #9ca3af; margin-top: 2px; }
 
-        /* ── Contract ──────────────────────────────── */
-
-        .contract {
-            background: #fafbfc;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 28px 32px;
-        }
+        .contract { background: #fafbfc; border: 1px solid #e5e7eb; border-radius: 12px; padding: 28px 32px; }
         .contract h3 { font-size: 0.95rem; font-weight: 650; margin-bottom: 12px; }
-        .contract code {
-            display: block;
-            font-family: 'SF Mono', 'Fira Code', monospace;
-            font-size: 0.82rem;
-            line-height: 2;
-            color: #374151;
-        }
+        .contract code { display: block; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82rem; line-height: 2; color: #374151; }
         .contract code span { color: #4f6df5; }
 
-        /* ── Weekly ────────────────────────────────── */
-
-        .weekly {
-            display: grid;
-            grid-template-columns: auto 1fr auto;
-            gap: 0;
-        }
-        .weekly-row {
-            display: contents;
-        }
-        .weekly-row > * {
-            padding: 10px 14px;
-            border-bottom: 1px solid #f3f4f6;
-            font-size: 0.85rem;
-        }
-        .weekly-num {
-            font-weight: 700;
-            color: #4f6df5;
-            text-align: center;
-            font-size: 0.8rem;
-        }
-        .weekly-title { color: #374151; }
-        .weekly-sprint { color: #9ca3af; font-size: 0.75rem; text-align: right; }
-
-        /* ── Details/Accordion ─────────────────────── */
-
-        details {
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            overflow: hidden;
-        }
-        details summary {
-            padding: 16px 22px;
-            font-weight: 600;
-            font-size: 0.92rem;
-            cursor: pointer;
-            list-style: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background 0.15s;
-        }
+        details { border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
+        details summary { padding: 16px 22px; font-weight: 600; font-size: 0.92rem; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; transition: background 0.15s; }
         details summary:hover { background: #fafbfc; }
         details summary::after { content: '+'; font-size: 1.2rem; color: #9ca3af; }
         details[open] summary::after { content: '−'; }
         details[open] summary { border-bottom: 1px solid #f0f0f0; }
         .details-body { padding: 20px 22px; }
 
-        /* ── Footer ────────────────────────────────── */
-
-        .footer {
-            text-align: center;
-            padding: 48px 0;
-            font-size: 0.78rem;
-            color: #9ca3af;
+        /* ── Week rows with notebook links ─────────── */
+        .wk { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #f3f4f6; gap: 12px; }
+        .wk:last-child { border-bottom: none; }
+        .wk-num { width: 28px; text-align: center; font-weight: 700; color: #4f6df5; font-size: 0.82rem; flex-shrink: 0; }
+        .wk-title { flex: 1; font-size: 0.88rem; color: #374151; }
+        .wk-sprint { font-size: 0.7rem; color: #9ca3af; width: 36px; text-align: right; flex-shrink: 0; }
+        .wk-links { display: flex; gap: 6px; flex-shrink: 0; }
+        .wk-links a {
+            display: inline-flex; align-items: center; gap: 3px;
+            font-size: 0.68rem; font-weight: 600; padding: 3px 8px;
+            border-radius: 5px; background: #f0f2ff; color: #4f6df5;
+            transition: all 0.15s; white-space: nowrap;
         }
+        .wk-links a:hover { background: #4f6df5; color: #fff; text-decoration: none; }
+        .wk-links a.hw { background: #fef7ea; color: #b8860b; }
+        .wk-links a.hw:hover { background: #f0a020; color: #fff; }
+        .wk-links a.check { background: #eafbf1; color: #22b573; }
+        .wk-links a.check:hover { background: #22b573; color: #fff; }
+
+        .footer { text-align: center; padding: 48px 0; font-size: 0.78rem; color: #9ca3af; }
         .footer a { color: #9ca3af; }
         .footer a:hover { color: #4f6df5; }
-
-        /* ── Responsive ────────────────────────────── */
 
         @media (max-width: 768px) {
             .hero h1 { font-size: 1.8rem; }
@@ -222,49 +91,30 @@
             .pipe-arrow { transform: rotate(90deg); }
             .course-list { grid-template-columns: 1fr; }
             .tracks { grid-template-columns: repeat(3, 1fr); }
+            .wk-links { flex-wrap: wrap; }
         }
     </style>
 </head>
 <body>
-
 <div class="container">
 
-    <!-- Hero -->
     <div class="hero">
         <h1>One project.<br><span>Four courses.</span><br>Two years.</h1>
         <p>Build a real tool from scratch and evolve it into a portfolio-quality product across CP1, CP2, OOP, and DSA.</p>
     </div>
 
-    <!-- Pipeline -->
     <div class="pipeline">
-        <div class="pipe-stage">
-            <div class="pipe-version">v1</div>
-            <div class="pipe-label">CP1</div>
-            <div class="pipe-sub">It works</div>
-        </div>
+        <div class="pipe-stage"><div class="pipe-version">v1</div><div class="pipe-label">CP1</div><div class="pipe-sub">It works</div></div>
         <div class="pipe-arrow">→</div>
-        <div class="pipe-stage">
-            <div class="pipe-version">v2</div>
-            <div class="pipe-label">CP2</div>
-            <div class="pipe-sub">It's robust</div>
-        </div>
+        <div class="pipe-stage"><div class="pipe-version">v2</div><div class="pipe-label">CP2</div><div class="pipe-sub">It's robust</div></div>
         <div class="pipe-arrow">→</div>
-        <div class="pipe-stage">
-            <div class="pipe-version">v3</div>
-            <div class="pipe-label">OOP</div>
-            <div class="pipe-sub">It's architected</div>
-        </div>
+        <div class="pipe-stage"><div class="pipe-version">v3</div><div class="pipe-label">OOP</div><div class="pipe-sub">It's architected</div></div>
         <div class="pipe-arrow">→</div>
-        <div class="pipe-stage">
-            <div class="pipe-version">v3</div>
-            <div class="pipe-label">DSA</div>
-            <div class="pipe-sub">It's fast</div>
-        </div>
+        <div class="pipe-stage"><div class="pipe-version">v3</div><div class="pipe-label">DSA</div><div class="pipe-sub">It's fast</div></div>
     </div>
 
     <hr>
 
-    <!-- Tracks -->
     <div class="section-title">Pick a track</div>
     <div class="tracks">
         <div class="track"><div class="track-icon">🤖</div><div class="track-name">Robotics</div><div class="track-product">MechaSense Studio</div></div>
@@ -277,176 +127,137 @@
 
     <hr>
 
-    <!-- Courses -->
     <div class="section-title">Four courses, one repo</div>
     <div class="course-list">
-        <div class="course">
-            <div class="course-code">CP1 — Semester 1</div>
-            <h3>Computer Programming 1</h3>
-            <p>Python fundamentals → v1 functional pipeline</p>
-            <div class="meta"><span>Year 1</span><span>5h / week</span><span>14 weeks</span></div>
-        </div>
-        <div class="course">
-            <div class="course-code">CP2 — Semester 2</div>
-            <h3>Computer Programming 2</h3>
-            <p>Robust data handling → v2 professional tool</p>
-            <div class="meta"><span>Year 1</span><span>5h / week</span><span>14 weeks</span></div>
-        </div>
-        <div class="course">
-            <div class="course-code">OOP — Semester 3</div>
-            <h3>Object-Oriented Programming</h3>
-            <p>Refactor into architecture → v3 components</p>
-            <div class="meta"><span>Year 2</span><span>3h / week</span><span>14 weeks</span></div>
-        </div>
-        <div class="course">
-            <div class="course-code">DSA — Semester 4</div>
-            <h3>Data Structures & Algorithms</h3>
-            <p>Optimize + benchmark → v3 performance proof</p>
-            <div class="meta"><span>Year 2</span><span>3h / week</span><span>14 weeks</span></div>
-        </div>
+        <div class="course"><div class="course-code">CP1 — Semester 1</div><h3>Computer Programming 1</h3><p>Python fundamentals → v1 functional pipeline</p><div class="meta"><span>Year 1</span><span>5h / week</span><span>14 weeks</span></div></div>
+        <div class="course"><div class="course-code">CP2 — Semester 2</div><h3>Computer Programming 2</h3><p>Robust data handling → v2 professional tool</p><div class="meta"><span>Year 1</span><span>5h / week</span><span>14 weeks</span></div></div>
+        <div class="course"><div class="course-code">OOP — Semester 3</div><h3>Object-Oriented Programming</h3><p>Refactor into architecture → v3 components</p><div class="meta"><span>Year 2</span><span>3h / week</span><span>14 weeks</span></div></div>
+        <div class="course"><div class="course-code">DSA — Semester 4</div><h3>Data Structures & Algorithms</h3><p>Optimize + benchmark → v3 performance proof</p><div class="meta"><span>Year 2</span><span>3h / week</span><span>14 weeks</span></div></div>
     </div>
 
     <hr>
 
-    <!-- Contract -->
-    <div class="section-title">The contract — what you build</div>
+    <div class="section-title">The contract</div>
     <div class="contract">
         <h3>Every track implements these in /src/</h3>
-        <code>
-            <span>load_data</span>(config) → data<br>
-            <span>clean_data</span>(data, config) → clean_data<br>
-            <span>analyze</span>(clean_data, config) → results<br>
-            <span>plot</span>(clean_data, results, config) → figures<br>
-            <span>export_results</span>(clean_data, results, figures, config) → paths<br>
-            <span>self_check</span>() → None
-        </code>
+        <code><span>load_data</span>(config) → data<br><span>clean_data</span>(data, config) → clean_data<br><span>analyze</span>(clean_data, config) → results<br><span>plot</span>(clean_data, results, config) → figures<br><span>export_results</span>(clean_data, results, figures, config) → paths<br><span>self_check</span>() → None</code>
     </div>
 
     <hr>
 
-    <!-- Week-by-week (collapsible) -->
-    <div class="section-title">Week by week</div>
+    <!-- ── NOTEBOOKS ──────────────────────────────────── -->
+    <div class="section-title">Notebooks — open in Colab</div>
 
-    <details>
-        <summary>CP1 — Python Fundamentals (14 weeks)</summary>
-        <div class="details-body">
-            <div class="weekly">
-                <div class="weekly-row"><div class="weekly-num">1</div><div class="weekly-title">Welcome to Python & Your Pipeline</div><div class="weekly-sprint">S1</div></div>
-                <div class="weekly-row"><div class="weekly-num">2</div><div class="weekly-title">Variables, Types & Numbers</div><div class="weekly-sprint">S1</div></div>
-                <div class="weekly-row"><div class="weekly-num">3</div><div class="weekly-title">Making Decisions (Conditionals)</div><div class="weekly-sprint">S2</div></div>
-                <div class="weekly-row"><div class="weekly-num">4</div><div class="weekly-title">Decision Logic & Classification</div><div class="weekly-sprint">S2</div></div>
-                <div class="weekly-row"><div class="weekly-num">5</div><div class="weekly-title">Loops: Scanning Data</div><div class="weekly-sprint">S3</div></div>
-                <div class="weekly-row"><div class="weekly-num">6</div><div class="weekly-title">Loops: Counting Events</div><div class="weekly-sprint">S3</div></div>
-                <div class="weekly-row"><div class="weekly-num">7</div><div class="weekly-title">Lists: Indexing & Windows</div><div class="weekly-sprint">S4</div></div>
-                <div class="weekly-row"><div class="weekly-num">8</div><div class="weekly-title">Strings: Parsing Data</div><div class="weekly-sprint">S4</div></div>
-                <div class="weekly-row"><div class="weekly-num">9</div><div class="weekly-title">Functions: Building Blocks</div><div class="weekly-sprint">S5</div></div>
-                <div class="weekly-row"><div class="weekly-num">10</div><div class="weekly-title">Functions: Decomposition & Reuse</div><div class="weekly-sprint">S5</div></div>
-                <div class="weekly-row"><div class="weekly-num">11</div><div class="weekly-title">Exceptions: Handling Errors</div><div class="weekly-sprint">S6</div></div>
-                <div class="weekly-row"><div class="weekly-num">12</div><div class="weekly-title">File I/O: Reading & Writing</div><div class="weekly-sprint">S6</div></div>
-                <div class="weekly-row"><div class="weekly-num">13</div><div class="weekly-title">Integration: End-to-End Pipeline</div><div class="weekly-sprint">S6</div></div>
-                <div class="weekly-row"><div class="weekly-num">14</div><div class="weekly-title">v1 Release & Demo</div><div class="weekly-sprint">S6</div></div>
-            </div>
-        </div>
-    </details>
+    <script>
+    const REPO = "ArifSolmaz/courseos-curriculum";
+    const BASE = "course-content/notebooks";
+    function colab(course, file) {
+        return `https://colab.research.google.com/github/${REPO}/blob/main/${BASE}/${course}/${file}`;
+    }
+    function gh(course, file) {
+        return `https://github.com/${REPO}/blob/main/${BASE}/${course}/${file}`;
+    }
 
-    <details>
-        <summary>CP2 — Professional Tool (14 weeks)</summary>
-        <div class="details-body">
-            <div class="weekly">
-                <div class="weekly-row"><div class="weekly-num">1</div><div class="weekly-title">Schema Validation</div><div class="weekly-sprint">S7</div></div>
-                <div class="weekly-row"><div class="weekly-num">2</div><div class="weekly-title">Dict Analytics</div><div class="weekly-sprint">S7</div></div>
-                <div class="weekly-row"><div class="weekly-num">3</div><div class="weekly-title">Configurable Cleaning Pipeline</div><div class="weekly-sprint">S8</div></div>
-                <div class="weekly-row"><div class="weekly-num">4</div><div class="weekly-title">Data Quality Reports</div><div class="weekly-sprint">S8</div></div>
-                <div class="weekly-row"><div class="weekly-num">5</div><div class="weekly-title">Matplotlib Standards</div><div class="weekly-sprint">S9</div></div>
-                <div class="weekly-row"><div class="weekly-num">6</div><div class="weekly-title">Report Generation</div><div class="weekly-sprint">S9</div></div>
-                <div class="weekly-row"><div class="weekly-num">7</div><div class="weekly-title">NumPy Introduction</div><div class="weekly-sprint">S10</div></div>
-                <div class="weekly-row"><div class="weekly-num">8</div><div class="weekly-title">Timing & Performance</div><div class="weekly-sprint">S10</div></div>
-                <div class="weekly-row"><div class="weekly-num">9</div><div class="weekly-title">Testing: Expanded Self-Check</div><div class="weekly-sprint">S11</div></div>
-                <div class="weekly-row"><div class="weekly-num">10</div><div class="weekly-title">Golden Outputs</div><div class="weekly-sprint">S11</div></div>
-                <div class="weekly-row"><div class="weekly-num">11</div><div class="weekly-title">Modularize into /src</div><div class="weekly-sprint">S12</div></div>
-                <div class="weekly-row"><div class="weekly-num">12</div><div class="weekly-title">Package Hygiene</div><div class="weekly-sprint">S12</div></div>
-                <div class="weekly-row"><div class="weekly-num">13</div><div class="weekly-title">Integration on Larger Data</div><div class="weekly-sprint">S12</div></div>
-                <div class="weekly-row"><div class="weekly-num">14</div><div class="weekly-title">v2 Release & Demo</div><div class="weekly-sprint">S12</div></div>
-            </div>
-        </div>
-    </details>
+    const WEEKS = {
+        cp1: [
+            [1,"Welcome to Python & Your Pipeline","S1"],
+            [2,"Variables, Types & Numbers","S1"],
+            [3,"Making Decisions (Conditionals)","S2"],
+            [4,"Decision Logic & Classification","S2"],
+            [5,"Loops: Scanning Data","S3"],
+            [6,"Loops: Counting Events","S3"],
+            [7,"Lists: Indexing & Windows","S4"],
+            [8,"Strings: Parsing Data","S4"],
+            [9,"Functions: Building Blocks","S5"],
+            [10,"Functions: Decomposition & Reuse","S5"],
+            [11,"Exceptions: Handling Errors","S6"],
+            [12,"File I/O: Reading & Writing","S6"],
+            [13,"Integration: End-to-End Pipeline","S6"],
+            [14,"v1 Release & Demo","S6"],
+        ],
+        cp2: [
+            [1,"Schema Validation","S7"],[2,"Dict Analytics","S7"],
+            [3,"Configurable Cleaning Pipeline","S8"],[4,"Data Quality Reports","S8"],
+            [5,"Matplotlib Standards","S9"],[6,"Report Generation","S9"],
+            [7,"NumPy Introduction","S10"],[8,"Timing & Performance","S10"],
+            [9,"Testing: Expanded Self-Check","S11"],[10,"Golden Outputs","S11"],
+            [11,"Modularize into /src","S12"],[12,"Package Hygiene","S12"],
+            [13,"Integration on Larger Data","S12"],[14,"v2 Release & Demo","S12"],
+        ],
+        oop: [
+            [1,"OOP Kickoff: Classes & Objects",""],[2,"Composition: DataSource & Dataset",""],
+            [3,"Cleaner Component",""],[4,"Analyzer Component",""],
+            [5,"Plotter & Reporter Components",""],[6,"Domain Exceptions & Validation",""],
+            [7,"SOLID Principles (SRP/OCP)",""],[8,"Strategy Pattern",""],
+            [9,"Factory & Registry Pattern",""],[10,"Testing with pytest",""],
+            [11,"Package Hygiene",""],[12,"Plugin Exercise",""],
+            [13,"Architecture Freeze",""],[14,"v3 Architecture Demo",""],
+        ],
+        dsa: [
+            [1,"Big-O & Python Cost Model",""],[2,"Benchmark Literacy",""],
+            [3,"Searching: Linear vs Binary",""],[4,"Sorting Algorithms",""],
+            [5,"Hashing & Indexing",""],[6,"Heap & Priority Queue",""],
+            [7,"Performance Sprint 1",""],[8,"Performance Sprint 2",""],
+            [9,"Trees & BST",""],[10,"Graphs: BFS & DFS",""],
+            [11,"Shortest Paths",""],[12,"Dynamic Programming",""],
+            [13,"Final Integration",""],[14,"Final Performance Report",""],
+        ],
+    };
 
-    <details>
-        <summary>OOP — Architecture (14 weeks)</summary>
-        <div class="details-body">
-            <div class="weekly">
-                <div class="weekly-row"><div class="weekly-num">1</div><div class="weekly-title">OOP Kickoff: Classes & Objects</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">2</div><div class="weekly-title">Composition: DataSource & Dataset</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">3</div><div class="weekly-title">Cleaner Component</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">4</div><div class="weekly-title">Analyzer Component</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">5</div><div class="weekly-title">Plotter & Reporter Components</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">6</div><div class="weekly-title">Domain Exceptions & Validation</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">7</div><div class="weekly-title">SOLID Principles (SRP/OCP)</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">8</div><div class="weekly-title">Strategy Pattern</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">9</div><div class="weekly-title">Factory & Registry Pattern</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">10</div><div class="weekly-title">Testing with pytest</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">11</div><div class="weekly-title">Package Hygiene</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">12</div><div class="weekly-title">Plugin Exercise</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">13</div><div class="weekly-title">Architecture Freeze</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">14</div><div class="weekly-title">v3 Architecture Demo</div><div class="weekly-sprint"></div></div>
-            </div>
-        </div>
-    </details>
+    const COURSE_LABELS = {
+        cp1: "CP1 — Python Fundamentals",
+        cp2: "CP2 — Professional Tool",
+        oop: "OOP — Architecture",
+        dsa: "DSA — Performance",
+    };
 
-    <details>
-        <summary>DSA — Performance (14 weeks)</summary>
-        <div class="details-body">
-            <div class="weekly">
-                <div class="weekly-row"><div class="weekly-num">1</div><div class="weekly-title">Big-O & Python Cost Model</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">2</div><div class="weekly-title">Benchmark Literacy</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">3</div><div class="weekly-title">Searching: Linear vs Binary</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">4</div><div class="weekly-title">Sorting Algorithms</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">5</div><div class="weekly-title">Hashing & Indexing</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">6</div><div class="weekly-title">Heap & Priority Queue</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">7</div><div class="weekly-title">Performance Sprint 1</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">8</div><div class="weekly-title">Performance Sprint 2</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">9</div><div class="weekly-title">Trees & BST</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">10</div><div class="weekly-title">Graphs: BFS & DFS</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">11</div><div class="weekly-title">Shortest Paths</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">12</div><div class="weekly-title">Dynamic Programming</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">13</div><div class="weekly-title">Final Integration</div><div class="weekly-sprint"></div></div>
-                <div class="weekly-row"><div class="weekly-num">14</div><div class="weekly-title">Final Performance Report</div><div class="weekly-sprint"></div></div>
-            </div>
-        </div>
-    </details>
+    function renderWeeks() {
+        const el = document.getElementById("notebooks-container");
+        let html = "";
+        for (const [code, weeks] of Object.entries(WEEKS)) {
+            const wn = (n) => String(n).padStart(2, '0');
+            html += `<details${code === 'cp1' ? ' open' : ''}>
+                <summary>${COURSE_LABELS[code]} (14 weeks)</summary>
+                <div class="details-body">
+                    ${weeks.map(([num, title, sprint]) => `
+                    <div class="wk">
+                        <div class="wk-num">${num}</div>
+                        <div class="wk-title">${title}</div>
+                        <div class="wk-sprint">${sprint}</div>
+                        <div class="wk-links">
+                            <a href="${colab(code, 'W'+wn(num)+'_core.ipynb')}" target="_blank">Core</a>
+                            <a href="${colab(code, 'W'+wn(num)+'_homework.ipynb')}" target="_blank" class="hw">HW</a>
+                            <a href="${colab(code, 'W'+wn(num)+'_check.ipynb')}" target="_blank" class="check">Check</a>
+                        </div>
+                    </div>`).join("")}
+                    <div style="margin-top:14px;font-size:0.78rem;color:#9ca3af;">
+                        Studio notebooks (per track):
+                        <a href="${gh(code, '')}" target="_blank">Browse all →</a>
+                    </div>
+                </div>
+            </details>`;
+        }
+        el.innerHTML = html;
+    }
+    document.addEventListener("DOMContentLoaded", renderWeeks);
+    </script>
+
+    <div id="notebooks-container"></div>
 
     <hr>
 
-    <!-- How it works -->
     <div class="section-title">Every week</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;text-align:center;margin-bottom:16px;">
-        <div>
-            <div style="font-size:1.6rem;margin-bottom:6px;">📓</div>
-            <div style="font-weight:600;font-size:0.88rem;">Core Notebook</div>
-            <div style="font-size:0.78rem;color:#6b7280;">Concepts + examples</div>
-        </div>
-        <div>
-            <div style="font-size:1.6rem;margin-bottom:6px;">🔧</div>
-            <div style="font-weight:600;font-size:0.88rem;">Studio Notebook</div>
-            <div style="font-size:0.78rem;color:#6b7280;">Build your project</div>
-        </div>
-        <div>
-            <div style="font-size:1.6rem;margin-bottom:6px;">✅</div>
-            <div style="font-weight:600;font-size:0.88rem;">Universal Check</div>
-            <div style="font-size:0.78rem;color:#6b7280;">Automated validation</div>
-        </div>
+        <div><div style="font-size:1.6rem;margin-bottom:6px;">📓</div><div style="font-weight:600;font-size:0.88rem;">Core Notebook</div><div style="font-size:0.78rem;color:#6b7280;">Concepts + examples</div></div>
+        <div><div style="font-size:1.6rem;margin-bottom:6px;">🔧</div><div style="font-weight:600;font-size:0.88rem;">Studio Notebook</div><div style="font-size:0.78rem;color:#6b7280;">Build your project</div></div>
+        <div><div style="font-size:1.6rem;margin-bottom:6px;">✅</div><div style="font-weight:600;font-size:0.88rem;">Universal Check</div><div style="font-size:0.78rem;color:#6b7280;">Automated validation</div></div>
     </div>
-    <p style="text-align:center;font-size:0.82rem;color:#9ca3af;">
-        Must-pass core → Standard target → Stretch.
-        Homework notebooks for practice outside class.
-    </p>
+    <p style="text-align:center;font-size:0.82rem;color:#9ca3af;">Must-pass core → Standard target → Stretch. Homework notebooks for practice outside class.</p>
 
-    <!-- Footer -->
     <div class="footer">
         <p>CourseOS — Mechatronics Engineering · <a href="https://github.com/ArifSolmaz/courseos-curriculum">GitHub</a></p>
     </div>
 
 </div>
-
 </body>
 </html>
