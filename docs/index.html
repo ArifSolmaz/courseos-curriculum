@@ -1,321 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CourseOS</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', -apple-system, sans-serif; color: #1a1d26; line-height: 1.65; background: #fff; -webkit-font-smoothing: antialiased; }
-        a { color: #4f6df5; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .container { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CourseOS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:#fefefe;color:#1a1a1a;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+::selection{background:#e0e7ff;color:#312e81}
 
-        .hero { padding: 80px 0 48px; text-align: center; }
-        .hero h1 { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.15; color: #111; }
-        .hero h1 span { color: #4f6df5; }
-        .hero p { font-size: 1.1rem; color: #6b7280; margin-top: 14px; max-width: 540px; margin-left: auto; margin-right: auto; }
+/* ─── Hero ─── */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 24px;position:relative}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(to bottom,transparent,#fefefe);pointer-events:none}
+.tag{display:inline-block;padding:6px 16px;border-radius:100px;font-size:.72rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#6366f1;background:#eef2ff;margin-bottom:24px}
+.hero h1{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:700;letter-spacing:-.04em;line-height:1.05;max-width:700px}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,#6366f1,#a855f7,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{margin-top:20px;font-size:1.05rem;color:#888;max-width:420px;line-height:1.6}
+.scroll-hint{position:absolute;bottom:40px;font-size:.72rem;color:#ccc;letter-spacing:2px;text-transform:uppercase;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
 
-        .pipeline { display: flex; align-items: center; justify-content: center; gap: 0; margin: 48px auto 0; max-width: 720px; }
-        .pipe-stage { flex: 1; text-align: center; padding: 22px 12px; border: 2px solid #e5e7eb; background: #fafbfc; transition: all 0.2s; }
-        .pipe-stage:first-child { border-radius: 14px 0 0 14px; }
-        .pipe-stage:last-child { border-radius: 0 14px 14px 0; }
-        .pipe-stage:hover { border-color: #4f6df5; background: #f0f2ff; }
-        .pipe-version { font-size: 1.8rem; font-weight: 800; color: #4f6df5; letter-spacing: -0.03em; }
-        .pipe-label { font-size: 0.78rem; font-weight: 600; color: #374151; margin-top: 2px; }
-        .pipe-sub { font-size: 0.68rem; color: #9ca3af; margin-top: 2px; }
-        .pipe-arrow { color: #d1d5db; font-size: 1.2rem; flex-shrink: 0; }
+/* ─── Sections ─── */
+section{padding:80px 24px}
+.narrow{max-width:720px;margin:0 auto}
+.label{font-size:.62rem;text-transform:uppercase;letter-spacing:2.5px;color:#c4b5fd;font-weight:600;margin-bottom:20px}
 
-        hr { border: none; border-top: 1px solid #f0f0f0; margin: 56px 0; }
+/* ─── Pipeline ─── */
+.pipe-section{background:#18181b;color:#fff;padding:80px 24px;position:relative;overflow:hidden}
+.pipe-section::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(99,102,241,.15),transparent 70%);pointer-events:none}
+.pipe-wrap{display:flex;max-width:720px;margin:0 auto;position:relative}
+.pipe-item{flex:1;text-align:center;padding:32px 12px;position:relative;z-index:1}
+.pipe-ver{font-size:2.8rem;font-weight:700;color:#818cf8;letter-spacing:-.03em}
+.pipe-name{font-size:.85rem;font-weight:600;margin-top:4px;color:#e2e8f0}
+.pipe-what{font-size:.75rem;color:#64748b;margin-top:4px;font-style:italic}
+.pipe-line{position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#4f46e5 15%,#7c3aed 50%,#4f46e5 85%,transparent);z-index:0}
 
-        .section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #9ca3af; font-weight: 600; margin-bottom: 20px; }
+/* ─── Choose / Lose ─── */
+.cl{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:32px;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb}
+.cl-col{padding:36px 32px}
+.cl-choose{background:#f0fdf4}
+.cl-lose{background:#fef2f2}
+.cl-h{font-size:.95rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.cl-choose .cl-h{color:#166534}
+.cl-lose .cl-h{color:#991b1b}
+.cl-list{list-style:none;font-size:.85rem;line-height:2;color:#555}
+.cl-list li::before{content:'→ ';color:#aaa}
+.cl-choose .cl-list li::before{content:'✓ ';color:#16a34a}
+.cl-lose .cl-list li::before{content:'✗ ';color:#dc2626}
 
-        .course-list { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        .course { padding: 22px 24px; border: 1px solid #e5e7eb; border-radius: 12px; transition: all 0.2s; }
-        .course:hover { border-color: #4f6df5; box-shadow: 0 2px 12px rgba(79,109,245,0.08); }
-        .course-code { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.2px; color: #4f6df5; font-weight: 700; }
-        .course h3 { font-size: 1rem; font-weight: 650; margin: 4px 0 6px; }
-        .course p { font-size: 0.85rem; color: #6b7280; }
-        .course .meta { font-size: 0.75rem; color: #9ca3af; margin-top: 10px; display: flex; gap: 12px; }
+/* ─── Tracks ─── */
+.tracks{display:flex;gap:10px;margin-top:8px}
+.tk{flex:1;padding:20px 8px;text-align:center;border-radius:14px;border:1.5px solid #f0f0f0;background:#fff;transition:all .25s;cursor:default}
+.tk:hover{border-color:#c7d2fe;transform:translateY(-4px) scale(1.02);box-shadow:0 12px 32px rgba(99,102,241,.1);cursor:pointer}
+.tk.selected{border-color:#6366f1;background:#eef2ff;box-shadow:0 0 0 3px #e0e7ff,0 8px 24px rgba(99,102,241,.12);transform:translateY(-4px) scale(1.02)}
+.tk.dimmed{opacity:.35;transform:scale(.97);pointer-events:none}
+.tk-i{font-size:2rem}
+.tk-n{font-size:.78rem;font-weight:600;margin-top:6px;color:#333}
+.tk-p{font-size:.65rem;color:#aaa;margin-top:2px}
 
-        .tracks { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
-        .track { text-align: center; padding: 20px 10px; border: 1px solid #e5e7eb; border-radius: 12px; transition: all 0.2s; }
-        .track:hover { border-color: #4f6df5; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-        .track-icon { font-size: 2rem; margin-bottom: 6px; }
-        .track-name { font-size: 0.78rem; font-weight: 600; color: #374151; }
-        .track-product { font-size: 0.68rem; color: #9ca3af; margin-top: 2px; }
+/* ─── How it works ─── */
+.steps{counter-reset:step;margin-top:24px}
+.step{display:flex;gap:20px;padding:18px 0;border-bottom:1px solid #f5f5f5;align-items:flex-start}
+.step:last-child{border-bottom:none}
+.step::before{counter-increment:step;content:counter(step);font-size:.75rem;font-weight:700;color:#fff;background:#6366f1;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-text{font-size:.88rem;color:#444;line-height:1.6}
+.step-text strong{color:#1a1a1a}
 
-        .contract { background: #fafbfc; border: 1px solid #e5e7eb; border-radius: 12px; padding: 28px 32px; }
-        .contract h3 { font-size: 0.95rem; font-weight: 650; margin-bottom: 12px; }
-        .contract code { display: block; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82rem; line-height: 2; color: #374151; }
-        .contract code span { color: #4f6df5; }
+/* ─── Safety net ─── */
+.safety{background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:28px 32px;margin-top:32px}
+.safety h3{font-size:.9rem;font-weight:700;color:#92400e;margin-bottom:10px}
+.safety p{font-size:.85rem;color:#78716c;line-height:1.7}
 
-        details { border: 1px solid #e5e7eb; border-radius: 12px; margin-bottom: 12px; overflow: hidden; }
-        details summary { padding: 16px 22px; font-weight: 600; font-size: 0.92rem; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; transition: background 0.15s; }
-        details summary:hover { background: #fafbfc; }
-        details summary::after { content: '+'; font-size: 1.2rem; color: #9ca3af; }
-        details[open] summary::after { content: '−'; }
-        details[open] summary { border-bottom: 1px solid #f0f0f0; }
-        .details-body { padding: 20px 22px; }
+/* ─── Grading ─── */
+.grade-bar{display:flex;border-radius:10px;overflow:hidden;height:36px;margin-top:16px}
+.grade-bar div{display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;color:#fff}
+.gb-weekly{background:#6366f1;flex:5}
+.gb-quiz{background:#8b5cf6;flex:2}
+.gb-demo{background:#a855f7;flex:2}
+.gb-habits{background:#c084fc;flex:1}
+.grade-labels{display:flex;margin-top:8px;font-size:.72rem;color:#888}
+.grade-labels span{flex:1;text-align:center}
 
-        /* ── Week rows with notebook links ─────────── */
-        .wk { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #f3f4f6; gap: 12px; }
-        .wk:last-child { border-bottom: none; }
-        .wk-num { width: 28px; text-align: center; font-weight: 700; color: #4f6df5; font-size: 0.82rem; flex-shrink: 0; }
-        .wk-title { flex: 1; font-size: 0.88rem; color: #374151; }
-        .wk-sprint { font-size: 0.7rem; color: #9ca3af; width: 36px; text-align: right; flex-shrink: 0; }
-        .wk-links { display: flex; gap: 6px; flex-shrink: 0; }
-        .wk-links a {
-            display: inline-flex; align-items: center; gap: 3px;
-            font-size: 0.68rem; font-weight: 600; padding: 3px 8px;
-            border-radius: 5px; background: #f0f2ff; color: #4f6df5;
-            transition: all 0.15s; white-space: nowrap;
-        }
-        .wk-links a:hover { background: #4f6df5; color: #fff; text-decoration: none; }
-        .wk-links a.hw { background: #fef7ea; color: #b8860b; }
-        .wk-links a.hw:hover { background: #f0a020; color: #fff; }
-        .wk-links a.check { background: #eafbf1; color: #22b573; }
-        .wk-links a.check:hover { background: #22b573; color: #fff; }
+/* ─── Notebooks ─── */
+details{border-radius:14px;background:#fff;border:1.5px solid #f0f0f0;margin-bottom:8px;transition:border-color .2s}
+details:hover{border-color:#c7d2fe}
+details[open]{border-color:#6366f1}
+summary{padding:14px 20px;font-weight:600;font-size:.88rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;color:#333}
+summary::after{content:'+';font-size:1rem;color:#ccc;transition:transform .2s}
+details[open] summary::after{content:'−';color:#6366f1}
+details[open] summary{color:#6366f1;border-bottom:1px solid #f0f0f0}
+.det{padding:12px 20px}
+.wk{display:flex;align-items:center;padding:8px 0;gap:12px}
+.wk+.wk{border-top:1px solid #fafafa}
+.wn{width:22px;text-align:center;font-size:.75rem;font-weight:600;color:#a5b4fc;flex-shrink:0}
+.wt{flex:1;font-size:.84rem;color:#444}
+.wl{display:flex;gap:4px}
+.wl a{font-size:.63rem;font-weight:600;padding:3px 8px;border-radius:6px;transition:all .15s;letter-spacing:.2px}
+.wl .core{background:#eef2ff;color:#6366f1}.wl .core:hover{background:#6366f1;color:#fff}
+.wl .hw{background:#fefce8;color:#ca8a04}.wl .hw:hover{background:#ca8a04;color:#fff}
+.wl .chk{background:#ecfdf5;color:#059669}.wl .chk:hover{background:#059669;color:#fff}
+.browse{font-size:.72rem;color:#bbb;margin-top:10px;padding-top:10px;border-top:1px solid #fafafa}
+.browse a{color:#6366f1}
 
-        .footer { text-align: center; padding: 48px 0; font-size: 0.78rem; color: #9ca3af; }
-        .footer a { color: #9ca3af; }
-        .footer a:hover { color: #4f6df5; }
+/* ─── Track selector ─── */
+.track-select{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:20px;padding:14px 18px;background:#fff;border:1.5px solid #f0f0f0;border-radius:12px}
+.track-select-label{font-size:.78rem;font-weight:600;color:#888;margin-right:4px}
+.ts-btn{border:1.5px solid #e5e7eb;background:#fff;padding:6px 14px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;color:#666;display:inline-flex;align-items:center;gap:4px}
+.ts-btn:hover{border-color:#c7d2fe;background:#faf8ff;color:#4f46e5}
+.ts-btn.active{border-color:#6366f1;background:#eef2ff;color:#4f46e5;box-shadow:0 0 0 2px #e0e7ff}
 
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 1.8rem; }
-            .pipeline { flex-direction: column; }
-            .pipe-stage:first-child { border-radius: 14px 14px 0 0; }
-            .pipe-stage:last-child { border-radius: 0 0 14px 14px; }
-            .pipe-arrow { transform: rotate(90deg); }
-            .course-list { grid-template-columns: 1fr; }
-            .tracks { grid-template-columns: repeat(3, 1fr); }
-            .wk-links { flex-wrap: wrap; }
-        }
-    </style>
+/* Studio link style */
+.wl .studio{background:#f0e6ff;color:#7c3aed}
+.wl .studio:hover{background:#7c3aed;color:#fff}
+
+/* ─── Footer ─── */
+.foot{text-align:center;padding:60px 24px 40px;font-size:.72rem;color:#ccc}
+.foot a{color:#a5b4fc}.foot a:hover{color:#6366f1}
+
+@media(max-width:640px){
+  .pipe-wrap{flex-direction:column;gap:8px}.pipe-line{display:none}
+  .cl{grid-template-columns:1fr}
+  .tracks{flex-wrap:wrap}.tk{min-width:calc(33% - 8px)}
+  .wl{flex-wrap:wrap}
+  .grade-bar{height:28px}
+}
+</style>
 </head>
 <body>
-<div class="container">
 
-    <div class="hero">
-        <h1>One project.<br><span>Four courses.</span><br>Two years.</h1>
-        <p>Build a real tool from scratch and evolve it into a portfolio-quality product across CP1, CP2, OOP, and DSA.</p>
-    </div>
-
-    <div class="pipeline">
-        <div class="pipe-stage"><div class="pipe-version">v1</div><div class="pipe-label">CP1</div><div class="pipe-sub">It works</div></div>
-        <div class="pipe-arrow">→</div>
-        <div class="pipe-stage"><div class="pipe-version">v2</div><div class="pipe-label">CP2</div><div class="pipe-sub">It's robust</div></div>
-        <div class="pipe-arrow">→</div>
-        <div class="pipe-stage"><div class="pipe-version">v3</div><div class="pipe-label">OOP</div><div class="pipe-sub">It's architected</div></div>
-        <div class="pipe-arrow">→</div>
-        <div class="pipe-stage"><div class="pipe-version">v3</div><div class="pipe-label">DSA</div><div class="pipe-sub">It's fast</div></div>
-    </div>
-
-    <hr>
-
-    <div class="section-title">Pick a track</div>
-    <div class="tracks">
-        <div class="track"><div class="track-icon">🤖</div><div class="track-name">Robotics</div><div class="track-product">MechaSense Studio</div></div>
-        <div class="track"><div class="track-icon">📊</div><div class="track-name">Data / AI</div><div class="track-product">CleanReport Pipeline</div></div>
-        <div class="track"><div class="track-icon">🎮</div><div class="track-name">Simulation</div><div class="track-product">SimLab Engine</div></div>
-        <div class="track"><div class="track-icon">🌌</div><div class="track-name">Space / Astro</div><div class="track-product">Lightcurve Explorer</div></div>
-        <div class="track"><div class="track-icon">📡</div><div class="track-name">IoT</div><div class="track-product">AutoDashboard</div></div>
-    </div>
-    <p style="text-align:center;font-size:0.78rem;color:#9ca3af;margin-top:12px;">All tracks follow the same contract. Explore weeks 1–2, confirm by week 3.</p>
-
-    <hr>
-
-    <div class="section-title">Four courses, one repo</div>
-    <div class="course-list">
-        <div class="course"><div class="course-code">CP1 — Semester 1</div><h3>Computer Programming 1</h3><p>Python fundamentals → v1 functional pipeline</p><div class="meta"><span>Year 1</span><span>5h / week</span><span>14 weeks</span></div></div>
-        <div class="course"><div class="course-code">CP2 — Semester 2</div><h3>Computer Programming 2</h3><p>Robust data handling → v2 professional tool</p><div class="meta"><span>Year 1</span><span>5h / week</span><span>14 weeks</span></div></div>
-        <div class="course"><div class="course-code">OOP — Semester 3</div><h3>Object-Oriented Programming</h3><p>Refactor into architecture → v3 components</p><div class="meta"><span>Year 2</span><span>3h / week</span><span>14 weeks</span></div></div>
-        <div class="course"><div class="course-code">DSA — Semester 4</div><h3>Data Structures & Algorithms</h3><p>Optimize + benchmark → v3 performance proof</p><div class="meta"><span>Year 2</span><span>3h / week</span><span>14 weeks</span></div></div>
-    </div>
-
-    <hr>
-
-    <!-- ── THE JOURNEY ────────────────────────────────── -->
-    <div class="section-title">Your journey</div>
-
-    <div style="font-size:0.92rem;color:#374151;line-height:1.8;">
-
-    <h3 style="font-size:1.05rem;margin-bottom:10px;">How it works</h3>
-    <p>You keep <strong>one GitHub repository</strong> for two years. Every week you open a Colab notebook, learn a concept, and apply it to your project. By the end, you have a portfolio-quality tool that you built from scratch.</p>
-
-    <p style="margin-top:12px;">There are no exams. Your grade comes from what you build, what you can explain, and the evidence you produce every week.</p>
-
-    <h3 style="font-size:1.05rem;margin-top:28px;margin-bottom:10px;">Year 1 — Learn to code, build a working tool</h3>
-
-    <p><strong>CP1 (Semester 1):</strong> You start from zero — <code>print("hello")</code> — and by Week 14 you have a working data pipeline. Every week adds one concept: variables, conditionals, loops, functions, file I/O. Each session is 5 hours: learn the concept, apply it to your project, run the check, submit.</p>
-
-    <p style="margin-top:8px;"><strong>CP2 (Semester 2):</strong> Your v1 pipeline works but it's fragile. Now you make it robust: validate input schemas, add configurable cleaning rules, create professional plots, generate reports, write tests, and move all code into <code>/src</code>. By Week 14 your tool is something you'd be proud to show.</p>
-
-    <h3 style="font-size:1.05rem;margin-top:28px;margin-bottom:10px;">Year 2 — Engineer it, optimize it</h3>
-
-    <p><strong>OOP (Semester 3):</strong> You refactor your v2 code into an architecture with components — DataSource, Cleaner, Analyzer, Plotter, Reporter. You learn design patterns (Strategy, Factory), write pytest tests, and build a plugin system. Sessions are 3 hours.</p>
-
-    <p style="margin-top:8px;"><strong>DSA (Semester 4):</strong> You find the bottleneck in your pipeline and optimize it using the right data structure — hash tables, heaps, binary search, trees. You prove the improvement with benchmarks: baseline vs optimized, Big-O analysis, timing plots. Your tool is now fast <em>and</em> you can explain why.</p>
-
-    <h3 style="font-size:1.05rem;margin-top:28px;margin-bottom:10px;">What does a typical week look like?</h3>
-    <ol style="margin-left:20px;">
-        <li>Open the <strong>Core Notebook</strong> in Colab — learn the concept with worked examples</li>
-        <li>Open your <strong>Studio Notebook</strong> — apply the concept to your project</li>
-        <li>Finish the <strong>must-pass core</strong> first, then the standard target, then stretch if time</li>
-        <li>Run the <strong>Universal Check</strong> — it tells you pass or fail</li>
-        <li>Fix failures in <code>/src</code>, not in the notebook</li>
-        <li>Complete the <strong>reflection</strong> and submit</li>
-        <li>Do the <strong>Homework</strong> at home before next week</li>
-    </ol>
-
-    <h3 style="font-size:1.05rem;margin-top:28px;margin-bottom:10px;">What if I fall behind?</h3>
-    <p>Every week has three levels. If you can't finish the standard target, <strong>finish the must-pass core</strong> — that keeps you safe. If you can't even finish that, submit a <strong>recovery ticket</strong> (what failed, what you tried, what you'll do next). The instructor will help you get back on track.</p>
-
-    <p style="margin-top:8px;">You get <strong>up to 3 recovery tickets per semester</strong> with full credit. After that, missed weeks are capped at the core level. The system is designed so nobody fails silently — but you have to show up and try.</p>
-
-    <h3 style="font-size:1.05rem;margin-top:28px;margin-bottom:10px;">Tracks & switching</h3>
-    <p>You explore all 5 tracks during Weeks 1–2 and <strong>confirm your choice by Week 3</strong>. After that, your track is locked for the rest of Year 1. Before Year 2 starts, one exceptional reset may be approved. No changes during OOP or DSA.</p>
-
-    <h3 style="font-size:1.05rem;margin-top:28px;margin-bottom:10px;">Grading</h3>
-    <p style="margin-bottom:4px;">All tracks are graded the same way:</p>
-    <ul style="margin-left:20px;">
-        <li>Weekly submissions + universal checks: <strong>50%</strong></li>
-        <li>Quizzes / oral explain-your-code: <strong>20%</strong></li>
-        <li>Release demo (v1 / v2 / v3): <strong>20%</strong></li>
-        <li>Professional habits (reflections, recovery, compliance): <strong>10%</strong></li>
-    </ul>
-    <p style="margin-top:8px;">Teamwork is allowed, but understanding is individual. If your team submits passing code and you can't explain it, <strong>you</strong> get the penalty.</p>
-
-    <h3 style="font-size:1.05rem;margin-top:28px;margin-bottom:10px;">AI tools</h3>
-    <p>If the instructor allows AI tools: you must understand and explain everything you submit. Disclose AI usage in reflections. <strong>"It runs" is not enough — you must know why it works.</strong></p>
-
-    </div>
-
-    <hr>
-
-    <div class="section-title">The contract</div>
-    <div class="contract">
-        <h3>Every track implements these in /src/</h3>
-        <code><span>load_data</span>(config) → data<br><span>clean_data</span>(data, config) → clean_data<br><span>analyze</span>(clean_data, config) → results<br><span>plot</span>(clean_data, results, config) → figures<br><span>export_results</span>(clean_data, results, figures, config) → paths<br><span>self_check</span>() → None</code>
-    </div>
-
-    <hr>
-
-    <!-- ── NOTEBOOKS ──────────────────────────────────── -->
-    <div class="section-title">Notebooks — open in Colab</div>
-
-    <script>
-    const REPO = "ArifSolmaz/courseos-curriculum";
-    const BASE = "course-content/notebooks";
-    function colab(course, file) {
-        return `https://colab.research.google.com/github/${REPO}/blob/main/${BASE}/${course}/${file}`;
-    }
-    function gh(course, file) {
-        return `https://github.com/${REPO}/blob/main/${BASE}/${course}/${file}`;
-    }
-
-    const WEEKS = {
-        cp1: [
-            [1,"Welcome to Python & Your Pipeline","S1"],
-            [2,"Variables, Types & Numbers","S1"],
-            [3,"Making Decisions (Conditionals)","S2"],
-            [4,"Decision Logic & Classification","S2"],
-            [5,"Loops: Scanning Data","S3"],
-            [6,"Loops: Counting Events","S3"],
-            [7,"Lists: Indexing & Windows","S4"],
-            [8,"Strings: Parsing Data","S4"],
-            [9,"Functions: Building Blocks","S5"],
-            [10,"Functions: Decomposition & Reuse","S5"],
-            [11,"Exceptions: Handling Errors","S6"],
-            [12,"File I/O: Reading & Writing","S6"],
-            [13,"Integration: End-to-End Pipeline","S6"],
-            [14,"v1 Release & Demo","S6"],
-        ],
-        cp2: [
-            [1,"Schema Validation","S7"],[2,"Dict Analytics","S7"],
-            [3,"Configurable Cleaning Pipeline","S8"],[4,"Data Quality Reports","S8"],
-            [5,"Matplotlib Standards","S9"],[6,"Report Generation","S9"],
-            [7,"NumPy Introduction","S10"],[8,"Timing & Performance","S10"],
-            [9,"Testing: Expanded Self-Check","S11"],[10,"Golden Outputs","S11"],
-            [11,"Modularize into /src","S12"],[12,"Package Hygiene","S12"],
-            [13,"Integration on Larger Data","S12"],[14,"v2 Release & Demo","S12"],
-        ],
-        oop: [
-            [1,"OOP Kickoff: Classes & Objects",""],[2,"Composition: DataSource & Dataset",""],
-            [3,"Cleaner Component",""],[4,"Analyzer Component",""],
-            [5,"Plotter & Reporter Components",""],[6,"Domain Exceptions & Validation",""],
-            [7,"SOLID Principles (SRP/OCP)",""],[8,"Strategy Pattern",""],
-            [9,"Factory & Registry Pattern",""],[10,"Testing with pytest",""],
-            [11,"Package Hygiene",""],[12,"Plugin Exercise",""],
-            [13,"Architecture Freeze",""],[14,"v3 Architecture Demo",""],
-        ],
-        dsa: [
-            [1,"Big-O & Python Cost Model",""],[2,"Benchmark Literacy",""],
-            [3,"Searching: Linear vs Binary",""],[4,"Sorting Algorithms",""],
-            [5,"Hashing & Indexing",""],[6,"Heap & Priority Queue",""],
-            [7,"Performance Sprint 1",""],[8,"Performance Sprint 2",""],
-            [9,"Trees & BST",""],[10,"Graphs: BFS & DFS",""],
-            [11,"Shortest Paths",""],[12,"Dynamic Programming",""],
-            [13,"Final Integration",""],[14,"Final Performance Report",""],
-        ],
-    };
-
-    const COURSE_LABELS = {
-        cp1: "CP1 — Python Fundamentals",
-        cp2: "CP2 — Professional Tool",
-        oop: "OOP — Architecture",
-        dsa: "DSA — Performance",
-    };
-
-    function renderWeeks() {
-        const el = document.getElementById("notebooks-container");
-        let html = "";
-        for (const [code, weeks] of Object.entries(WEEKS)) {
-            const wn = (n) => String(n).padStart(2, '0');
-            html += `<details${code === 'cp1' ? ' open' : ''}>
-                <summary>${COURSE_LABELS[code]} (14 weeks)</summary>
-                <div class="details-body">
-                    ${weeks.map(([num, title, sprint]) => `
-                    <div class="wk">
-                        <div class="wk-num">${num}</div>
-                        <div class="wk-title">${title}</div>
-                        <div class="wk-sprint">${sprint}</div>
-                        <div class="wk-links">
-                            <a href="${colab(code, 'W'+wn(num)+'_core.ipynb')}" target="_blank">Core</a>
-                            <a href="${colab(code, 'W'+wn(num)+'_homework.ipynb')}" target="_blank" class="hw">HW</a>
-                            <a href="${colab(code, 'W'+wn(num)+'_check.ipynb')}" target="_blank" class="check">Check</a>
-                        </div>
-                    </div>`).join("")}
-                    <div style="margin-top:14px;font-size:0.78rem;color:#9ca3af;">
-                        Studio notebooks (per track):
-                        <a href="${gh(code, '')}" target="_blank">Browse all →</a>
-                    </div>
-                </div>
-            </details>`;
-        }
-        el.innerHTML = html;
-    }
-    document.addEventListener("DOMContentLoaded", renderWeeks);
-    </script>
-
-    <div id="notebooks-container"></div>
-
-    <hr>
-
-    <div class="section-title">Every week</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;text-align:center;margin-bottom:16px;">
-        <div><div style="font-size:1.6rem;margin-bottom:6px;">📓</div><div style="font-weight:600;font-size:0.88rem;">Core Notebook</div><div style="font-size:0.78rem;color:#6b7280;">Concepts + examples</div></div>
-        <div><div style="font-size:1.6rem;margin-bottom:6px;">🔧</div><div style="font-weight:600;font-size:0.88rem;">Studio Notebook</div><div style="font-size:0.78rem;color:#6b7280;">Build your project</div></div>
-        <div><div style="font-size:1.6rem;margin-bottom:6px;">✅</div><div style="font-weight:600;font-size:0.88rem;">Universal Check</div><div style="font-size:0.78rem;color:#6b7280;">Automated validation</div></div>
-    </div>
-    <p style="text-align:center;font-size:0.82rem;color:#9ca3af;">Must-pass core → Standard target → Stretch. Homework notebooks for practice outside class.</p>
-
-    <div class="footer">
-        <p>CourseOS — Mechatronics Engineering · <a href="https://github.com/ArifSolmaz/courseos-curriculum">GitHub</a></p>
-    </div>
-
+<!-- HERO -->
+<div class="hero">
+  <div class="tag">Mechatronics Engineering · 2026–2028</div>
+  <h1>Build once.<br><em>Evolve forever.</em></h1>
+  <p class="hero-sub">One project. Four courses. Two years. You keep the same repo from day one to graduation.</p>
+  <div class="scroll-hint">scroll</div>
 </div>
+
+<!-- PIPELINE -->
+<div class="pipe-section">
+  <div class="label" style="text-align:center;color:#818cf8;">The evolution</div>
+  <div class="pipe-wrap">
+    <div class="pipe-line"></div>
+    <div class="pipe-item"><div class="pipe-ver">v1</div><div class="pipe-name">CP1</div><div class="pipe-what">It works</div></div>
+    <div class="pipe-item"><div class="pipe-ver">v2</div><div class="pipe-name">CP2</div><div class="pipe-what">It's robust</div></div>
+    <div class="pipe-item"><div class="pipe-ver">v3</div><div class="pipe-name">OOP</div><div class="pipe-what">It's architected</div></div>
+    <div class="pipe-item"><div class="pipe-ver">v3</div><div class="pipe-name">DSA</div><div class="pipe-what">It's fast</div></div>
+  </div>
+</div>
+
+<!-- CHOOSE / LOSE per track -->
+<section>
+<div class="narrow">
+  <div class="label">What you choose, what you lose</div>
+  <p style="font-size:.92rem;color:#555;line-height:1.7;margin-bottom:24px;">Every track builds the <strong>same pipeline</strong> with the <strong>same contract</strong> — but the domain, the data, and the story are completely different. Here's what each choice gives you and what it costs.</p>
+
+  <!-- Robotics -->
+  <div class="cl track-cl" data-tk="robotics" style="margin-bottom:14px">
+    <div class="cl-col cl-choose">
+      <div class="cl-h">🤖 Choose Robotics</div>
+      <ul class="cl-list">
+        <li>Work with sensor streams — IMU, temperature, RPM, vibration</li>
+        <li>Build a fault detector that catches anomalies in real time</li>
+        <li>Closest to your Mechatronics core — directly relevant to your degree</li>
+        <li>DSA project: fast event queries with sorted indexes + binary search</li>
+        <li>Portfolio piece that screams "I'm an engineer"</li>
+      </ul>
+    </div>
+    <div class="cl-col cl-lose">
+      <div class="cl-h">Lose</div>
+      <ul class="cl-list">
+        <li>Data is numeric and repetitive — less variety than other tracks</li>
+        <li>No web/visual appeal — harder to demo to non-engineers</li>
+        <li>Sensor data can feel dry if you're not passionate about hardware</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Data/AI -->
+  <div class="cl track-cl" data-tk="data" style="margin-bottom:14px">
+    <div class="cl-col cl-choose">
+      <div class="cl-h">📊 Choose Data / AI</div>
+      <ul class="cl-list">
+        <li>Clean messy real-world CSVs — missing values, bad types, outliers</li>
+        <li>Build an automated report generator with dashboards</li>
+        <li>Most transferable skill — every industry needs data cleaning</li>
+        <li>DSA project: hash-based aggregation + caching for fast analytics</li>
+        <li>Easiest to explain in job interviews</li>
+      </ul>
+    </div>
+    <div class="cl-col cl-lose">
+      <div class="cl-h">Lose</div>
+      <ul class="cl-list">
+        <li>Less domain-specific — doesn't showcase Mechatronics identity</li>
+        <li>Can feel generic compared to robotics or space</li>
+        <li>Everyone's comfort zone — less distinctive in your cohort</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Simulation -->
+  <div class="cl track-cl" data-tk="simulation" style="margin-bottom:14px">
+    <div class="cl-col cl-choose">
+      <div class="cl-h">🎮 Choose Simulation</div>
+      <ul class="cl-list">
+        <li>Build a discrete simulation engine with timesteps, scoring, logging</li>
+        <li>Most creative track — design your own scenario rules</li>
+        <li>Great for understanding control loops and system behavior</li>
+        <li>DSA project: spatial hashing or grid indexing for fast collision/search</li>
+        <li>Fun to demo — people can see things move</li>
+      </ul>
+    </div>
+    <div class="cl-col cl-lose">
+      <div class="cl-h">Lose</div>
+      <ul class="cl-list">
+        <li>Hardest to keep deterministic — debugging randomness is painful</li>
+        <li>Scope creep risk — easy to over-design the simulation</li>
+        <li>Less "real data" experience than other tracks</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Space -->
+  <div class="cl track-cl" data-tk="space" style="margin-bottom:14px">
+    <div class="cl-col cl-choose">
+      <div class="cl-h">🌌 Choose Space / Astro</div>
+      <ul class="cl-list">
+        <li>Analyze star brightness curves — detect dips, transits, events</li>
+        <li>Work with real NASA/TESS-style data formats</li>
+        <li>Unique and impressive — nobody else in your class has this</li>
+        <li>DSA project: prefix sums + windowed statistics for fast dip search</li>
+        <li>The "cool factor" — instant conversation starter</li>
+      </ul>
+    </div>
+    <div class="cl-col cl-lose">
+      <div class="cl-h">Lose</div>
+      <ul class="cl-list">
+        <li>Domain knowledge gap — you need to learn astro basics</li>
+        <li>Less directly tied to Mechatronics career paths</li>
+        <li>Smaller community if you get stuck — fewer peers in this track</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- IoT -->
+  <div class="cl track-cl" data-tk="iot" style="margin-bottom:14px">
+    <div class="cl-col cl-choose">
+      <div class="cl-h">📡 Choose IoT</div>
+      <ul class="cl-list">
+        <li>Turn any time-series CSV into a standard dashboard + report</li>
+        <li>Most practical and deployable — works with any sensor data</li>
+        <li>Build column-mapping and dashboard profiles — real software</li>
+        <li>DSA project: caching repeated computations for batch speed</li>
+        <li>Closest to industry tooling — Grafana, Datadog, etc.</li>
+      </ul>
+    </div>
+    <div class="cl-col cl-lose">
+      <div class="cl-h">Lose</div>
+      <ul class="cl-list">
+        <li>Less specialized — jack of all trades, master of none</li>
+        <li>Dashboard work can feel repetitive across weeks</li>
+        <li>Less algorithmic depth than robotics or space</li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;padding:18px 24px;background:#f5f3ff;border-radius:12px;border:1px solid #e9e5ff">
+    <p style="font-size:.85rem;color:#5b21b6;line-height:1.6;margin:0"><strong>The rule:</strong> explore all 5 tracks in Weeks 1–2. Try the sample data, run the starter code, feel the domain. Confirm in Week 3. Locked after that — no switching in Year 1. One exceptional reset before Year 2 with a migration plan. No changes during OOP or DSA.</p>
+  </div>
+</div>
+</section>
+
+<!-- TRACKS (now interactive selector) -->
+<section id="track-section" style="background:#fafafa;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0">
+<div class="narrow">
+  <div class="label">Pick your track</div>
+  <p style="font-size:.85rem;color:#888;margin-bottom:16px;">Click one. The rest of the page will show only your track's content.</p>
+  <div class="tracks" id="track-cards">
+    <div class="tk" data-tk="robotics" onclick="pickTrack('robotics')"><div class="tk-i">🤖</div><div class="tk-n">Robotics</div><div class="tk-p">MechaSense Studio</div></div>
+    <div class="tk" data-tk="data" onclick="pickTrack('data')"><div class="tk-i">📊</div><div class="tk-n">Data / AI</div><div class="tk-p">CleanReport</div></div>
+    <div class="tk" data-tk="simulation" onclick="pickTrack('simulation')"><div class="tk-i">🎮</div><div class="tk-n">Simulation</div><div class="tk-p">SimLab Engine</div></div>
+    <div class="tk" data-tk="space" onclick="pickTrack('space')"><div class="tk-i">🌌</div><div class="tk-n">Space</div><div class="tk-p">Lightcurve Explorer</div></div>
+    <div class="tk" data-tk="iot" onclick="pickTrack('iot')"><div class="tk-i">📡</div><div class="tk-n">IoT</div><div class="tk-p">AutoDashboard</div></div>
+  </div>
+</div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+<div class="narrow">
+  <div class="label">Every week, same rhythm</div>
+  <div class="steps">
+    <div class="step"><div class="step-text">Open the <strong>Core Notebook</strong> in Colab — learn the concept with worked examples</div></div>
+    <div class="step"><div class="step-text">Open your <strong>Studio Notebook</strong> — apply it to your track's project</div></div>
+    <div class="step"><div class="step-text">Finish the <strong>must-pass core</strong> first. Then standard. Then stretch if time.</div></div>
+    <div class="step"><div class="step-text">Run the <strong>Universal Check</strong> — it tells you pass or fail, no ambiguity</div></div>
+    <div class="step"><div class="step-text">Fix failures in <strong>/src</strong>, not in the notebook</div></div>
+    <div class="step"><div class="step-text">Write your <strong>reflection</strong> — what you learned, what was hard, what's next</div></div>
+    <div class="step"><div class="step-text">Do the <strong>Homework</strong> at home before next session</div></div>
+  </div>
+
+  <div class="safety">
+    <h3>🛟 Falling behind?</h3>
+    <p>Can't finish the standard target? <strong>Finish the must-pass core</strong> — that keeps you safe. Can't even do that? Submit a <strong>recovery ticket</strong> — what failed, what you tried, what's next. You get 3 per semester at full credit. After that, capped at core level. The system catches you — but you have to reach out.</p>
+  </div>
+</div>
+</section>
+
+<!-- GRADING -->
+<section style="background:#fafafa;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0">
+<div class="narrow">
+  <div class="label">Grading</div>
+  <p style="font-size:.85rem;color:#666;margin-bottom:4px;">No exams. Your grade is what you build and what you can explain.</p>
+  <div class="grade-bar">
+    <div class="gb-weekly">50%</div>
+    <div class="gb-quiz">20%</div>
+    <div class="gb-demo">20%</div>
+    <div class="gb-habits">10%</div>
+  </div>
+  <div class="grade-labels">
+    <span style="flex:5">Weekly submissions + checks</span>
+    <span style="flex:2">Quizzes & oral</span>
+    <span style="flex:2">Release demo</span>
+    <span style="flex:1">Habits</span>
+  </div>
+  <p style="font-size:.78rem;color:#aaa;margin-top:16px;">Teamwork allowed, understanding individual. Can't explain the code → your penalty. AI tools: disclose, explain everything. "It runs" is not enough.</p>
+</div>
+</section>
+
+<!-- NOTEBOOKS -->
+<section>
+<div class="narrow">
+  <div class="label">Notebooks — open in Colab</div>
+
+  <div id="track-badge" style="display:none;margin-bottom:18px;padding:10px 18px;background:#eef2ff;border-radius:10px;border:1px solid #d4d0ff;font-size:.85rem;color:#4f46e5;font-weight:600"></div>
+
+  <script>
+  const R="ArifSolmaz/courseos-curriculum",B="course-content/notebooks";
+  function co(c,f){return`https://colab.research.google.com/github/${R}/blob/main/${B}/${c}/${f}`}
+  function gh(c){return`https://github.com/${R}/tree/main/${B}/${c}`}
+
+  const TNAMES={robotics:'🤖 Robotics',data:'📊 Data / AI',simulation:'🎮 Simulation',space:'🌌 Space / Astro',iot:'📡 IoT'};
+  let selectedTrack = localStorage.getItem('courseos_track') || null;
+
+  const W={
+    cp1:[[1,"Welcome to Python"],[2,"Variables & Types"],[3,"Conditionals"],[4,"Decision Logic"],[5,"Loops: Scanning"],[6,"Loops: Events"],[7,"Lists"],[8,"Strings"],[9,"Functions"],[10,"Decomposition"],[11,"Exceptions"],[12,"File I/O"],[13,"Integration"],[14,"v1 Release"]],
+    cp2:[[1,"Schema Validation"],[2,"Dict Analytics"],[3,"Cleaning Pipeline"],[4,"Data Quality"],[5,"Matplotlib"],[6,"Reports"],[7,"NumPy"],[8,"Timing"],[9,"Testing"],[10,"Golden Outputs"],[11,"Modularize /src"],[12,"Package Hygiene"],[13,"Integration"],[14,"v2 Release"]],
+    oop:[[1,"Classes & Objects"],[2,"Composition"],[3,"Cleaner"],[4,"Analyzer"],[5,"Plotter & Reporter"],[6,"Exceptions"],[7,"SOLID"],[8,"Strategy Pattern"],[9,"Factory"],[10,"pytest"],[11,"Hygiene"],[12,"Plugin"],[13,"Freeze"],[14,"v3 Demo"]],
+    dsa:[[1,"Big-O"],[2,"Benchmarks"],[3,"Searching"],[4,"Sorting"],[5,"Hashing"],[6,"Heap"],[7,"Sprint 1"],[8,"Sprint 2"],[9,"Trees"],[10,"Graphs"],[11,"Shortest Paths"],[12,"DP"],[13,"Integration"],[14,"Final Report"]]
+  };
+  const L={cp1:"CP1 — Fundamentals (Year 1)",cp2:"CP2 — Professional (Year 1)",oop:"OOP — Architecture (Year 2)",dsa:"DSA — Performance (Year 2)"};
+
+  function pickTrack(t) {
+    selectedTrack = t;
+    localStorage.setItem('courseos_track', t);
+
+    // Track cards: selected + dim others
+    document.querySelectorAll('.tk').forEach(el => {
+      el.classList.toggle('selected', el.dataset.tk === t);
+      el.classList.toggle('dimmed', el.dataset.tk !== t);
+    });
+
+    // Choose/lose: show only selected track
+    document.querySelectorAll('.track-cl').forEach(el => {
+      el.style.display = el.dataset.tk === t ? '' : 'none';
+    });
+
+    // Badge above notebooks
+    const badge = document.getElementById('track-badge');
+    badge.style.display = 'block';
+    badge.innerHTML = 'Your track: ' + TNAMES[t] + ' <a href="#track-section" style="margin-left:12px;font-size:.72rem;color:#818cf8" onclick="resetTrack(event)">change</a>';
+
+    renderNotebooks();
+  }
+
+  function resetTrack(e) {
+    e.preventDefault();
+    selectedTrack = null;
+    localStorage.removeItem('courseos_track');
+    document.querySelectorAll('.tk').forEach(el => { el.classList.remove('selected','dimmed'); });
+    document.querySelectorAll('.track-cl').forEach(el => { el.style.display = ''; });
+    document.getElementById('track-badge').style.display = 'none';
+    renderNotebooks();
+    document.getElementById('track-section').scrollIntoView({behavior:'smooth'});
+  }
+
+  function renderNotebooks() {
+    let h="";
+    for(const[k,ws]of Object.entries(W)){
+      const p=n=>String(n).padStart(2,'0');
+      h+=`<details${k==='cp1'?' open':''}>
+        <summary>${L[k]}</summary>
+        <div class="det">
+          ${ws.map(([n,t])=>`<div class="wk">
+            <div class="wn">${p(n)}</div>
+            <div class="wt">${t}</div>
+            <div class="wl">
+              <a class="core" href="${co(k,'W'+p(n)+'_core.ipynb')}" target="_blank">Core</a>
+              ${selectedTrack ? `<a class="studio" href="${co(k,'W'+p(n)+'_studio_'+selectedTrack+'.ipynb')}" target="_blank">Studio</a>` : ''}
+              <a class="hw" href="${co(k,'W'+p(n)+'_homework.ipynb')}" target="_blank">HW</a>
+              <a class="chk" href="${co(k,'W'+p(n)+'_check.ipynb')}" target="_blank">Check</a>
+            </div>
+          </div>`).join("")}
+          <div class="browse">All studio variants: <a href="${gh(k)}" target="_blank">Browse →</a></div>
+        </div>
+      </details>`;
+    }
+    document.getElementById("nb").innerHTML=h;
+  }
+
+  document.addEventListener("DOMContentLoaded",()=>{
+    if (selectedTrack) { pickTrack(selectedTrack); }
+    else { renderNotebooks(); }
+  });
+  </script>
+  <div id="nb"></div>
+</div>
+</section>
+
+<div class="foot">
+  CourseOS · <a href="https://github.com/ArifSolmaz/courseos-curriculum" target="_blank">GitHub</a>
+</div>
+
 </body>
 </html>
