@@ -11,7 +11,9 @@ body{font-family:'Space Grotesk',sans-serif;background:#fefefe;color:#1a1a1a;ove
 a{color:inherit;text-decoration:none}
 ::selection{background:#e0e7ff;color:#312e81}
 
-/* ─── Hero ─── */
+.wrap{max-width:720px;margin:0 auto;padding:0 28px}
+
+/* Hero */
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 24px;position:relative}
 .hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(to bottom,transparent,#fefefe);pointer-events:none}
 .tag{display:inline-block;padding:6px 16px;border-radius:100px;font-size:.72rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#6366f1;background:#eef2ff;margin-bottom:24px}
@@ -21,13 +23,13 @@ a{color:inherit;text-decoration:none}
 .scroll-hint{position:absolute;bottom:40px;font-size:.72rem;color:#ccc;letter-spacing:2px;text-transform:uppercase;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
 
-/* ─── Sections ─── */
-section{padding:80px 24px}
-.narrow{max-width:720px;margin:0 auto}
+/* Sections */
+section{padding:72px 28px}
 .label{font-size:.62rem;text-transform:uppercase;letter-spacing:2.5px;color:#c4b5fd;font-weight:600;margin-bottom:20px}
+.alt{background:#fafafb;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0}
 
-/* ─── Pipeline ─── */
-.pipe-section{background:#18181b;color:#fff;padding:80px 24px;position:relative;overflow:hidden}
+/* Pipeline */
+.pipe-section{background:#18181b;color:#fff;padding:72px 28px;position:relative;overflow:hidden}
 .pipe-section::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(99,102,241,.15),transparent 70%);pointer-events:none}
 .pipe-wrap{display:flex;max-width:720px;margin:0 auto;position:relative}
 .pipe-item{flex:1;text-align:center;padding:32px 12px;position:relative;z-index:1}
@@ -36,58 +38,55 @@ section{padding:80px 24px}
 .pipe-what{font-size:.75rem;color:#64748b;margin-top:4px;font-style:italic}
 .pipe-line{position:absolute;top:50%;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#4f46e5 15%,#7c3aed 50%,#4f46e5 85%,transparent);z-index:0}
 
-/* ─── Choose / Lose ─── */
-.cl{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:32px;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb}
-.cl-col{padding:36px 32px}
-.cl-choose{background:#f0fdf4}
-.cl-lose{background:#fef2f2}
-.cl-h{font-size:.95rem;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.cl-choose .cl-h{color:#166534}
-.cl-lose .cl-h{color:#991b1b}
-.cl-list{list-style:none;font-size:.85rem;line-height:2;color:#555}
-.cl-list li::before{content:'→ ';color:#aaa}
-.cl-choose .cl-list li::before{content:'✓ ';color:#16a34a}
-.cl-lose .cl-list li::before{content:'✗ ';color:#dc2626}
-
-/* ─── Tracks ─── */
-.tracks{display:flex;gap:10px;margin-top:8px}
-.tk{flex:1;padding:20px 8px;text-align:center;border-radius:14px;border:1.5px solid #f0f0f0;background:#fff;transition:all .25s;cursor:default}
-.tk:hover{border-color:#c7d2fe;transform:translateY(-4px) scale(1.02);box-shadow:0 12px 32px rgba(99,102,241,.1);cursor:pointer}
-.tk.selected{border-color:#6366f1;background:#eef2ff;box-shadow:0 0 0 3px #e0e7ff,0 8px 24px rgba(99,102,241,.12);transform:translateY(-4px) scale(1.02)}
-.tk.dimmed{opacity:.35;transform:scale(.97);pointer-events:none}
+/* Tracks */
+.tracks{display:flex;gap:10px}
+.tk{flex:1;text-align:center;padding:24px 8px;border-radius:14px;border:1.5px solid #f0f0f0;background:#fff;transition:all .25s;cursor:pointer;text-decoration:none;color:inherit}
+.tk:hover{border-color:#c7d2fe;transform:translateY(-4px);box-shadow:0 12px 32px rgba(99,102,241,.1)}
 .tk-i{font-size:2rem}
 .tk-n{font-size:.78rem;font-weight:600;margin-top:6px;color:#333}
 .tk-p{font-size:.65rem;color:#aaa;margin-top:2px}
+.tk-link{display:inline-block;margin-top:8px;font-size:.68rem;color:#6366f1;font-weight:600}
 
-/* ─── How it works ─── */
+/* Courses */
+.courses{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.crs{padding:24px;border-radius:14px;background:#fff;border:1.5px solid #f0f0f0;transition:all .2s}
+.crs:hover{border-color:#c7d2fe;box-shadow:0 4px 16px rgba(99,102,241,.06)}
+.crs-code{font-size:.7rem;color:#6366f1;font-weight:700;letter-spacing:.5px}
+.crs h3{font-size:.95rem;font-weight:600;margin:6px 0 4px}
+.crs p{font-size:.82rem;color:#888;line-height:1.5}
+.crs-meta{display:flex;gap:10px;margin-top:10px;font-size:.72rem;color:#bbb}
+
+/* Steps */
 .steps{counter-reset:step;margin-top:24px}
-.step{display:flex;gap:20px;padding:18px 0;border-bottom:1px solid #f5f5f5;align-items:flex-start}
+.step{display:flex;gap:20px;padding:16px 0;border-bottom:1px solid #f5f5f5;align-items:flex-start}
 .step:last-child{border-bottom:none}
 .step::before{counter-increment:step;content:counter(step);font-size:.75rem;font-weight:700;color:#fff;background:#6366f1;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
 .step-text{font-size:.88rem;color:#444;line-height:1.6}
 .step-text strong{color:#1a1a1a}
 
-/* ─── Safety net ─── */
-.safety{background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:28px 32px;margin-top:32px}
-.safety h3{font-size:.9rem;font-weight:700;color:#92400e;margin-bottom:10px}
+/* Safety */
+.safety{background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:24px 28px;margin-top:28px}
+.safety h3{font-size:.9rem;font-weight:700;color:#92400e;margin-bottom:8px}
 .safety p{font-size:.85rem;color:#78716c;line-height:1.7}
 
-/* ─── Grading ─── */
+/* Grading */
 .grade-bar{display:flex;border-radius:10px;overflow:hidden;height:36px;margin-top:16px}
 .grade-bar div{display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;color:#fff}
-.gb-weekly{background:#6366f1;flex:5}
-.gb-quiz{background:#8b5cf6;flex:2}
-.gb-demo{background:#a855f7;flex:2}
-.gb-habits{background:#c084fc;flex:1}
+.gb-w{background:#6366f1;flex:5}.gb-q{background:#8b5cf6;flex:2}.gb-d{background:#a855f7;flex:2}.gb-h{background:#c084fc;flex:1}
 .grade-labels{display:flex;margin-top:8px;font-size:.72rem;color:#888}
-.grade-labels span{flex:1;text-align:center}
+.grade-labels span{text-align:center}
 
-/* ─── Notebooks ─── */
+/* Contract */
+.code-block{background:#1a1a2e;border-radius:14px;padding:24px 28px;font-family:monospace;font-size:.82rem;line-height:2.1;color:#c4b5fd;overflow-x:auto}
+.code-block .fn{color:#a5b4fc}.code-block .ar{color:#6ee7b7}
+
+/* Notebooks */
+.track-badge{margin-bottom:18px;padding:10px 18px;background:#eef2ff;border-radius:10px;border:1px solid #d4d0ff;font-size:.85rem;color:#4f46e5;font-weight:600;display:none}
 details{border-radius:14px;background:#fff;border:1.5px solid #f0f0f0;margin-bottom:8px;transition:border-color .2s}
 details:hover{border-color:#c7d2fe}
 details[open]{border-color:#6366f1}
 summary{padding:14px 20px;font-weight:600;font-size:.88rem;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;color:#333}
-summary::after{content:'+';font-size:1rem;color:#ccc;transition:transform .2s}
+summary::after{content:'+';font-size:1rem;color:#ccc}
 details[open] summary::after{content:'−';color:#6366f1}
 details[open] summary{color:#6366f1;border-bottom:1px solid #f0f0f0}
 .det{padding:12px 20px}
@@ -95,33 +94,23 @@ details[open] summary{color:#6366f1;border-bottom:1px solid #f0f0f0}
 .wk+.wk{border-top:1px solid #fafafa}
 .wn{width:22px;text-align:center;font-size:.75rem;font-weight:600;color:#a5b4fc;flex-shrink:0}
 .wt{flex:1;font-size:.84rem;color:#444}
-.wl{display:flex;gap:4px}
+.wl{display:flex;gap:4px;flex-shrink:0}
 .wl a{font-size:.63rem;font-weight:600;padding:3px 8px;border-radius:6px;transition:all .15s;letter-spacing:.2px}
 .wl .core{background:#eef2ff;color:#6366f1}.wl .core:hover{background:#6366f1;color:#fff}
+.wl .studio{background:#f0e6ff;color:#7c3aed}.wl .studio:hover{background:#7c3aed;color:#fff}
 .wl .hw{background:#fefce8;color:#ca8a04}.wl .hw:hover{background:#ca8a04;color:#fff}
 .wl .chk{background:#ecfdf5;color:#059669}.wl .chk:hover{background:#059669;color:#fff}
 .browse{font-size:.72rem;color:#bbb;margin-top:10px;padding-top:10px;border-top:1px solid #fafafa}
 .browse a{color:#6366f1}
 
-/* ─── Track selector ─── */
-.track-select{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:20px;padding:14px 18px;background:#fff;border:1.5px solid #f0f0f0;border-radius:12px}
-.track-select-label{font-size:.78rem;font-weight:600;color:#888;margin-right:4px}
-.ts-btn{border:1.5px solid #e5e7eb;background:#fff;padding:6px 14px;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;color:#666;display:inline-flex;align-items:center;gap:4px}
-.ts-btn:hover{border-color:#c7d2fe;background:#faf8ff;color:#4f46e5}
-.ts-btn.active{border-color:#6366f1;background:#eef2ff;color:#4f46e5;box-shadow:0 0 0 2px #e0e7ff}
-
-/* Studio link style */
-.wl .studio{background:#f0e6ff;color:#7c3aed}
-.wl .studio:hover{background:#7c3aed;color:#fff}
-
-/* ─── Footer ─── */
-.foot{text-align:center;padding:60px 24px 40px;font-size:.72rem;color:#ccc}
+/* Footer */
+.foot{text-align:center;padding:56px 28px 40px;font-size:.72rem;color:#ccc}
 .foot a{color:#a5b4fc}.foot a:hover{color:#6366f1}
 
 @media(max-width:640px){
   .pipe-wrap{flex-direction:column;gap:8px}.pipe-line{display:none}
-  .cl{grid-template-columns:1fr}
   .tracks{flex-wrap:wrap}.tk{min-width:calc(33% - 8px)}
+  .courses{grid-template-columns:1fr}
   .wl{flex-wrap:wrap}
   .grade-bar{height:28px}
 }
@@ -129,7 +118,6 @@ details[open] summary{color:#6366f1;border-bottom:1px solid #f0f0f0}
 </head>
 <body>
 
-<!-- HERO -->
 <div class="hero">
   <div class="tag">Mechatronics Engineering · 2026–2028</div>
   <h1>Build once.<br><em>Evolve forever.</em></h1>
@@ -137,9 +125,8 @@ details[open] summary{color:#6366f1;border-bottom:1px solid #f0f0f0}
   <div class="scroll-hint">scroll</div>
 </div>
 
-<!-- PIPELINE -->
 <div class="pipe-section">
-  <div class="label" style="text-align:center;color:#818cf8;">The evolution</div>
+  <div class="label" style="text-align:center;color:#818cf8">The evolution</div>
   <div class="pipe-wrap">
     <div class="pipe-line"></div>
     <div class="pipe-item"><div class="pipe-ver">v1</div><div class="pipe-name">CP1</div><div class="pipe-what">It works</div></div>
@@ -149,221 +136,38 @@ details[open] summary{color:#6366f1;border-bottom:1px solid #f0f0f0}
   </div>
 </div>
 
-<!-- CHOOSE / LOSE per track -->
-<section>
-<div class="narrow">
-  <div class="label">What you choose, what you lose</div>
-  <p style="font-size:.92rem;color:#555;line-height:1.7;margin-bottom:24px;">Every track builds the <strong>same pipeline</strong> with the <strong>same contract</strong> — but the domain, the data, and the story are completely different. Here's what each choice gives you and what it costs.</p>
-
-  <!-- Robotics -->
-  <div class="track-cl" data-tk="robotics" style="margin-bottom:28px">
-    <div style="padding:24px 28px;background:#fff;border:1.5px solid #f0f0f0;border-radius:16px 16px 0 0;border-bottom:none">
-      <h3 style="font-size:1.1rem;margin-bottom:4px">🤖 Robotics / Mechatronics — <em>MechaSense Studio</em></h3>
-      <p style="font-size:.85rem;color:#888;line-height:1.6">You build a <strong>sensor monitoring tool</strong> that reads IMU, temperature, RPM, and vibration data, detects faults and anomalies, and generates engineering reports. Think: a mini Grafana for a robot arm.</p>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border:1.5px solid #f0f0f0;border-radius:0 0 16px 16px;overflow:hidden">
-      <div style="padding:20px;border-right:1px solid #f0f0f0">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#16a34a;font-weight:700;margin-bottom:8px">What you build</div>
-        <ul style="list-style:none;font-size:.82rem;color:#444;line-height:1.9">
-          <li>✓ CSV sensor data loader (multi-sensor)</li>
-          <li>✓ Threshold-based fault detector</li>
-          <li>✓ Event counter (crossings, peaks, spikes)</li>
-          <li>✓ Moving-average smoother</li>
-          <li>✓ Time-series + distribution plots</li>
-          <li>✓ JSON fault report with stats</li>
-          <li>✓ OOP: EventAnalyzer, RuleCleaner components</li>
-          <li>✓ DSA: sorted event index + binary search range queries</li>
-        </ul>
-      </div>
-      <div style="padding:20px;border-right:1px solid #f0f0f0">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#6366f1;font-weight:700;margin-bottom:8px">End product (after 2 years)</div>
-        <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes <strong>raw sensor CSVs</strong>, validates and cleans them, detects threshold crossings and anomalies, generates labeled time-series plots, and exports a structured report — all in one command. Optimized with binary search for fast event range queries on 100K+ readings.</p>
-        <div style="margin-top:12px;font-size:.78rem;color:#888"><strong>Sample output:</strong> "3 overtemp events detected in RPM sensor between t=120–180s, peak at 94.2°C"</div>
-      </div>
-      <div style="padding:20px">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#dc2626;font-weight:700;margin-bottom:8px">Trade-offs</div>
-        <ul style="list-style:none;font-size:.82rem;color:#555;line-height:1.9">
-          <li>✗ Data is numeric and repetitive — less variety</li>
-          <li>✗ Harder to demo to non-engineers visually</li>
-          <li>✗ Can feel dry if hardware doesn't excite you</li>
-        </ul>
-        <div style="margin-top:14px;padding:10px 14px;background:#f0fdf4;border-radius:8px;font-size:.78rem;color:#166534"><strong>Best for:</strong> students who love hardware, sensors, and control systems</div>
-      </div>
-    </div>
+<!-- TRACKS — cards link to detail page -->
+<section class="alt">
+<div class="wrap">
+  <div class="label">Choose your track</div>
+  <p style="font-size:.88rem;color:#666;margin-bottom:18px;line-height:1.6">Five domains, same contract, same grading. Click a track to see exactly what you'll build, what the end product looks like, and what the trade-offs are.</p>
+  <div class="tracks">
+    <a class="tk" href="tracks.html#robotics"><div class="tk-i">🤖</div><div class="tk-n">Robotics</div><div class="tk-p">MechaSense Studio</div><div class="tk-link">See details →</div></a>
+    <a class="tk" href="tracks.html#data"><div class="tk-i">📊</div><div class="tk-n">Data / AI</div><div class="tk-p">CleanReport</div><div class="tk-link">See details →</div></a>
+    <a class="tk" href="tracks.html#simulation"><div class="tk-i">🎮</div><div class="tk-n">Simulation</div><div class="tk-p">SimLab Engine</div><div class="tk-link">See details →</div></a>
+    <a class="tk" href="tracks.html#space"><div class="tk-i">🌌</div><div class="tk-n">Space</div><div class="tk-p">Lightcurve Explorer</div><div class="tk-link">See details →</div></a>
+    <a class="tk" href="tracks.html#iot"><div class="tk-i">📡</div><div class="tk-n">IoT</div><div class="tk-p">AutoDashboard</div><div class="tk-link">See details →</div></a>
   </div>
-
-  <!-- Data/AI -->
-  <div class="track-cl" data-tk="data" style="margin-bottom:28px">
-    <div style="padding:24px 28px;background:#fff;border:1.5px solid #f0f0f0;border-radius:16px 16px 0 0;border-bottom:none">
-      <h3 style="font-size:1.1rem;margin-bottom:4px">📊 Data / AI — <em>CleanReport Pipeline</em></h3>
-      <p style="font-size:.85rem;color:#888;line-height:1.6">You build an <strong>automated data cleaning and reporting tool</strong> that takes messy CSVs, validates schemas, removes bad rows with documented reasons, computes group summaries, and generates publication-ready reports.</p>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border:1.5px solid #f0f0f0;border-radius:0 0 16px 16px;overflow:hidden">
-      <div style="padding:20px;border-right:1px solid #f0f0f0">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#16a34a;font-weight:700;margin-bottom:8px">What you build</div>
-        <ul style="list-style:none;font-size:.82rem;color:#444;line-height:1.9">
-          <li>✓ Schema validator with meaningful errors</li>
-          <li>✓ Configurable cleaning pipeline (rules via config)</li>
-          <li>✓ Group-by summaries (dict analytics)</li>
-          <li>✓ Outlier detector (IQR method)</li>
-          <li>✓ Histogram + box plot dashboard</li>
-          <li>✓ JSON + Markdown auto-reports</li>
-          <li>✓ OOP: pluggable cleaners/analyzers</li>
-          <li>✓ DSA: hash-based aggregation + caching</li>
-        </ul>
-      </div>
-      <div style="padding:20px;border-right:1px solid #f0f0f0">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#6366f1;font-weight:700;margin-bottom:8px">End product (after 2 years)</div>
-        <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes <strong>any dirty CSV</strong>, checks it against an expected schema, drops invalid rows with per-reason counts, computes group statistics, generates labeled plots, and writes a complete report — JSON for machines, Markdown for humans. Cached aggregation makes re-runs near-instant.</p>
-        <div style="margin-top:12px;font-size:.78rem;color:#888"><strong>Sample output:</strong> "1,247 of 1,500 rows valid. Dropped: 142 missing, 89 out-of-range, 22 duplicate. Mean score by city: Cairo=78.3, Alex=82.1"</div>
-      </div>
-      <div style="padding:20px">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#dc2626;font-weight:700;margin-bottom:8px">Trade-offs</div>
-        <ul style="list-style:none;font-size:.82rem;color:#555;line-height:1.9">
-          <li>✗ Doesn't showcase Mechatronics identity</li>
-          <li>✗ Can feel generic vs robotics or space</li>
-          <li>✗ Everyone's comfort zone — less distinctive</li>
-        </ul>
-        <div style="margin-top:14px;padding:10px 14px;background:#f0fdf4;border-radius:8px;font-size:.78rem;color:#166534"><strong>Best for:</strong> students who want the most transferable, career-safe skill</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Simulation -->
-  <div class="track-cl" data-tk="simulation" style="margin-bottom:28px">
-    <div style="padding:24px 28px;background:#fff;border:1.5px solid #f0f0f0;border-radius:16px 16px 0 0;border-bottom:none">
-      <h3 style="font-size:1.1rem;margin-bottom:4px">🎮 Simulation / Games — <em>SimLab Engine</em></h3>
-      <p style="font-size:.85rem;color:#888;line-height:1.6">You build a <strong>discrete simulation engine</strong> that runs timestep-based scenarios, logs state, computes scores, and generates trajectory plots. Think: a physics sandbox you designed the rules for.</p>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border:1.5px solid #f0f0f0;border-radius:0 0 16px 16px;overflow:hidden">
-      <div style="padding:20px;border-right:1px solid #f0f0f0">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#16a34a;font-weight:700;margin-bottom:8px">What you build</div>
-        <ul style="list-style:none;font-size:.82rem;color:#444;line-height:1.9">
-          <li>✓ Timestep loop with position, velocity, score</li>
-          <li>✓ Parameter validation + edge-case handling</li>
-          <li>✓ Batch scenario runner (config-driven)</li>
-          <li>✓ Deterministic seeded runs for testing</li>
-          <li>✓ Trajectory + score plots</li>
-          <li>✓ Scenario comparison reports</li>
-          <li>✓ OOP: Simulator, Scenario, Logger, Reporter</li>
-          <li>✓ DSA: spatial hashing / grid indexing</li>
-        </ul>
-      </div>
-      <div style="padding:20px;border-right:1px solid #f0f0f0">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#6366f1;font-weight:700;margin-bottom:8px">End product (after 2 years)</div>
-        <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes <strong>scenario parameters</strong>, runs a simulation with configurable rules, logs every timestep, validates results against expected bounds, plots trajectories, and compares multiple runs. Optimized with spatial hashing for fast collision/proximity queries at scale.</p>
-        <div style="margin-top:12px;font-size:.78rem;color:#888"><strong>Sample output:</strong> "Scenario A: 500 steps, final score 2,340, 3 collisions. Scenario B: 500 steps, score 1,890, 0 collisions. B is 23% safer."</div>
-      </div>
-      <div style="padding:20px">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#dc2626;font-weight:700;margin-bottom:8px">Trade-offs</div>
-        <ul style="list-style:none;font-size:.82rem;color:#555;line-height:1.9">
-          <li>✗ Hardest to keep deterministic — debugging randomness is painful</li>
-          <li>✗ Scope creep risk — easy to over-design</li>
-          <li>✗ Less "real data" experience than other tracks</li>
-        </ul>
-        <div style="margin-top:14px;padding:10px 14px;background:#f0fdf4;border-radius:8px;font-size:.78rem;color:#166534"><strong>Best for:</strong> students who love designing systems, game logic, and creative rule-based problems</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Space -->
-  <div class="track-cl" data-tk="space" style="margin-bottom:28px">
-    <div style="padding:24px 28px;background:#fff;border:1.5px solid #f0f0f0;border-radius:16px 16px 0 0;border-bottom:none">
-      <h3 style="font-size:1.1rem;margin-bottom:4px">🌌 Space / Astro — <em>Lightcurve Explorer</em></h3>
-      <p style="font-size:.85rem;color:#888;line-height:1.6">You build a <strong>lightcurve analysis tool</strong> that processes star brightness data, detects flux dips (possible planet transits), detrends noise, and generates discovery reports. Real NASA-style data science.</p>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border:1.5px solid #f0f0f0;border-radius:0 0 16px 16px;overflow:hidden">
-      <div style="padding:20px;border-right:1px solid #f0f0f0">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#16a34a;font-weight:700;margin-bottom:8px">What you build</div>
-        <ul style="list-style:none;font-size:.82rem;color:#444;line-height:1.9">
-          <li>✓ Time-flux data loader (TESS-like format)</li>
-          <li>✓ NaN/outlier cleaner for flux data</li>
-          <li>✓ Threshold-based dip detector</li>
-          <li>✓ Configurable detrending</li>
-          <li>✓ Lightcurve + dip-annotated plots</li>
-          <li>✓ Sector-by-sector summary reports</li>
-          <li>✓ OOP: pluggable detrenders</li>
-          <li>✓ DSA: prefix sums + windowed statistics</li>
-        </ul>
-      </div>
-      <div style="padding:20px;border-right:1px solid #f0f0f0">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#6366f1;font-weight:700;margin-bottom:8px">End product (after 2 years)</div>
-        <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes <strong>raw star brightness data</strong>, cleans it, applies detrending to remove instrument noise, scans for significant flux dips, marks candidate transit events, and produces annotated lightcurve plots with a structured report. Optimized with prefix sums for O(1) windowed statistics.</p>
-        <div style="margin-top:12px;font-size:.78rem;color:#888"><strong>Sample output:</strong> "Star TIC-29837: 2 dips detected at t=45.2d (depth 0.8%) and t=91.7d (depth 0.9%). Period estimate: ~46.5 days."</div>
-      </div>
-      <div style="padding:20px">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#dc2626;font-weight:700;margin-bottom:8px">Trade-offs</div>
-        <ul style="list-style:none;font-size:.82rem;color:#555;line-height:1.9">
-          <li>✗ Need to learn basic astro concepts (flux, transit, sector)</li>
-          <li>✗ Less directly tied to Mechatronics careers</li>
-          <li>✗ Fewer peers — if you're stuck, fewer classmates can help</li>
-        </ul>
-        <div style="margin-top:14px;padding:10px 14px;background:#f0fdf4;border-radius:8px;font-size:.78rem;color:#166534"><strong>Best for:</strong> students who want something unique and impressive — the "wow" track</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- IoT -->
-  <div class="track-cl" data-tk="iot" style="margin-bottom:28px">
-    <div style="padding:24px 28px;background:#fff;border:1.5px solid #f0f0f0;border-radius:16px 16px 0 0;border-bottom:none">
-      <h3 style="font-size:1.1rem;margin-bottom:4px">📡 IoT / Reporting — <em>AutoDashboard Reporter</em></h3>
-      <p style="font-size:.85rem;color:#888;line-height:1.6">You build a <strong>universal dashboard generator</strong> that takes any time-series CSV, auto-maps columns, applies a dashboard profile, and produces a standard report. Give it data, get a dashboard — any device, any format.</p>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border:1.5px solid #f0f0f0;border-radius:0 0 16px 16px;overflow:hidden">
-      <div style="padding:20px;border-right:1px solid #f0f0f0">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#16a34a;font-weight:700;margin-bottom:8px">What you build</div>
-        <ul style="list-style:none;font-size:.82rem;color:#444;line-height:1.9">
-          <li>✓ Auto-detecting column mapper (aliases)</li>
-          <li>✓ Standard cleaning pipeline for IoT streams</li>
-          <li>✓ Dashboard profile system (configurable layouts)</li>
-          <li>✓ Multi-device batch processing</li>
-          <li>✓ Standard time-series + summary plots</li>
-          <li>✓ JSON + Markdown reports per device</li>
-          <li>✓ OOP: plugin dashboard system</li>
-          <li>✓ DSA: caching repeated computations</li>
-        </ul>
-      </div>
-      <div style="padding:20px;border-right:1px solid #f0f0f0">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#6366f1;font-weight:700;margin-bottom:8px">End product (after 2 years)</div>
-        <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes <strong>any IoT CSV</strong> (temperature, humidity, pressure — whatever), figures out the columns, cleans the data, generates a standardized dashboard with time-series and summary plots, and exports reports. Works with new devices without code changes — just config. Cached computations make batch re-processing fast.</p>
-        <div style="margin-top:12px;font-size:.78rem;color:#888"><strong>Sample output:</strong> "Device D01: 720 readings over 30 days. Temp range 18.2–26.4°C, 3 anomalies. Humidity stable. Dashboard: 4 plots exported."</div>
-      </div>
-      <div style="padding:20px">
-        <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#dc2626;font-weight:700;margin-bottom:8px">Trade-offs</div>
-        <ul style="list-style:none;font-size:.82rem;color:#555;line-height:1.9">
-          <li>✗ Less specialized — generalist, not deep in one domain</li>
-          <li>✗ Dashboard work can feel repetitive week to week</li>
-          <li>✗ Less algorithmic depth than robotics or space</li>
-        </ul>
-        <div style="margin-top:14px;padding:10px 14px;background:#f0fdf4;border-radius:8px;font-size:.78rem;color:#166534"><strong>Best for:</strong> students who want the most practical, industry-ready, "just works" tool</div>
-      </div>
-    </div>
-  </div>
-
-  <div style="margin-top:20px;padding:18px 24px;background:#f5f3ff;border-radius:12px;border:1px solid #e9e5ff">
-    <p style="font-size:.85rem;color:#5b21b6;line-height:1.6;margin:0"><strong>The rule:</strong> explore all 5 tracks in Weeks 1–2. Try the sample data, run the starter code, feel the domain. Confirm in Week 3. Locked after that — no switching in Year 1. One exceptional reset before Year 2 with a migration plan. No changes during OOP or DSA.</p>
-  </div>
+  <p style="text-align:center;font-size:.75rem;color:#bbb;margin-top:14px">Explore weeks 1–2. Confirm week 3. Locked after that.</p>
 </div>
 </section>
 
-<!-- TRACKS (now interactive selector) -->
-<section id="track-section" style="background:#fafafa;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0">
-<div class="narrow">
-  <div class="label">Pick your track</div>
-  <p style="font-size:.85rem;color:#888;margin-bottom:16px;">Click one. The rest of the page will show only your track's content.</p>
-  <div class="tracks" id="track-cards">
-    <div class="tk" data-tk="robotics" onclick="pickTrack('robotics')"><div class="tk-i">🤖</div><div class="tk-n">Robotics</div><div class="tk-p">MechaSense Studio</div></div>
-    <div class="tk" data-tk="data" onclick="pickTrack('data')"><div class="tk-i">📊</div><div class="tk-n">Data / AI</div><div class="tk-p">CleanReport</div></div>
-    <div class="tk" data-tk="simulation" onclick="pickTrack('simulation')"><div class="tk-i">🎮</div><div class="tk-n">Simulation</div><div class="tk-p">SimLab Engine</div></div>
-    <div class="tk" data-tk="space" onclick="pickTrack('space')"><div class="tk-i">🌌</div><div class="tk-n">Space</div><div class="tk-p">Lightcurve Explorer</div></div>
-    <div class="tk" data-tk="iot" onclick="pickTrack('iot')"><div class="tk-i">📡</div><div class="tk-n">IoT</div><div class="tk-p">AutoDashboard</div></div>
+<!-- COURSES -->
+<section>
+<div class="wrap">
+  <div class="label">Four courses, one repo</div>
+  <div class="courses">
+    <div class="crs"><div class="crs-code">CP1</div><h3>Computer Programming 1</h3><p>Python fundamentals → v1 functional pipeline</p><div class="crs-meta"><span>Year 1, Sem 1</span><span>5h/week</span><span>14 weeks</span></div></div>
+    <div class="crs"><div class="crs-code">CP2</div><h3>Computer Programming 2</h3><p>Robust data handling → v2 professional tool</p><div class="crs-meta"><span>Year 1, Sem 2</span><span>5h/week</span><span>14 weeks</span></div></div>
+    <div class="crs"><div class="crs-code">OOP</div><h3>Object-Oriented Programming</h3><p>Refactor into architecture → v3 components</p><div class="crs-meta"><span>Year 2, Sem 3</span><span>3h/week</span><span>14 weeks</span></div></div>
+    <div class="crs"><div class="crs-code">DSA</div><h3>Data Structures & Algorithms</h3><p>Optimize + benchmark → v3 performance proof</p><div class="crs-meta"><span>Year 2, Sem 4</span><span>3h/week</span><span>14 weeks</span></div></div>
   </div>
 </div>
 </section>
 
 <!-- HOW IT WORKS -->
-<section>
-<div class="narrow">
+<section class="alt">
+<div class="wrap">
   <div class="label">Every week, same rhythm</div>
   <div class="steps">
     <div class="step"><div class="step-text">Open the <strong>Core Notebook</strong> in Colab — learn the concept with worked examples</div></div>
@@ -371,27 +175,23 @@ details[open] summary{color:#6366f1;border-bottom:1px solid #f0f0f0}
     <div class="step"><div class="step-text">Finish the <strong>must-pass core</strong> first. Then standard. Then stretch if time.</div></div>
     <div class="step"><div class="step-text">Run the <strong>Universal Check</strong> — it tells you pass or fail, no ambiguity</div></div>
     <div class="step"><div class="step-text">Fix failures in <strong>/src</strong>, not in the notebook</div></div>
-    <div class="step"><div class="step-text">Write your <strong>reflection</strong> — what you learned, what was hard, what's next</div></div>
-    <div class="step"><div class="step-text">Do the <strong>Homework</strong> at home before next session</div></div>
+    <div class="step"><div class="step-text">Write your <strong>reflection</strong> and submit</div></div>
+    <div class="step"><div class="step-text">Do the <strong>Homework</strong> before next session</div></div>
   </div>
-
   <div class="safety">
     <h3>🛟 Falling behind?</h3>
-    <p>Can't finish the standard target? <strong>Finish the must-pass core</strong> — that keeps you safe. Can't even do that? Submit a <strong>recovery ticket</strong> — what failed, what you tried, what's next. You get 3 per semester at full credit. After that, capped at core level. The system catches you — but you have to reach out.</p>
+    <p>Can't finish the standard target? <strong>Finish the must-pass core</strong> — that keeps you safe. Can't even do that? Submit a <strong>recovery ticket</strong>. You get 3 per semester at full credit. After that, capped at core level. The system catches you — but you have to reach out.</p>
   </div>
 </div>
 </section>
 
 <!-- GRADING -->
-<section style="background:#fafafa;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0">
-<div class="narrow">
+<section>
+<div class="wrap">
   <div class="label">Grading</div>
-  <p style="font-size:.85rem;color:#666;margin-bottom:4px;">No exams. Your grade is what you build and what you can explain.</p>
+  <p style="font-size:.85rem;color:#666;margin-bottom:4px">No exams. Your grade is what you build and what you can explain.</p>
   <div class="grade-bar">
-    <div class="gb-weekly">50%</div>
-    <div class="gb-quiz">20%</div>
-    <div class="gb-demo">20%</div>
-    <div class="gb-habits">10%</div>
+    <div class="gb-w">50%</div><div class="gb-q">20%</div><div class="gb-d">20%</div><div class="gb-h">10%</div>
   </div>
   <div class="grade-labels">
     <span style="flex:5">Weekly submissions + checks</span>
@@ -399,25 +199,29 @@ details[open] summary{color:#6366f1;border-bottom:1px solid #f0f0f0}
     <span style="flex:2">Release demo</span>
     <span style="flex:1">Habits</span>
   </div>
-  <p style="font-size:.78rem;color:#aaa;margin-top:16px;">Teamwork allowed, understanding individual. Can't explain the code → your penalty. AI tools: disclose, explain everything. "It runs" is not enough.</p>
+  <p style="font-size:.78rem;color:#aaa;margin-top:16px">Teamwork allowed, understanding individual. Can't explain the code → your penalty. AI tools: disclose, explain everything. "It runs" is not enough.</p>
+</div>
+</section>
+
+<!-- CONTRACT -->
+<section class="alt">
+<div class="wrap">
+  <div class="label">The contract</div>
+  <div class="code-block"><span style="color:#555"># every track implements these in /src/</span><br><span class="fn">load_data</span>(config) <span class="ar">→ data</span><br><span class="fn">clean_data</span>(data, config) <span class="ar">→ clean_data</span><br><span class="fn">analyze</span>(clean_data, config) <span class="ar">→ results</span><br><span class="fn">plot</span>(clean_data, results, config) <span class="ar">→ figures</span><br><span class="fn">export_results</span>(clean_data, results, figures, config) <span class="ar">→ paths</span><br><span class="fn">self_check</span>() <span class="ar">→ None</span></div>
 </div>
 </section>
 
 <!-- NOTEBOOKS -->
 <section>
-<div class="narrow">
+<div class="wrap">
   <div class="label">Notebooks — open in Colab</div>
-
-  <div id="track-badge" style="display:none;margin-bottom:18px;padding:10px 18px;background:#eef2ff;border-radius:10px;border:1px solid #d4d0ff;font-size:.85rem;color:#4f46e5;font-weight:600"></div>
-
+  <div class="track-badge" id="track-badge"></div>
   <script>
   const R="ArifSolmaz/courseos-curriculum",B="course-content/notebooks";
   function co(c,f){return`https://colab.research.google.com/github/${R}/blob/main/${B}/${c}/${f}`}
   function gh(c){return`https://github.com/${R}/tree/main/${B}/${c}`}
-
-  const TNAMES={robotics:'🤖 Robotics',data:'📊 Data / AI',simulation:'🎮 Simulation',space:'🌌 Space / Astro',iot:'📡 IoT'};
-  let selectedTrack = localStorage.getItem('courseos_track') || null;
-
+  const TN={robotics:'🤖 Robotics',data:'📊 Data/AI',simulation:'🎮 Simulation',space:'🌌 Space',iot:'📡 IoT'};
+  let sel=localStorage.getItem('courseos_track')||null;
   const W={
     cp1:[[1,"Welcome to Python"],[2,"Variables & Types"],[3,"Conditionals"],[4,"Decision Logic"],[5,"Loops: Scanning"],[6,"Loops: Events"],[7,"Lists"],[8,"Strings"],[9,"Functions"],[10,"Decomposition"],[11,"Exceptions"],[12,"File I/O"],[13,"Integration"],[14,"v1 Release"]],
     cp2:[[1,"Schema Validation"],[2,"Dict Analytics"],[3,"Cleaning Pipeline"],[4,"Data Quality"],[5,"Matplotlib"],[6,"Reports"],[7,"NumPy"],[8,"Timing"],[9,"Testing"],[10,"Golden Outputs"],[11,"Modularize /src"],[12,"Package Hygiene"],[13,"Integration"],[14,"v2 Release"]],
@@ -425,77 +229,32 @@ details[open] summary{color:#6366f1;border-bottom:1px solid #f0f0f0}
     dsa:[[1,"Big-O"],[2,"Benchmarks"],[3,"Searching"],[4,"Sorting"],[5,"Hashing"],[6,"Heap"],[7,"Sprint 1"],[8,"Sprint 2"],[9,"Trees"],[10,"Graphs"],[11,"Shortest Paths"],[12,"DP"],[13,"Integration"],[14,"Final Report"]]
   };
   const L={cp1:"CP1 — Fundamentals (Year 1)",cp2:"CP2 — Professional (Year 1)",oop:"OOP — Architecture (Year 2)",dsa:"DSA — Performance (Year 2)"};
-
-  function pickTrack(t) {
-    selectedTrack = t;
-    localStorage.setItem('courseos_track', t);
-
-    // Track cards: selected + dim others
-    document.querySelectorAll('.tk').forEach(el => {
-      el.classList.toggle('selected', el.dataset.tk === t);
-      el.classList.toggle('dimmed', el.dataset.tk !== t);
-    });
-
-    // Choose/lose: show only selected track
-    document.querySelectorAll('.track-cl').forEach(el => {
-      el.style.display = el.dataset.tk === t ? '' : 'none';
-    });
-
-    // Badge above notebooks
-    const badge = document.getElementById('track-badge');
-    badge.style.display = 'block';
-    badge.innerHTML = 'Your track: ' + TNAMES[t] + ' <a href="#track-section" style="margin-left:12px;font-size:.72rem;color:#818cf8" onclick="resetTrack(event)">change</a>';
-
-    renderNotebooks();
-  }
-
-  function resetTrack(e) {
-    e.preventDefault();
-    selectedTrack = null;
-    localStorage.removeItem('courseos_track');
-    document.querySelectorAll('.tk').forEach(el => { el.classList.remove('selected','dimmed'); });
-    document.querySelectorAll('.track-cl').forEach(el => { el.style.display = ''; });
-    document.getElementById('track-badge').style.display = 'none';
-    renderNotebooks();
-    document.getElementById('track-section').scrollIntoView({behavior:'smooth'});
-  }
-
-  function renderNotebooks() {
+  function rn(){
+    const b=document.getElementById('track-badge');
+    if(sel){b.style.display='block';b.innerHTML='Your track: '+TN[sel]+' <a href="tracks.html" style="margin-left:12px;font-size:.72rem;color:#818cf8">change →</a>';}
+    else{b.style.display='none';}
     let h="";
     for(const[k,ws]of Object.entries(W)){
       const p=n=>String(n).padStart(2,'0');
       h+=`<details${k==='cp1'?' open':''}>
-        <summary>${L[k]}</summary>
-        <div class="det">
-          ${ws.map(([n,t])=>`<div class="wk">
-            <div class="wn">${p(n)}</div>
-            <div class="wt">${t}</div>
-            <div class="wl">
-              <a class="core" href="${co(k,'W'+p(n)+'_core.ipynb')}" target="_blank">Core</a>
-              ${selectedTrack ? `<a class="studio" href="${co(k,'W'+p(n)+'_studio_'+selectedTrack+'.ipynb')}" target="_blank">Studio</a>` : ''}
-              <a class="hw" href="${co(k,'W'+p(n)+'_homework.ipynb')}" target="_blank">HW</a>
-              <a class="chk" href="${co(k,'W'+p(n)+'_check.ipynb')}" target="_blank">Check</a>
-            </div>
-          </div>`).join("")}
-          <div class="browse">All studio variants: <a href="${gh(k)}" target="_blank">Browse →</a></div>
-        </div>
-      </details>`;
+        <summary>${L[k]}</summary><div class="det">
+        ${ws.map(([n,t])=>`<div class="wk"><div class="wn">${p(n)}</div><div class="wt">${t}</div><div class="wl">
+          <a class="core" href="${co(k,'W'+p(n)+'_core.ipynb')}" target="_blank">Core</a>
+          ${sel?`<a class="studio" href="${co(k,'W'+p(n)+'_studio_'+sel+'.ipynb')}" target="_blank">Studio</a>`:''}
+          <a class="hw" href="${co(k,'W'+p(n)+'_homework.ipynb')}" target="_blank">HW</a>
+          <a class="chk" href="${co(k,'W'+p(n)+'_check.ipynb')}" target="_blank">Check</a>
+        </div></div>`).join("")}
+        <div class="browse">All studio variants: <a href="${gh(k)}" target="_blank">Browse →</a></div>
+      </div></details>`;
     }
     document.getElementById("nb").innerHTML=h;
   }
-
-  document.addEventListener("DOMContentLoaded",()=>{
-    if (selectedTrack) { pickTrack(selectedTrack); }
-    else { renderNotebooks(); }
-  });
+  document.addEventListener("DOMContentLoaded",rn);
   </script>
   <div id="nb"></div>
 </div>
 </section>
 
-<div class="foot">
-  CourseOS · <a href="https://github.com/ArifSolmaz/courseos-curriculum" target="_blank">GitHub</a>
-</div>
-
+<div class="foot">CourseOS · <a href="https://github.com/ArifSolmaz/courseos-curriculum" target="_blank">GitHub</a></div>
 </body>
 </html>

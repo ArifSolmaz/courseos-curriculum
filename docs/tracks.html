@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose Your Track — CourseOS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:#fefefe;color:#1a1a1a}
+a{color:#6366f1;text-decoration:none}
+a:hover{text-decoration:underline}
+::selection{background:#e0e7ff;color:#312e81}
+
+.wrap{max-width:800px;margin:0 auto;padding:0 28px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;color:#999;margin-top:32px;transition:color .15s}
+.back:hover{color:#6366f1;text-decoration:none}
+
+.page-header{padding:48px 0 40px}
+.page-header h1{font-size:2rem;font-weight:700;letter-spacing:-.03em}
+.page-header p{font-size:.95rem;color:#777;margin-top:10px;line-height:1.6;max-width:560px}
+
+/* Track card */
+.track-card{margin-bottom:48px;scroll-margin-top:32px}
+.tc-header{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.tc-icon{font-size:2.6rem}
+.tc-info h2{font-size:1.2rem;font-weight:700;letter-spacing:-.02em}
+.tc-info .product{font-size:.85rem;color:#6366f1;font-weight:600}
+.tc-desc{font-size:.9rem;color:#666;line-height:1.7;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid #f0f0f0}
+
+/* Three columns */
+.tc-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border:1.5px solid #f0f0f0;border-radius:16px;overflow:hidden}
+.tc-col{padding:24px}
+.tc-col+.tc-col{border-left:1px solid #f0f0f0}
+.tc-col-label{font-size:.65rem;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:12px}
+.tc-col-label.green{color:#16a34a}
+.tc-col-label.blue{color:#6366f1}
+.tc-col-label.red{color:#dc2626}
+.tc-col-label.amber{color:#d97706}
+.tc-list{list-style:none;font-size:.82rem;color:#444;line-height:2}
+.tc-list li{display:flex;gap:6px}
+.tc-list .icon{flex-shrink:0;width:16px}
+.tc-list.green .icon{color:#16a34a}
+.tc-list.red .icon{color:#dc2626}
+
+.tc-sample{margin-top:16px;padding:14px 18px;background:#fafafb;border-radius:10px;border:1px solid #f0f0f0}
+.tc-sample-label{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:#bbb;font-weight:600;margin-bottom:6px}
+.tc-sample p{font-size:.82rem;color:#555;line-height:1.6;font-style:italic}
+
+.tc-best{margin-top:16px;padding:12px 16px;background:#f0fdf4;border-radius:10px;border:1px solid #dcfce7;font-size:.82rem;color:#166534}
+.tc-best strong{color:#15803d}
+
+/* Select button */
+.tc-select{margin-top:24px;display:flex;align-items:center;gap:12px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:10px;font-size:.85rem;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-primary{background:#6366f1;color:#fff;box-shadow:0 2px 8px rgba(99,102,241,.25)}
+.btn-primary:hover{background:#4f46e5;transform:translateY(-1px);box-shadow:0 4px 16px rgba(99,102,241,.3)}
+.btn-outline{background:#fff;color:#666;border:1.5px solid #e5e7eb}
+.btn-outline:hover{border-color:#6366f1;color:#6366f1}
+.selected-msg{display:none;font-size:.85rem;color:#16a34a;font-weight:600}
+
+/* Comparison table */
+.compare{margin-top:48px;margin-bottom:48px}
+.compare h2{font-size:1.1rem;font-weight:700;margin-bottom:16px;letter-spacing:-.02em}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{text-align:left;padding:10px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.8px;color:#999;font-weight:600;border-bottom:2px solid #f0f0f0;background:#fafafb}
+td{padding:12px 14px;border-bottom:1px solid #f5f5f5;color:#444;vertical-align:top}
+tr:hover td{background:#fafafb}
+.comp-icon{font-size:1.1rem;text-align:center}
+
+.foot{text-align:center;padding:48px 28px 32px;font-size:.72rem;color:#ccc}
+.foot a{color:#a5b4fc}
+
+@media(max-width:768px){
+  .tc-grid{grid-template-columns:1fr}
+  .tc-col+.tc-col{border-left:none;border-top:1px solid #f0f0f0}
+  table{font-size:.75rem}
+  th,td{padding:8px 10px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<a href="index.html" class="back">← Back to CourseOS</a>
+
+<div class="page-header">
+  <h1>Choose your track wisely</h1>
+  <p>You'll live with this choice for 2 years. Every track uses the same contract and grading — but the domain, the data, and the final product are different. Read all five before deciding.</p>
+</div>
+
+<!-- ═══ ROBOTICS ═══ -->
+<div class="track-card" id="robotics">
+  <div class="tc-header"><div class="tc-icon">🤖</div><div class="tc-info"><h2>Robotics / Mechatronics</h2><div class="product">MechaSense Studio</div></div></div>
+  <div class="tc-desc">You build a <strong>sensor monitoring and fault detection tool</strong>. It reads IMU, temperature, RPM, and vibration streams, cleans noisy data, detects anomalies and threshold crossings, and generates engineering reports with annotated time-series plots.</div>
+  <div class="tc-grid">
+    <div class="tc-col">
+      <div class="tc-col-label green">What you build (4 courses)</div>
+      <ul class="tc-list green">
+        <li><span class="icon">✓</span> Multi-sensor CSV loader</li>
+        <li><span class="icon">✓</span> Threshold + spike fault detector</li>
+        <li><span class="icon">✓</span> Event counter (crossings, peaks)</li>
+        <li><span class="icon">✓</span> Moving-average smoother</li>
+        <li><span class="icon">✓</span> Time-series + distribution plots</li>
+        <li><span class="icon">✓</span> JSON fault report with per-sensor stats</li>
+        <li><span class="icon">✓</span> OOP: EventAnalyzer, RuleCleaner, CSVDataSource</li>
+        <li><span class="icon">✓</span> DSA: sorted event index + binary search range queries</li>
+      </ul>
+    </div>
+    <div class="tc-col">
+      <div class="tc-col-label blue">End product after 2 years</div>
+      <p style="font-size:.82rem;color:#555;line-height:1.7">A command-line tool that takes raw sensor CSVs, validates and cleans them, detects threshold crossings and anomalies, generates labeled time-series plots with fault annotations, and exports a structured JSON report. Optimized to handle 100K+ readings with sub-millisecond range queries via binary search.</p>
+      <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"3 overtemp events in RPM sensor between t=120–180s, peak 94.2°C. 2 vibration spikes above 55g at t=45s and t=162s. Overall health: WARNING."</p></div>
+    </div>
+    <div class="tc-col">
+      <div class="tc-col-label red">Trade-offs</div>
+      <ul class="tc-list red">
+        <li><span class="icon">✗</span> Data is numeric and repetitive — less variety</li>
+        <li><span class="icon">✗</span> Harder to demo visually to non-engineers</li>
+        <li><span class="icon">✗</span> Can feel dry if hardware doesn't excite you</li>
+      </ul>
+      <div class="tc-best"><strong>Best for:</strong> students who love hardware, sensors, and control systems. Directly relevant to your Mechatronics degree.</div>
+    </div>
+  </div>
+  <div class="tc-select">
+    <button class="btn btn-primary" onclick="select('robotics')">Select Robotics</button>
+    <span class="selected-msg" id="msg-robotics">✓ Selected — saved to your profile</span>
+  </div>
+</div>
+
+<!-- ═══ DATA ═══ -->
+<div class="track-card" id="data">
+  <div class="tc-header"><div class="tc-icon">📊</div><div class="tc-info"><h2>Data / AI</h2><div class="product">CleanReport Pipeline</div></div></div>
+  <div class="tc-desc">You build an <strong>automated data cleaning and reporting pipeline</strong>. It takes messy CSVs with missing values, bad types, and outliers — validates them against a schema, drops bad rows with documented reasons, computes group summaries, and generates reports with dashboards.</div>
+  <div class="tc-grid">
+    <div class="tc-col">
+      <div class="tc-col-label green">What you build (4 courses)</div>
+      <ul class="tc-list green">
+        <li><span class="icon">✓</span> Schema validator with clear error messages</li>
+        <li><span class="icon">✓</span> Configurable cleaning rules (via config dict)</li>
+        <li><span class="icon">✓</span> Group-by summaries and dict analytics</li>
+        <li><span class="icon">✓</span> Outlier detector (IQR method)</li>
+        <li><span class="icon">✓</span> Histogram + box plot + scatter dashboards</li>
+        <li><span class="icon">✓</span> JSON + Markdown auto-generated reports</li>
+        <li><span class="icon">✓</span> OOP: pluggable cleaners, analyzers (Strategy pattern)</li>
+        <li><span class="icon">✓</span> DSA: hash-based aggregation + caching</li>
+      </ul>
+    </div>
+    <div class="tc-col">
+      <div class="tc-col-label blue">End product after 2 years</div>
+      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes any dirty CSV, checks it against a schema, drops invalid rows with per-reason counts, computes group statistics, generates labeled plots, and writes a complete report — JSON for machines, Markdown for humans. Cached aggregation makes re-runs near-instant on large files.</p>
+      <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"1,247 of 1,500 rows valid. Dropped: 142 missing, 89 out-of-range, 22 duplicate. Mean score by city: Cairo=78.3, Alex=82.1, Luxor=74.6."</p></div>
+    </div>
+    <div class="tc-col">
+      <div class="tc-col-label red">Trade-offs</div>
+      <ul class="tc-list red">
+        <li><span class="icon">✗</span> Doesn't showcase your Mechatronics identity</li>
+        <li><span class="icon">✗</span> Can feel generic compared to robotics or space</li>
+        <li><span class="icon">✗</span> Many students pick this — less distinctive</li>
+      </ul>
+      <div class="tc-best"><strong>Best for:</strong> students who want the most transferable, career-safe skill. Every industry needs data cleaning.</div>
+    </div>
+  </div>
+  <div class="tc-select">
+    <button class="btn btn-primary" onclick="select('data')">Select Data / AI</button>
+    <span class="selected-msg" id="msg-data">✓ Selected — saved to your profile</span>
+  </div>
+</div>
+
+<!-- ═══ SIMULATION ═══ -->
+<div class="track-card" id="simulation">
+  <div class="tc-header"><div class="tc-icon">🎮</div><div class="tc-info"><h2>Simulation / Games</h2><div class="product">SimLab Engine</div></div></div>
+  <div class="tc-desc">You build a <strong>discrete simulation engine</strong>. It runs timestep-based scenarios, logs state at every step, computes scores, validates parameters, and generates trajectory plots and comparison reports. You design the rules.</div>
+  <div class="tc-grid">
+    <div class="tc-col">
+      <div class="tc-col-label green">What you build (4 courses)</div>
+      <ul class="tc-list green">
+        <li><span class="icon">✓</span> Timestep loop with position, velocity, score</li>
+        <li><span class="icon">✓</span> Parameter validation + boundary handling</li>
+        <li><span class="icon">✓</span> Batch scenario runner (config-driven)</li>
+        <li><span class="icon">✓</span> Deterministic seeded runs for reproducibility</li>
+        <li><span class="icon">✓</span> Trajectory, score, and comparison plots</li>
+        <li><span class="icon">✓</span> Scenario comparison reports</li>
+        <li><span class="icon">✓</span> OOP: Simulator, Scenario, Logger, Reporter</li>
+        <li><span class="icon">✓</span> DSA: spatial hashing / grid indexing for collision</li>
+      </ul>
+    </div>
+    <div class="tc-col">
+      <div class="tc-col-label blue">End product after 2 years</div>
+      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes scenario parameters, runs a simulation with your custom rules, logs every timestep, validates results against expected bounds, plots trajectories, and compares multiple runs side by side. Spatial hashing enables fast proximity/collision queries at scale.</p>
+      <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"Scenario A: 500 steps, final score 2,340, 3 collisions detected. Scenario B: 500 steps, score 1,890, 0 collisions. B is 23% safer with 19% lower score."</p></div>
+    </div>
+    <div class="tc-col">
+      <div class="tc-col-label red">Trade-offs</div>
+      <ul class="tc-list red">
+        <li><span class="icon">✗</span> Hardest to keep deterministic — randomness is painful to debug</li>
+        <li><span class="icon">✗</span> Scope creep risk — easy to over-design the simulation</li>
+        <li><span class="icon">✗</span> Less "real data" experience than other tracks</li>
+      </ul>
+      <div class="tc-best"><strong>Best for:</strong> students who love designing systems, game logic, and creative rule-based problems. Most fun to demo.</div>
+    </div>
+  </div>
+  <div class="tc-select">
+    <button class="btn btn-primary" onclick="select('simulation')">Select Simulation</button>
+    <span class="selected-msg" id="msg-simulation">✓ Selected — saved to your profile</span>
+  </div>
+</div>
+
+<!-- ═══ SPACE ═══ -->
+<div class="track-card" id="space">
+  <div class="tc-header"><div class="tc-icon">🌌</div><div class="tc-info"><h2>Space / Astro</h2><div class="product">Lightcurve Explorer</div></div></div>
+  <div class="tc-desc">You build a <strong>lightcurve analysis tool</strong>. It processes star brightness (flux) measurements, cleans noise and NaN values, detects flux dips that could indicate planet transits, applies detrending, and generates discovery reports with annotated plots.</div>
+  <div class="tc-grid">
+    <div class="tc-col">
+      <div class="tc-col-label green">What you build (4 courses)</div>
+      <ul class="tc-list green">
+        <li><span class="icon">✓</span> Time-flux data loader (TESS-like format)</li>
+        <li><span class="icon">✓</span> NaN/outlier cleaner for flux data</li>
+        <li><span class="icon">✓</span> Threshold-based dip/transit detector</li>
+        <li><span class="icon">✓</span> Configurable detrending algorithms</li>
+        <li><span class="icon">✓</span> Lightcurve plots with dip annotations</li>
+        <li><span class="icon">✓</span> Sector-by-sector summary reports</li>
+        <li><span class="icon">✓</span> OOP: pluggable detrenders (Strategy pattern)</li>
+        <li><span class="icon">✓</span> DSA: prefix sums for O(1) windowed statistics</li>
+      </ul>
+    </div>
+    <div class="tc-col">
+      <div class="tc-col-label blue">End product after 2 years</div>
+      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes raw star brightness data, cleans it, removes instrument noise via detrending, scans for significant flux dips, marks candidate transit events, and produces annotated lightcurve plots with a structured JSON report. Prefix-sum optimization enables instant windowed statistics over millions of data points.</p>
+      <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"Star TIC-29837: 2 dips detected at t=45.2d (depth 0.8%) and t=91.7d (depth 0.9%). Estimated period: ~46.5 days. Confidence: moderate."</p></div>
+    </div>
+    <div class="tc-col">
+      <div class="tc-col-label red">Trade-offs</div>
+      <ul class="tc-list red">
+        <li><span class="icon">✗</span> Need to learn basic astro concepts (flux, transit, sector)</li>
+        <li><span class="icon">✗</span> Less directly tied to Mechatronics career paths</li>
+        <li><span class="icon">✗</span> Fewer peers in this track — less help from classmates</li>
+      </ul>
+      <div class="tc-best"><strong>Best for:</strong> students who want something unique and impressive. The "wow" track — instant conversation starter in interviews.</div>
+    </div>
+  </div>
+  <div class="tc-select">
+    <button class="btn btn-primary" onclick="select('space')">Select Space / Astro</button>
+    <span class="selected-msg" id="msg-space">✓ Selected — saved to your profile</span>
+  </div>
+</div>
+
+<!-- ═══ IOT ═══ -->
+<div class="track-card" id="iot">
+  <div class="tc-header"><div class="tc-icon">📡</div><div class="tc-info"><h2>IoT / Reporting</h2><div class="product">AutoDashboard Reporter</div></div></div>
+  <div class="tc-desc">You build a <strong>universal dashboard generator</strong>. Give it any time-series CSV — temperature, humidity, pressure, whatever — and it auto-maps columns, applies a dashboard profile, cleans the data, and produces a standard report. New device? Just change config.</div>
+  <div class="tc-grid">
+    <div class="tc-col">
+      <div class="tc-col-label green">What you build (4 courses)</div>
+      <ul class="tc-list green">
+        <li><span class="icon">✓</span> Auto-detecting column mapper (aliases)</li>
+        <li><span class="icon">✓</span> Standard IoT cleaning pipeline</li>
+        <li><span class="icon">✓</span> Dashboard profile system (configurable layouts)</li>
+        <li><span class="icon">✓</span> Multi-device batch processing</li>
+        <li><span class="icon">✓</span> Time-series + summary dashboard plots</li>
+        <li><span class="icon">✓</span> Per-device JSON + Markdown reports</li>
+        <li><span class="icon">✓</span> OOP: plugin dashboard architecture</li>
+        <li><span class="icon">✓</span> DSA: cached computation for batch speed</li>
+      </ul>
+    </div>
+    <div class="tc-col">
+      <div class="tc-col-label blue">End product after 2 years</div>
+      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes any IoT CSV, figures out the columns from aliases in config, cleans the data, generates a standardized dashboard with time-series and summary plots, and exports reports. Works with new devices without code changes. Cached computations make batch re-processing near-instant.</p>
+      <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"Device D01: 720 readings over 30 days. Temp range 18.2–26.4°C, 3 anomalies flagged. Humidity stable at 44–48%. Dashboard: 4 plots exported."</p></div>
+    </div>
+    <div class="tc-col">
+      <div class="tc-col-label red">Trade-offs</div>
+      <ul class="tc-list red">
+        <li><span class="icon">✗</span> Less specialized — generalist, not deep in one domain</li>
+        <li><span class="icon">✗</span> Dashboard work can feel repetitive across weeks</li>
+        <li><span class="icon">✗</span> Less algorithmic depth than robotics or space</li>
+      </ul>
+      <div class="tc-best"><strong>Best for:</strong> students who want the most practical, industry-ready tool. Closest to real monitoring platforms (Grafana, Datadog).</div>
+    </div>
+  </div>
+  <div class="tc-select">
+    <button class="btn btn-primary" onclick="select('iot')">Select IoT</button>
+    <span class="selected-msg" id="msg-iot">✓ Selected — saved to your profile</span>
+  </div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="compare">
+  <h2>Quick comparison</h2>
+  <table>
+    <tr><th></th><th>Track</th><th>Data type</th><th>DSA optimization</th><th>Career angle</th><th>Difficulty</th></tr>
+    <tr><td class="comp-icon">🤖</td><td><strong>Robotics</strong></td><td>Sensor streams (numeric)</td><td>Binary search range queries</td><td>Hardware / controls</td><td>Medium</td></tr>
+    <tr><td class="comp-icon">📊</td><td><strong>Data / AI</strong></td><td>Messy CSVs (mixed types)</td><td>Hash aggregation + cache</td><td>Data science / analytics</td><td>Easiest</td></tr>
+    <tr><td class="comp-icon">🎮</td><td><strong>Simulation</strong></td><td>Generated timestep logs</td><td>Spatial hashing / grid index</td><td>Systems / game dev</td><td>Hardest</td></tr>
+    <tr><td class="comp-icon">🌌</td><td><strong>Space</strong></td><td>Star brightness (time-flux)</td><td>Prefix sums + windowed stats</td><td>Research / unique portfolio</td><td>Medium-hard</td></tr>
+    <tr><td class="comp-icon">📡</td><td><strong>IoT</strong></td><td>Multi-device time-series</td><td>Cached batch computation</td><td>Industry monitoring tools</td><td>Medium</td></tr>
+  </table>
+</div>
+
+<div style="padding:24px 0 48px;text-align:center">
+  <p style="font-size:.85rem;color:#888;margin-bottom:16px">Explore all 5 during Weeks 1–2. Confirm by Week 3. Locked for Year 1. One reset possible before Year 2.</p>
+  <a href="index.html" class="btn btn-outline">← Back to CourseOS</a>
+</div>
+
+</div>
+
+<div class="foot">CourseOS · <a href="https://github.com/ArifSolmaz/courseos-curriculum">GitHub</a></div>
+
+<script>
+const TN={robotics:'🤖 Robotics',data:'📊 Data/AI',simulation:'🎮 Simulation',space:'🌌 Space',iot:'📡 IoT'};
+let current=localStorage.getItem('courseos_track');
+
+function select(track){
+  // Clear previous
+  document.querySelectorAll('.selected-msg').forEach(m=>m.style.display='none');
+  document.querySelectorAll('.tc-select .btn').forEach(b=>{b.textContent=b.textContent.replace('✓ ','');b.classList.remove('btn-outline');b.classList.add('btn-primary');});
+
+  // Set new
+  localStorage.setItem('courseos_track',track);
+  current=track;
+  const msg=document.getElementById('msg-'+track);
+  if(msg)msg.style.display='inline';
+  const btn=msg?.previousElementSibling;
+  if(btn){btn.textContent='✓ '+TN[track]+' selected';btn.classList.remove('btn-primary');btn.classList.add('btn-outline');}
+}
+
+// Restore on load
+document.addEventListener('DOMContentLoaded',()=>{
+  if(current)select(current);
+  // Scroll to hash
+  if(window.location.hash){
+    const el=document.querySelector(window.location.hash);
+    if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth'}),100);
+  }
+});
+</script>
+</body>
+</html>
