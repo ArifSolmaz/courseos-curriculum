@@ -59,8 +59,8 @@ def setup_cell(course="cp1"):
     """Standard Colab setup cell."""
     return code(f"""# === SETUP (run this first) ===
 # If running in Google Colab, uncomment and run the lines below:
-# !git clone https://github.com/YOUR-ORG/YOUR-REPO.git
-# %cd YOUR-REPO
+# !git clone https://github.com/ArifSolmaz/courseos-curriculum.git
+# %cd courseos-curriculum/course-content
 
 import sys, os
 # Add src to path so we can import project modules
