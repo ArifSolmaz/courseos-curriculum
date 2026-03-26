@@ -286,15 +286,103 @@ tr:hover td{background:#fafafb}
 
 <!-- COMPARISON TABLE -->
 <div class="compare">
-  <h2>Quick comparison</h2>
+  <h2>Side-by-side comparison</h2>
+  <div style="overflow-x:auto">
   <table>
-    <tr><th></th><th>Track</th><th>Data type</th><th>DSA optimization</th><th>Career angle</th><th>Difficulty</th></tr>
-    <tr><td class="comp-icon">🤖</td><td><strong>Robotics</strong></td><td>Sensor streams (numeric)</td><td>Binary search range queries</td><td>Hardware / controls</td><td>Medium</td></tr>
-    <tr><td class="comp-icon">📊</td><td><strong>Data / AI</strong></td><td>Messy CSVs (mixed types)</td><td>Hash aggregation + cache</td><td>Data science / analytics</td><td>Easiest</td></tr>
-    <tr><td class="comp-icon">🎮</td><td><strong>Simulation</strong></td><td>Generated timestep logs</td><td>Spatial hashing / grid index</td><td>Systems / game dev</td><td>Hardest</td></tr>
-    <tr><td class="comp-icon">🌌</td><td><strong>Space</strong></td><td>Star brightness (time-flux)</td><td>Prefix sums + windowed stats</td><td>Research / unique portfolio</td><td>Medium-hard</td></tr>
-    <tr><td class="comp-icon">📡</td><td><strong>IoT</strong></td><td>Multi-device time-series</td><td>Cached batch computation</td><td>Industry monitoring tools</td><td>Medium</td></tr>
+    <tr>
+      <th style="width:36px"></th>
+      <th>Track</th>
+      <th>Data you work with</th>
+      <th>DSA optimization</th>
+      <th>Career angle</th>
+      <th>Difficulty</th>
+      <th>Fun factor</th>
+    </tr>
+    <tr><td class="comp-icon">🤖</td><td><strong>Robotics</strong></td><td>Sensor streams (IMU, temp, RPM)</td><td>Binary search range queries</td><td>Hardware, controls, manufacturing</td><td><span style="color:#d97706">●●●</span>○○</td><td><span style="color:#6366f1">●●●</span>○○</td></tr>
+    <tr><td class="comp-icon">📊</td><td><strong>Data / AI</strong></td><td>Messy CSVs (mixed types, nulls)</td><td>Hash aggregation + caching</td><td>Data science, analytics, any industry</td><td><span style="color:#16a34a">●●</span>○○○</td><td><span style="color:#6366f1">●●</span>○○○</td></tr>
+    <tr><td class="comp-icon">🎮</td><td><strong>Simulation</strong></td><td>Generated timestep logs</td><td>Spatial hashing / grid indexing</td><td>Game dev, systems, defense</td><td><span style="color:#dc2626">●●●●</span>○</td><td><span style="color:#6366f1">●●●●●</span></td></tr>
+    <tr><td class="comp-icon">🌌</td><td><strong>Space</strong></td><td>Star brightness (time, flux)</td><td>Prefix sums + windowed stats</td><td>Research, aerospace, unique portfolio</td><td><span style="color:#d97706">●●●●</span>○</td><td><span style="color:#6366f1">●●●●</span>○</td></tr>
+    <tr><td class="comp-icon">📡</td><td><strong>IoT</strong></td><td>Multi-device time-series</td><td>Cached batch computation</td><td>Industry monitoring (Grafana-like)</td><td><span style="color:#d97706">●●●</span>○○</td><td><span style="color:#6366f1">●●●</span>○○</td></tr>
   </table>
+  </div>
+</div>
+
+<!-- ═══ REAL STORIES ═══ -->
+<div style="margin-top:56px;margin-bottom:56px">
+  <h2 style="font-size:1.3rem;font-weight:700;letter-spacing:-.03em;margin-bottom:8px">Real talk — what does this choice actually mean?</h2>
+  <p style="font-size:.9rem;color:#777;line-height:1.6;margin-bottom:40px">These aren't hypothetical. These are the kinds of people and careers each track prepares you for. Read the one that pulls you — if none does, read all five.</p>
+
+  <!-- Robotics story -->
+  <div style="margin-bottom:48px" id="story-robotics">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><span style="font-size:2rem">🤖</span><h3 style="font-size:1.05rem;font-weight:700">Robotics — "I want to make machines smarter"</h3></div>
+    <div style="font-size:.9rem;color:#444;line-height:1.85">
+      <p>Imagine you're working at a factory floor. A robotic arm assembles car doors 16 hours a day. One day, it starts drifting — the door alignment is off by 2mm. Nobody notices until 400 defective doors pile up. Cost: $180,000.</p>
+      <p style="margin-top:10px">Your MechaSense tool could have caught it. A vibration spike at t=14:32, an RPM drop to 2,840 (normal: 3,100), and a temperature creep from 65°C to 78°C over 40 minutes. Your pipeline reads the sensor CSV, flags the anomaly, and sends a report: <em>"Warning: motor degradation pattern detected. Recommend maintenance window."</em></p>
+      <p style="margin-top:10px"><strong>Why it's medium difficulty:</strong> The data is clean numbers — no messy strings or mixed types. The challenge is detecting <em>meaningful</em> patterns in noise. When is a temperature spike a real fault vs a hot day? That's where your threshold logic and event detection earn their keep.</p>
+      <p style="margin-top:10px"><strong>Where this leads:</strong> Predictive maintenance is a $15B+ industry. Companies like Siemens, ABB, and Bosch hire engineers who can build exactly this kind of monitoring pipeline. As a Mechatronics graduate with a working sensor analysis tool in your portfolio, you're not just another applicant — you have proof.</p>
+      <p style="margin-top:10px;padding:12px 16px;background:#eef2ff;border-radius:10px;color:#4338ca"><strong>After graduation, you can tell an employer:</strong> "I built a tool that processes 100K+ sensor readings, detects faults using configurable thresholds, and generates reports — with sub-millisecond range queries. Here's the repo."</p>
+    </div>
+  </div>
+
+  <!-- Data story -->
+  <div style="margin-bottom:48px" id="story-data">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><span style="font-size:2rem">📊</span><h3 style="font-size:1.05rem;font-weight:700">Data / AI — "I want to make sense of messy information"</h3></div>
+    <div style="font-size:.9rem;color:#444;line-height:1.85">
+      <p>A hospital has 50,000 patient records in a CSV. Except: half the dates are in different formats, 3,000 rows have the age column filled with "N/A" or "-1" or just blank, and someone entered blood pressure as text ("normal" instead of 120/80). A researcher needs clean data by Friday.</p>
+      <p style="margin-top:10px">Your CleanReport tool handles it. Schema validation catches the format issues immediately. The configurable cleaning pipeline drops invalid rows with documented reasons: <em>"Dropped 3,247 rows: 1,842 missing age, 980 invalid date format, 425 duplicate entries."</em> Group summaries by department roll out automatically. Two plots and a Markdown report are ready in seconds.</p>
+      <p style="margin-top:10px"><strong>Why it's the easiest track:</strong> You're working with familiar data structures (dicts, lists, CSVs) the whole time. No domain knowledge needed — you don't need to understand flux or vibration or collision physics. The concepts transfer directly: cleaning rules, validation, aggregation. If you've ever used Excel, you already understand the problem.</p>
+      <p style="margin-top:10px"><strong>Why easy doesn't mean worthless:</strong> Data cleaning is 80% of every data science job. Literally. McKinsey, Google, every bank, every hospital — they all drown in dirty data. This is the one skill that <em>never</em> goes out of demand. The trade-off: it won't make you stand out as a Mechatronics engineer specifically. It's a universal skill, not a domain signal.</p>
+      <p style="margin-top:10px;padding:12px 16px;background:#eef2ff;border-radius:10px;color:#4338ca"><strong>After graduation, you can tell an employer:</strong> "Give me any CSV, I'll validate its schema, clean it with documented reasons, compute group summaries, and generate a report — automatically. Here's the repo."</p>
+    </div>
+  </div>
+
+  <!-- Simulation story -->
+  <div style="margin-bottom:48px" id="story-simulation">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><span style="font-size:2rem">🎮</span><h3 style="font-size:1.05rem;font-weight:700">Simulation — "I want to build worlds and test ideas"</h3></div>
+    <div style="font-size:.9rem;color:#444;line-height:1.85">
+      <p>An autonomous drone needs to navigate a warehouse. Before you send the real drone crashing into shelves, you simulate it: a 2D grid, obstacles, a pathfinding agent, timestep-by-timestep movement. Run scenario A with 10 obstacles. Run scenario B with 30. Compare: which layout causes fewer collisions? Which path is faster? The simulation tells you before any hardware gets scratched.</p>
+      <p style="margin-top:10px">Your SimLab Engine handles it. You define the rules — velocity, collision detection, scoring — and the engine runs thousands of timesteps, logging every state. The report compares scenarios side by side: trajectories, collision counts, efficiency scores. Change one parameter, re-run, compare again.</p>
+      <p style="margin-top:10px"><strong>Why it's the hardest track:</strong> You're not just processing data — you're <em>generating</em> it. You design the simulation rules, which means edge cases are <em>your</em> edge cases. Randomness makes debugging brutal: "it worked 99 times but crashed on run 100." Keeping runs deterministic (seeded) and reproducible is a real engineering skill that most students underestimate.</p>
+      <p style="margin-top:10px"><strong>Why the difficulty pays off:</strong> Simulation is the backbone of aerospace, defense, autonomous vehicles, and game development. Engineers who can build, validate, and benchmark simulations are rare and valuable. The spatial hashing you implement in DSA is the same technique used in real physics engines (Unity, Unreal). This is also the most <em>fun</em> track to demo — people can watch things move on screen.</p>
+      <p style="margin-top:10px;padding:12px 16px;background:#eef2ff;border-radius:10px;color:#4338ca"><strong>After graduation, you can tell an employer:</strong> "I built a simulation engine from scratch — configurable scenarios, deterministic runs, trajectory analysis, collision detection optimized with spatial hashing. Here's the repo."</p>
+    </div>
+  </div>
+
+  <!-- Space story -->
+  <div style="margin-bottom:48px" id="story-space">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><span style="font-size:2rem">🌌</span><h3 style="font-size:1.05rem;font-weight:700">Space — "I want to discover things nobody has seen"</h3></div>
+    <div style="font-size:.9rem;color:#444;line-height:1.85">
+      <p>NASA's TESS satellite stares at a patch of sky for 27 days straight, measuring the brightness of thousands of stars every 2 minutes. If a planet passes in front of a star, the brightness dips — by maybe 0.5%. Hidden in terabytes of noisy data, there's a tiny signal that says: <em>a new world exists</em>.</p>
+      <p style="margin-top:10px">Your Lightcurve Explorer does exactly this (on toy data, but the same algorithm). Load a lightcurve CSV. Clean the NaN gaps and outlier spikes from instrument noise. Apply detrending to flatten the baseline. Scan for dips below threshold. Mark candidates. Your report says: <em>"2 dips detected at t=45.2d and t=91.7d, depth 0.8%, estimated period 46.5 days."</em> That's a planet candidate.</p>
+      <p style="margin-top:10px"><strong>Why it's medium-hard:</strong> The algorithms aren't harder than other tracks — threshold detection, windowed statistics, detrending are all doable. The hard part is the <em>domain</em>. You need to learn what flux means, what a transit looks like, what detrending does and why. Nobody in your Mechatronics class will know this already. You're on your own for domain context, and fewer classmates can help you debug.</p>
+      <p style="margin-top:10px"><strong>Why the effort is worth it:</strong> Nothing else in your cohort will look like this. In an interview, when 20 people show data cleaning tools and sensor monitors, you pull out a <em>planet transit detector</em>. Conversation over — they want to hear more. This track also prepares you for aerospace and research careers. And the prefix-sum optimization you build in DSA is used everywhere — from financial analytics to genomics.</p>
+      <p style="margin-top:10px;padding:12px 16px;background:#eef2ff;border-radius:10px;color:#4338ca"><strong>After graduation, you can tell an employer:</strong> "I built a lightcurve analysis pipeline that detects planet transit candidates in star brightness data — with windowed statistics optimized to O(1) using prefix sums. Here's the repo."</p>
+    </div>
+  </div>
+
+  <!-- IoT story -->
+  <div style="margin-bottom:48px" id="story-iot">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><span style="font-size:2rem">📡</span><h3 style="font-size:1.05rem;font-weight:700">IoT — "I want to build something that works for any device"</h3></div>
+    <div style="font-size:.9rem;color:#444;line-height:1.85">
+      <p>A smart building has 200 sensors: temperature in every room, humidity in the server room, CO2 in the meeting halls, water flow in the basement. Each device dumps a CSV with different column names — "temp_c", "temperature", "T(°C)", "ambient". A facilities manager needs one dashboard for everything, updated daily.</p>
+      <p style="margin-top:10px">Your AutoDashboard Reporter handles it. Column mapping in config translates aliases: all of "temp_c", "temperature", "T(°C)" map to "temperature". A dashboard profile defines which plots to generate. The pipeline cleans the data, runs the dashboard, exports 4 standardized plots and a per-device report. New sensor type? Add one line to the config. No code changes.</p>
+      <p style="margin-top:10px"><strong>Why it's medium difficulty:</strong> The concepts are straightforward — reading CSVs, cleaning, plotting, reporting. You've done this in CP1. The challenge in IoT is <em>generalization</em>: making it work for any device, any column names, any data shape, without writing device-specific code. That's a software engineering problem, not an algorithm problem. The DSA optimization (caching repeated computations) is conceptually simple but practically powerful.</p>
+      <p style="margin-top:10px"><strong>Where this leads:</strong> IoT monitoring is one of the fastest-growing sectors in tech. Platforms like Grafana, Datadog, AWS IoT, and Azure IoT Hub are exactly what you're building a miniature version of. Companies building smart factories, smart buildings, and smart cities need people who can build data pipelines that scale across heterogeneous devices. This is the most "deployable" track — the tool you build could genuinely be used on day one at a job.</p>
+      <p style="margin-top:10px;padding:12px 16px;background:#eef2ff;border-radius:10px;color:#4338ca"><strong>After graduation, you can tell an employer:</strong> "I built a universal IoT dashboard generator — give it any sensor CSV, it auto-maps columns, cleans data, and produces standardized reports. Config-driven, no code changes for new devices. Here's the repo."</p>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL ADVICE -->
+<div style="margin-bottom:48px;padding:28px 32px;background:#18181b;border-radius:16px;color:#e2e8f0">
+  <h3 style="font-size:1rem;font-weight:700;color:#818cf8;margin-bottom:12px">How to decide</h3>
+  <div style="font-size:.88rem;line-height:1.85;color:#a1a1aa">
+    <p><strong style="color:#e2e8f0">If you're unsure:</strong> pick Data/AI. It's the safest, easiest, and most transferable. You can always make it interesting with your own dataset choice.</p>
+    <p style="margin-top:8px"><strong style="color:#e2e8f0">If you want to stand out:</strong> pick Space or Simulation. Harder, but nobody else will have it. Interviewers remember the student who built a planet detector.</p>
+    <p style="margin-top:8px"><strong style="color:#e2e8f0">If you want the most relevant to your degree:</strong> pick Robotics or IoT. Both deal with sensor data and monitoring — core Mechatronics territory.</p>
+    <p style="margin-top:8px"><strong style="color:#e2e8f0">If you want the most fun:</strong> pick Simulation. You design the rules, you watch things move, and the demo practically sells itself.</p>
+    <p style="margin-top:14px;color:#818cf8"><strong>Don't pick based on difficulty alone.</strong> The hard tracks teach you more. The easy track frees you to go deeper on your own. Both are valid. Pick what you'll still care about in Week 28.</p>
+  </div>
 </div>
 
 <div style="padding:24px 0 48px;text-align:center">
