@@ -110,7 +110,7 @@ tr:hover td{background:#fafafb}
     <div class="tc-col">
       <div class="tc-col-label blue">End product after 2 years</div>
       <p style="font-size:.82rem;color:#555;line-height:1.7">A command-line tool that takes raw sensor CSVs, validates and cleans them, detects threshold crossings and anomalies, generates labeled time-series plots with fault annotations, and exports a structured JSON report. Optimized to handle 100K+ readings with sub-millisecond range queries via binary search.</p>
-      <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"3 overtemp events in RPM sensor between t=120–180s, peak 94.2°C. 2 vibration spikes above 55g at t=45s and t=162s. Overall health: WARNING."</p></div>
+      <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"3 overtemp events in RPM sensor between t=120–180s, peak 94.2°C (example threshold). 2 vibration spikes above 55g at t=45s and t=162s. Overall health: WARNING."</p></div>
     </div>
     <div class="tc-col">
       <div class="tc-col-label red">Trade-offs</div>
@@ -221,7 +221,7 @@ tr:hover td{background:#fafafb}
         <li><span class="icon">✓</span> Lightcurve plots with dip annotations</li>
         <li><span class="icon">✓</span> Sector-by-sector summary reports</li>
         <li><span class="icon">✓</span> OOP: pluggable detrenders (Strategy pattern)</li>
-        <li><span class="icon">✓</span> DSA: prefix sums for O(1) windowed statistics</li>
+        <li><span class="icon">✓</span> DSA: prefix sums for constant-time windowed statistics</li>
       </ul>
     </div>
     <div class="tc-col">
@@ -353,10 +353,10 @@ tr:hover td{background:#fafafb}
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><span style="font-size:2rem">🌌</span><h3 style="font-size:1.05rem;font-weight:700">Space — "I want to discover things nobody has seen"</h3></div>
     <div style="font-size:.9rem;color:#444;line-height:1.85">
       <p>NASA's TESS satellite stares at a patch of sky for 27 days straight, measuring the brightness of thousands of stars every 2 minutes. If a planet passes in front of a star, the brightness dips — by maybe 0.5%. Hidden in terabytes of noisy data, there's a tiny signal that says: <em>a new world exists</em>.</p>
-      <p style="margin-top:10px">Your Lightcurve Explorer does exactly this (on toy data, but the same algorithm). Load a lightcurve CSV. Clean the NaN gaps and outlier spikes from instrument noise. Apply detrending to flatten the baseline. Scan for dips below threshold. Mark candidates. Your report says: <em>"2 dips detected at t=45.2d and t=91.7d, depth 0.8%, estimated period 46.5 days."</em> That's a planet candidate.</p>
+      <p style="margin-top:10px">Your Lightcurve Explorer follows the same broad idea as real transit-search pipelines, but in a simplified educational form. Load a lightcurve CSV. Clean NaN gaps and obvious outliers. Apply detrending to flatten the baseline. Scan for transit-like dips below threshold. Mark candidate events. Your report says: <em>"2 transit-like dips detected at t=45.2d and t=91.7d, depth 0.8%, estimated period 46.5 days."</em> That's a promising toy-pipeline candidate for further vetting.</p>
       <p style="margin-top:10px"><strong>Why it's medium-hard:</strong> The algorithms aren't harder than other tracks — threshold detection, windowed statistics, detrending are all doable. The hard part is the <em>domain</em>. You need to learn what flux means, what a transit looks like, what detrending does and why. Nobody in your Mechatronics class will know this already. You're on your own for domain context, and fewer classmates can help you debug.</p>
       <p style="margin-top:10px"><strong>Why the effort is worth it:</strong> Nothing else in your cohort will look like this. In an interview, when 20 people show data cleaning tools and sensor monitors, you pull out a <em>planet transit detector</em>. Conversation over — they want to hear more. This track also prepares you for aerospace and research careers. And the prefix-sum optimization you build in DSA is used everywhere — from financial analytics to genomics.</p>
-      <p style="margin-top:10px;padding:12px 16px;background:#eef2ff;border-radius:10px;color:#4338ca"><strong>After graduation, you can tell an employer:</strong> "I built a lightcurve analysis pipeline that detects planet transit candidates in star brightness data — with windowed statistics optimized to O(1) using prefix sums. Here's the repo."</p>
+      <p style="margin-top:10px;padding:12px 16px;background:#eef2ff;border-radius:10px;color:#4338ca"><strong>After graduation, you can tell an employer:</strong> "I built an educational lightcurve analysis pipeline that detects transit-like dip candidates in star brightness data — with windowed statistics optimized using prefix sums. Here's the repo."</p>
     </div>
   </div>
 

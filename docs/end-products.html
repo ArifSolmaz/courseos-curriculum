@@ -120,11 +120,11 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
 <span class="out">  - out_of_range_temp: 198</span><br>
 <span class="out">  - out_of_range_vibration: 134</span><br>
 <span class="hi">Events detected:</span><br>
-<span class="hi">  ⚠ 3 overtemp events (threshold: 80°C)</span><br>
+<span class="hi">  ⚠ 3 overtemp events (example threshold: 80°C)</span><br>
 <span class="hi">    t=1432s peak=94.2°C duration=45s</span><br>
 <span class="hi">    t=3891s peak=87.1°C duration=22s</span><br>
 <span class="hi">    t=8204s peak=91.8°C duration=38s</span><br>
-<span class="hi">  ⚠ 5 vibration spikes (threshold: 50g)</span><br>
+<span class="hi">  ⚠ 5 vibration spikes (example threshold: 50g)</span><br>
 <span class="hi">    t=1440s peak=62.3g (correlates with overtemp #1)</span><br>
 <span class="out">Analysis: mean_temp=42.3°C std=12.1 | mean_rpm=2847 std=234</span><br>
 <span class="ok">Saved: reports/figures/timeseries.png</span><br>
@@ -221,7 +221,7 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
 
 <div class="bench">
   <div class="bench-desc">
-    <h4>Benchmark proof</h4>
+    <h4>Illustrative benchmark (example run)</h4>
     <p>Event range query: "find all overtemp events between t=1000 and t=2000." Baseline scans all events linearly. Optimized uses a sorted index with binary search to jump directly to the range.</p>
   </div>
   <div class="bench-table">
@@ -341,15 +341,15 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
       <li>pytest suite with fixtures</li>
       <li>CachedAggregator: hash-based group aggregation</li>
       <li>Memoized statistics for repeated queries</li>
-      <li>Benchmark: uncached O(n) vs cached O(1) lookups</li>
+      <li>Benchmark: uncached full scan vs cached lookups</li>
     </ul>
   </div>
 </div>
 
 <div class="bench">
   <div class="bench-desc">
-    <h4>Benchmark proof</h4>
-    <p>Group aggregation: "what is the mean score per city?" Baseline scans all rows every time. Optimized builds a hash-based index once, then answers queries in O(1) from cache.</p>
+    <h4>Illustrative benchmark (example run)</h4>
+    <p>Group aggregation: "what is the mean score per city?" Baseline scans all rows every time. Optimized builds a hash-based index once, then answers repeated queries from cache — effectively constant time for cached lookups.</p>
   </div>
   <div class="bench-table">
     <table>
@@ -452,17 +452,17 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
       <li>Factory: load scenario from JSON config</li>
       <li>Custom exceptions (CollisionError, BoundsError)</li>
       <li>pytest suite with seeded deterministic tests</li>
-      <li>SpatialHash for O(1) proximity/collision queries</li>
+      <li>SpatialHash for fast average-case proximity lookup</li>
       <li>Grid indexing for fast neighbor lookup</li>
-      <li>Benchmark: brute-force O(n²) vs spatial hash O(1)</li>
+      <li>Benchmark: brute-force all-object checks vs grid-based neighborhood lookup</li>
     </ul>
   </div>
 </div>
 
 <div class="bench">
   <div class="bench-desc">
-    <h4>Benchmark proof</h4>
-    <p>Collision detection: "is anything within 15 units of the agent?" Baseline checks every object (O(n) per query, O(n²) per step). Spatial hashing divides the grid into cells — only check the nearby cells. O(1) average per query.</p>
+    <h4>Illustrative benchmark (example run)</h4>
+    <p>Collision detection: "is anything within 15 units of the agent?" Baseline checks every object. Spatial hashing divides the grid into cells — only nearby cells are searched. Under favorable spatial distributions, average query cost can be close to constant, though worst-case depends on occupancy.</p>
   </div>
   <div class="bench-table">
     <table>
@@ -494,21 +494,21 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
 <div class="term-code">
 <span class="cmd">$ python -c "from lightcurve import run; run('data/raw/tic_29837.csv')"</span><br><br>
 <span class="out">Loading data/raw/tic_29837.csv... 48,291 measurements</span><br>
-<span class="out">Time range: 0.0 to 54.2 days (sector A + B)</span><br>
+<span class="out">Time range: 0.0 to 60.2 days (sector A + B)</span><br>
 <span class="out">Cleaning: 48,291 → 45,102 (3,189 dropped: 2,104 NaN, 1,085 outlier)</span><br>
 <span class="out">Detrending: polynomial order 3 applied</span><br>
 <span class="hi">Transit search (threshold: 0.5% dip):</span><br>
 <span class="hi">  🪐 Dip #1: t=12.34d  depth=0.82%  duration=3.2h  SNR=8.4</span><br>
 <span class="hi">  🪐 Dip #2: t=58.81d  depth=0.79%  duration=3.1h  SNR=7.9</span><br>
 <span class="hi">  Estimated period: 46.47 days</span><br>
-<span class="hi">  Confidence: MODERATE (2 transits observed)</span><br>
+<span class="hi">  Confidence: MODERATE (two transit-like events in toy pipeline)</span><br>
 <span class="out">Sector summary: A(24,501 pts, 1 dip), B(20,601 pts, 1 dip)</span><br>
 <span class="ok">Saved: reports/figures/lightcurve_full.png</span><br>
 <span class="ok">Saved: reports/figures/dip_detail.png</span><br>
 <span class="ok">Saved: reports/figures/summary.png</span><br>
 <span class="ok">Saved: reports/report.json</span><br><br>
 <span class="cmd">$ python -c "from lightcurve.dsa import WindowStats; w = WindowStats(flux); print(w.mean(1000, 2000))"</span><br>
-<span class="out">0.99847 (prefix sum, 0.0001ms vs 0.12ms naive)</span>
+<span class="out">0.99847 (prefix sum, ~0.001ms vs ~0.12ms naive)</span>
 </div>
 </div>
 
@@ -566,31 +566,31 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
       <li>Strategy pattern for detrending algorithm selection</li>
       <li>Custom exceptions (NoDataError, InsufficientTransits)</li>
       <li>pytest with synthetic transit injection tests</li>
-      <li>PrefixSum array for O(1) windowed statistics</li>
+      <li>PrefixSum array for constant-time windowed statistics</li>
       <li>Fast mean/std/min/max over any time range</li>
-      <li>Benchmark: naive O(n) windows vs O(1) prefix sums</li>
+      <li>Benchmark: naive per-window summation vs precomputed prefix sums</li>
     </ul>
   </div>
 </div>
 
 <div class="bench">
   <div class="bench-desc">
-    <h4>Benchmark proof</h4>
-    <p>Windowed statistics: "what's the mean flux between t=10.0 and t=15.0 days?" Baseline sums all values in the range O(n). Prefix sums precompute cumulative sums — any window mean in O(1), two subtractions.</p>
+    <h4>Illustrative benchmark (example run)</h4>
+    <p>Windowed statistics: "what's the mean flux between t=10.0 and t=15.0 days?" Baseline sums all values in the window each time. Prefix sums precompute cumulative sums once — any window mean then requires only two lookups and a subtraction, effectively constant time.</p>
   </div>
   <div class="bench-table">
     <table>
       <tr><th>n points</th><th>Naive window</th><th>Prefix sum</th><th>Speedup</th></tr>
-      <tr><td>10,000</td><td>0.12ms</td><td>0.0001ms</td><td class="fast">1,200×</td></tr>
-      <tr><td>100,000</td><td>1.2ms</td><td>0.0001ms</td><td class="fast">12,000×</td></tr>
-      <tr><td>1,000,000</td><td>12ms</td><td>0.0001ms</td><td class="fast">120,000×</td></tr>
+      <tr><td>10,000</td><td>0.12ms</td><td><0.01ms</td><td class="fast">1,200×</td></tr>
+      <tr><td>100,000</td><td>1.2ms</td><td><0.01ms</td><td class="fast">12,000×</td></tr>
+      <tr><td>1,000,000</td><td>12ms</td><td><0.01ms</td><td class="fast">120,000×</td></tr>
     </table>
   </div>
 </div>
 
 <div class="usecase">
   <h4>Real-world use</h4>
-  <p>NASA's TESS mission has found 7,000+ exoplanet candidates using exactly this workflow: load lightcurve → detrend → detect dips → estimate period → flag candidates. Your tool does the same thing on toy data. The prefix-sum technique you implement is used in financial rolling averages, genomics sliding windows, and video processing. And in an interview, you say "I built a planet detector" — nobody forgets that.</p>
+  <p>NASA's TESS mission has found thousands of planet candidates through a much more sophisticated transit-search and validation pipeline. Your tool mirrors the broad educational idea on toy data: load lightcurve → clean/detrend → identify transit-like dips → estimate a period → report candidate events. The prefix-sum technique you implement is also widely used in rolling statistics across many data-heavy fields — financial analytics, genomics, video processing. And in an interview, you say "I built an educational transit detector" — nobody forgets that.</p>
 </div>
 </div>
 
@@ -699,7 +699,7 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
 
 <div class="bench">
   <div class="bench-desc">
-    <h4>Benchmark proof</h4>
+    <h4>Illustrative benchmark (example run)</h4>
     <p>Batch reprocessing: when a new day of data arrives, recompute all device summaries. Baseline recalculates everything from scratch. Cached version only processes the new data and merges with stored results.</p>
   </div>
   <div class="bench-table">

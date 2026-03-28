@@ -2282,10 +2282,11 @@ In the real world, decisions depend on MULTIPLE measurements:"""))
     \"\"\"Classify machine state from multiple sensor readings.
 
     Decision logic:
-    - CRITICAL: temp > 80 OR vibration > 50 (immediate danger)
-    - WARNING:  temp > 60 AND rpm > 3000 (combined stress)
-    - CAUTION:  temp > 60 OR rpm > 3000 (one metric elevated)
-    - NORMAL:   everything within limits
+    Example thresholds for this toy dataset (real limits depend on hardware):
+    - CRITICAL: temp > 80 OR vibration > 50
+    - WARNING:  temp > 60 AND rpm > 3000
+    - CAUTION:  temp > 60 OR rpm > 3000
+    - NORMAL:   everything within example limits
     \"\"\"
     if temp > 80 or vibration > 50:
         return "CRITICAL"
