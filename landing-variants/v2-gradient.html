@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CourseOS — One project. Four courses. Two years.</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: #1e1b4b;
+  line-height: 1.6;
+  background: linear-gradient(180deg, #ede9fe 0%, #dbeafe 30%, #f0f9ff 60%, #ffffff 100%);
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+/* ── Utility ── */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+.gradient-text {
+  background: linear-gradient(135deg, #7c3aed, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Glass Card ── */
+.glass {
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.08);
+}
+.glass-strong {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(124, 58, 237, 0.10);
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-block;
+  padding: 14px 32px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  border: none;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(124, 58, 237, 0.25); }
+.btn-primary {
+  background: linear-gradient(135deg, #7c3aed, #3b82f6);
+  color: #fff;
+}
+.btn-outline {
+  background: rgba(255,255,255,0.5);
+  border: 2px solid rgba(124, 58, 237, 0.3);
+  color: #7c3aed;
+}
+
+/* ── Section ── */
+section { padding: 80px 0; }
+.section-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.section-sub {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin-bottom: 48px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Scroll Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  animation: fadeUp 0.7s ease-out both;
+}
+.fade-up-d1 { animation-delay: 0.1s; }
+.fade-up-d2 { animation-delay: 0.2s; }
+.fade-up-d3 { animation-delay: 0.3s; }
+.fade-up-d4 { animation-delay: 0.4s; }
+.fade-up-d5 { animation-delay: 0.5s; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+  padding: 14px 0;
+}
+nav .container { display: flex; align-items: center; justify-content: space-between; }
+nav .logo { font-weight: 800; font-size: 1.3rem; }
+nav .nav-links { display: flex; gap: 28px; list-style: none; }
+nav .nav-links a {
+  text-decoration: none; color: #4b5563; font-weight: 500; font-size: 0.92rem;
+  transition: color 0.2s;
+}
+nav .nav-links a:hover { color: #7c3aed; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-top: 80px;
+}
+.hero h1 { font-size: 3.6rem; font-weight: 900; line-height: 1.15; margin-bottom: 20px; }
+.hero .subtitle { font-size: 1.25rem; color: #6b7280; max-width: 600px; margin: 0 auto 36px; line-height: 1.7; }
+.hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+/* ── PIPELINE ── */
+.pipeline-wrapper { display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap; }
+.pipeline-card {
+  padding: 28px 32px;
+  text-align: center;
+  min-width: 160px;
+  position: relative;
+}
+.pipeline-card .version { font-size: 2rem; font-weight: 800; }
+.pipeline-card .plabel { font-size: 0.88rem; color: #6b7280; margin-top: 4px; }
+.pipeline-arrow {
+  width: 60px; height: 4px;
+  background: linear-gradient(90deg, #7c3aed, #3b82f6);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ── TRACKS ── */
+.tracks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 20px;
+}
+.track-card {
+  padding: 32px 20px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.track-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(124, 58, 237, 0.15); }
+.track-emoji { font-size: 2.8rem; margin-bottom: 12px; display: block; }
+.track-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+.track-product { font-size: 0.85rem; color: #7c3aed; font-weight: 500; }
+
+/* ── COURSES ── */
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+.course-card { padding: 32px 28px; transition: transform 0.3s; }
+.course-card:hover { transform: translateY(-4px); }
+.course-code {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 14px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.12), rgba(59,130,246,0.12));
+  color: #7c3aed;
+}
+.course-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+.course-meta { font-size: 0.88rem; color: #6b7280; line-height: 1.8; }
+
+/* ── CONTRACT ── */
+.contract-box {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px;
+  font-family: 'Inter', monospace;
+}
+.contract-box pre {
+  background: rgba(124, 58, 237, 0.06);
+  border-radius: 14px;
+  padding: 24px;
+  overflow-x: auto;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  border: 1px solid rgba(124, 58, 237, 0.1);
+}
+
+/* ── JOURNEY ── */
+.journey-item {
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+.journey-item h3 { font-weight: 700; font-size: 1.15rem; margin-bottom: 10px; }
+.journey-item p, .journey-item ul { font-size: 0.95rem; color: #4b5563; }
+.journey-item ul { padding-left: 20px; margin-top: 8px; }
+.journey-item li { margin-bottom: 6px; }
+
+.step-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.step-card {
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(124, 58, 237, 0.04);
+  border: 1px solid rgba(124, 58, 237, 0.08);
+}
+.step-card .step-num {
+  display: inline-block;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #3b82f6);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-align: center;
+  line-height: 28px;
+  margin-right: 8px;
+}
+
+/* ── NOTEBOOKS ── */
+.notebook-section { margin-bottom: 24px; }
+details {
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+details summary {
+  padding: 18px 24px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1.05rem;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+  background: rgba(255,255,255,0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 16px;
+  transition: background 0.2s;
+}
+details summary:hover { background: rgba(255,255,255,0.65); }
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: '\25B6';
+  font-size: 0.75rem;
+  transition: transform 0.3s;
+  color: #7c3aed;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details[open] summary {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+.notebook-table-wrap {
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  padding: 16px;
+  overflow-x: auto;
+}
+.notebook-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.notebook-table th {
+  text-align: left;
+  padding: 10px 14px;
+  font-weight: 600;
+  color: #7c3aed;
+  border-bottom: 2px solid rgba(124, 58, 237, 0.1);
+  white-space: nowrap;
+}
+.notebook-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(124, 58, 237, 0.05);
+  white-space: nowrap;
+}
+.notebook-table tr:last-child td { border-bottom: none; }
+.notebook-table a {
+  color: #7c3aed;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(124, 58, 237, 0.07);
+  transition: background 0.2s;
+  display: inline-block;
+  margin: 2px;
+  font-size: 0.82rem;
+}
+.notebook-table a:hover { background: rgba(124, 58, 237, 0.15); }
+
+/* ── GRADING ── */
+.grading-bars { margin-top: 16px; }
+.grading-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.grading-bar-label { font-weight: 600; font-size: 0.9rem; min-width: 140px; }
+.grading-bar-track {
+  flex: 1;
+  height: 28px;
+  border-radius: 14px;
+  background: rgba(124, 58, 237, 0.06);
+  overflow: hidden;
+}
+.grading-bar-fill {
+  height: 100%;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #7c3aed, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 48px 0;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+footer a { color: #7c3aed; text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .hero h1 { font-size: 2.2rem; }
+  .hero .subtitle { font-size: 1.05rem; }
+  section { padding: 56px 0; }
+  .section-title { font-size: 1.7rem; }
+  .pipeline-wrapper { flex-direction: column; }
+  .pipeline-arrow { width: 4px; height: 40px; }
+  nav .nav-links { display: none; }
+  .contract-box { padding: 24px; }
+  .contract-box pre { font-size: 0.75rem; padding: 16px; }
+}
+@media (max-width: 480px) {
+  .hero h1 { font-size: 1.8rem; }
+  .tracks-grid { grid-template-columns: repeat(2, 1fr); }
+  .courses-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════ NAV ════════════ -->
+<nav>
+  <div class="container">
+    <div class="logo"><span class="gradient-text">CourseOS</span></div>
+    <ul class="nav-links">
+      <li><a href="#pipeline">Pipeline</a></li>
+      <li><a href="#tracks">Tracks</a></li>
+      <li><a href="#courses">Courses</a></li>
+      <li><a href="#contract">Contract</a></li>
+      <li><a href="#journey">Journey</a></li>
+      <li><a href="#notebooks">Notebooks</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ════════════ HERO ════════════ -->
+<section class="hero">
+  <div class="container">
+    <h1 class="fade-up">One project. Four courses.<br><span class="gradient-text">Two years.</span></h1>
+    <p class="subtitle fade-up fade-up-d1">
+      CourseOS is a project-based programming curriculum where you build one real product across four semesters. Choose your track, follow the pipeline, ship working software.
+    </p>
+    <div class="hero-buttons fade-up fade-up-d2">
+      <a href="#pipeline" class="btn btn-primary">See the Pipeline</a>
+      <a href="#tracks" class="btn btn-outline">Explore Tracks</a>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ PIPELINE ════════════ -->
+<section id="pipeline">
+  <div class="container">
+    <h2 class="section-title fade-up"><span class="gradient-text">The Pipeline</span></h2>
+    <p class="section-sub fade-up fade-up-d1">Your product evolves through four versions &mdash; each version maps to one course.</p>
+    <div class="pipeline-wrapper fade-up fade-up-d2">
+      <div class="glass pipeline-card">
+        <div class="version gradient-text">v1</div>
+        <div class="plabel">Script &middot; CP1</div>
+      </div>
+      <div class="pipeline-arrow"></div>
+      <div class="glass pipeline-card">
+        <div class="version gradient-text">v2</div>
+        <div class="plabel">Data &middot; CP2</div>
+      </div>
+      <div class="pipeline-arrow"></div>
+      <div class="glass pipeline-card">
+        <div class="version gradient-text">v3</div>
+        <div class="plabel">OOP &middot; OOP</div>
+      </div>
+      <div class="pipeline-arrow"></div>
+      <div class="glass pipeline-card">
+        <div class="version gradient-text">v3+</div>
+        <div class="plabel">Optimized &middot; DSA</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ TRACKS ════════════ -->
+<section id="tracks">
+  <div class="container">
+    <h2 class="section-title fade-up"><span class="gradient-text">5 Tracks</span></h2>
+    <p class="section-sub fade-up fade-up-d1">Pick the domain that excites you. Your track stays the same for all four courses.</p>
+    <div class="tracks-grid">
+      <div class="glass track-card fade-up fade-up-d1">
+        <span class="track-emoji">&#129302;</span>
+        <div class="track-name">Robotics</div>
+        <div class="track-product">RoboClean</div>
+      </div>
+      <div class="glass track-card fade-up fade-up-d2">
+        <span class="track-emoji">&#128202;</span>
+        <div class="track-name">Data</div>
+        <div class="track-product">DataPulse</div>
+      </div>
+      <div class="glass track-card fade-up fade-up-d3">
+        <span class="track-emoji">&#127918;</span>
+        <div class="track-name">Simulation</div>
+        <div class="track-product">SimWorld</div>
+      </div>
+      <div class="glass track-card fade-up fade-up-d4">
+        <span class="track-emoji">&#127748;</span>
+        <div class="track-name">Space</div>
+        <div class="track-product">OrbitSim</div>
+      </div>
+      <div class="glass track-card fade-up fade-up-d5">
+        <span class="track-emoji">&#128225;</span>
+        <div class="track-name">IoT</div>
+        <div class="track-product">SensorNet</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ COURSES ════════════ -->
+<section id="courses">
+  <div class="container">
+    <h2 class="section-title fade-up"><span class="gradient-text">4 Courses</span></h2>
+    <p class="section-sub fade-up fade-up-d1">Each course is one semester, one version of your product.</p>
+    <div class="courses-grid">
+      <div class="glass course-card fade-up fade-up-d1">
+        <span class="course-code">CP1</span>
+        <h3>Computer Programming 1</h3>
+        <p class="course-meta">
+          Year 1 &middot; Fall Semester<br>
+          3 hours/week &middot; 14 weeks<br>
+          Pipeline: v1 (Script)
+        </p>
+      </div>
+      <div class="glass course-card fade-up fade-up-d2">
+        <span class="course-code">CP2</span>
+        <h3>Computer Programming 2</h3>
+        <p class="course-meta">
+          Year 1 &middot; Spring Semester<br>
+          3 hours/week &middot; 14 weeks<br>
+          Pipeline: v2 (Data)
+        </p>
+      </div>
+      <div class="glass course-card fade-up fade-up-d3">
+        <span class="course-code">OOP</span>
+        <h3>Object-Oriented Programming</h3>
+        <p class="course-meta">
+          Year 2 &middot; Fall Semester<br>
+          3 hours/week &middot; 14 weeks<br>
+          Pipeline: v3 (OOP)
+        </p>
+      </div>
+      <div class="glass course-card fade-up fade-up-d4">
+        <span class="course-code">DSA</span>
+        <h3>Data Structures &amp; Algorithms</h3>
+        <p class="course-meta">
+          Year 2 &middot; Spring Semester<br>
+          3 hours/week &middot; 14 weeks<br>
+          Pipeline: v3+ (Optimized)
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ CONTRACT ════════════ -->
+<section id="contract">
+  <div class="container">
+    <h2 class="section-title fade-up"><span class="gradient-text">The Contract</span></h2>
+    <p class="section-sub fade-up fade-up-d1">Every track implements these 6 function signatures. Your product must honour this interface.</p>
+    <div class="glass-strong contract-box fade-up fade-up-d2">
+      <pre><code>def load_raw(path: str) -&gt; list[dict]:
+    """Read raw data from file and return list of records."""
+
+def clean(raw: list[dict], config: dict) -&gt; list[dict]:
+    """Validate and clean records according to config rules."""
+
+def analyze(clean_data: list[dict]) -&gt; dict:
+    """Compute summary statistics and return analysis dict."""
+
+def visualize(analysis: dict, output_path: str) -&gt; None:
+    """Generate and save charts from analysis results."""
+
+def report(analysis: dict, output_path: str) -&gt; None:
+    """Produce a human-readable report file."""
+
+def optimize(data: list[dict], strategy: str) -&gt; list[dict]:
+    """Apply DSA-backed optimization to the data pipeline."""</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ JOURNEY ════════════ -->
+<section id="journey">
+  <div class="container">
+    <h2 class="section-title fade-up"><span class="gradient-text">The Journey</span></h2>
+    <p class="section-sub fade-up fade-up-d1">Everything you need to know about how CourseOS works.</p>
+
+    <!-- How it works -->
+    <div class="glass journey-item fade-up">
+      <h3>How It Works</h3>
+      <p>You pick a track in Week 1 of CP1. That track gives you a domain, a dataset, and a product name. Over four semesters you build, refine, and optimize that product. Each course adds a new layer of skill. By graduation you have a portfolio-ready, fully tested, documented software project.</p>
+    </div>
+
+    <!-- Year 1 -->
+    <div class="glass journey-item fade-up">
+      <h3>Year 1 &mdash; Foundations</h3>
+      <ul>
+        <li><strong>CP1 (Fall):</strong> Learn Python from zero. Write scripts, loops, functions. Ship v1 &mdash; a working script that loads and processes your track's data.</li>
+        <li><strong>CP2 (Spring):</strong> Add data quality, validation, visualization, testing. Ship v2 &mdash; a robust data pipeline with charts and reports.</li>
+      </ul>
+    </div>
+
+    <!-- Year 2 -->
+    <div class="glass journey-item fade-up">
+      <h3>Year 2 &mdash; Mastery</h3>
+      <ul>
+        <li><strong>OOP (Fall):</strong> Refactor into classes, apply SOLID and design patterns, add plugins. Ship v3 &mdash; a modular, extensible architecture.</li>
+        <li><strong>DSA (Spring):</strong> Benchmark, profile, apply algorithms. Ship v3+ &mdash; an optimized product with Big-O analysis and a final performance report.</li>
+      </ul>
+    </div>
+
+    <!-- Typical Week -->
+    <div class="glass journey-item fade-up">
+      <h3>A Typical Week</h3>
+      <div class="step-grid">
+        <div class="step-card">
+          <span class="step-num">1</span><strong>Monday:</strong> Core notebook released on Colab
+        </div>
+        <div class="step-card">
+          <span class="step-num">2</span><strong>Tuesday:</strong> Read &amp; run the notebook, take notes
+        </div>
+        <div class="step-card">
+          <span class="step-num">3</span><strong>Wednesday:</strong> Attend lab session, ask questions
+        </div>
+        <div class="step-card">
+          <span class="step-num">4</span><strong>Thursday:</strong> Work on the homework notebook
+        </div>
+        <div class="step-card">
+          <span class="step-num">5</span><strong>Friday:</strong> Push HW to GitHub, self-check
+        </div>
+        <div class="step-card">
+          <span class="step-num">6</span><strong>Weekend:</strong> Review, prep for next week
+        </div>
+        <div class="step-card">
+          <span class="step-num">7</span><strong>Sunday:</strong> Check notebook auto-graded, fix if needed
+        </div>
+      </div>
+    </div>
+
+    <!-- Fall Behind -->
+    <div class="glass journey-item fade-up">
+      <h3>What If You Fall Behind?</h3>
+      <p>CourseOS uses <strong>Recovery Tickets</strong>. If you miss a deadline:</p>
+      <ul>
+        <li>You get <strong>3 recovery tickets</strong> per semester (no questions asked).</li>
+        <li>Each ticket extends one deadline by 7 days.</li>
+        <li>You can stack up to 2 tickets on a single assignment (14 days max).</li>
+        <li>Unused tickets convert to bonus points at the end of the semester.</li>
+        <li>If you run out of tickets, talk to the instructor &mdash; there is always a path forward.</li>
+      </ul>
+    </div>
+
+    <!-- Track Switching -->
+    <div class="glass journey-item fade-up">
+      <h3>Track Switching</h3>
+      <p>You may switch tracks <strong>once</strong>, and only between CP1 and CP2 (i.e., during the break between semesters). After CP2 starts, your track is locked. Switching requires redoing any track-specific notebooks from CP1 that differ. Most of the work carries over because the contract functions are the same.</p>
+    </div>
+
+    <!-- Grading -->
+    <div class="glass journey-item fade-up">
+      <h3>Grading</h3>
+      <p>Your grade in each course follows this breakdown:</p>
+      <div class="grading-bars">
+        <div class="grading-bar-row">
+          <span class="grading-bar-label">Weekly HW</span>
+          <div class="grading-bar-track"><div class="grading-bar-fill" style="width:50%">50%</div></div>
+        </div>
+        <div class="grading-bar-row">
+          <span class="grading-bar-label">Version Release</span>
+          <div class="grading-bar-track"><div class="grading-bar-fill" style="width:20%">20%</div></div>
+        </div>
+        <div class="grading-bar-row">
+          <span class="grading-bar-label">Midterm Check</span>
+          <div class="grading-bar-track"><div class="grading-bar-fill" style="width:20%">20%</div></div>
+        </div>
+        <div class="grading-bar-row">
+          <span class="grading-bar-label">Participation</span>
+          <div class="grading-bar-track"><div class="grading-bar-fill" style="width:10%">10%</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Policy -->
+    <div class="glass journey-item fade-up">
+      <h3>AI Policy</h3>
+      <p>AI tools (ChatGPT, Copilot, Claude, etc.) are <strong>allowed and encouraged</strong> as learning accelerators. The rules:</p>
+      <ul>
+        <li><strong>Always cite:</strong> Add a comment <code># AI-assisted</code> on any AI-generated line.</li>
+        <li><strong>Understand everything:</strong> You must be able to explain every line of your code in a live check.</li>
+        <li><strong>No copy-paste submissions:</strong> Running a prompt and submitting raw output is academic dishonesty.</li>
+        <li><strong>Checks are oral:</strong> Weekly check notebooks include questions you answer live.</li>
+        <li>The goal is to use AI the way a professional developer does &mdash; as a tool, not a crutch.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ NOTEBOOKS ════════════ -->
+<section id="notebooks">
+  <div class="container">
+    <h2 class="section-title fade-up"><span class="gradient-text">Week-by-Week Notebooks</span></h2>
+    <p class="section-sub fade-up fade-up-d1">Every week has a Core lesson, a Homework, and a Check. Click a course to expand.</p>
+
+    <!-- CP1 -->
+    <details class="fade-up">
+      <summary>CP1 &mdash; Computer Programming 1 (14 weeks)</summary>
+      <div class="notebook-table-wrap">
+        <table class="notebook-table">
+          <thead><tr><th>Wk</th><th>Topic</th><th>Core</th><th>HW</th><th>Check</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Welcome to Python</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W01_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W01_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W01_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>2</td><td>Variables</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W02_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W02_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W02_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>3</td><td>Conditionals</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W03_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W03_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W03_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>4</td><td>Decision Logic</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W04_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W04_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W04_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>5</td><td>Loops &amp; Scanning</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W05_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W05_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W05_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>6</td><td>Loops &amp; Events</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W06_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W06_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W06_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>7</td><td>Lists</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W07_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W07_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W07_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>8</td><td>Strings</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W08_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W08_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W08_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>9</td><td>Functions</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W09_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W09_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W09_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>10</td><td>Decomposition</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W10_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W10_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W10_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>11</td><td>Exceptions</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W11_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W11_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W11_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>12</td><td>File I/O</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W12_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W12_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W12_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>13</td><td>Integration</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W13_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W13_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W13_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>14</td><td>v1 Release</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W14_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W14_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp1/W14_check.ipynb" target="_blank">Check</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <!-- CP2 -->
+    <details class="fade-up">
+      <summary>CP2 &mdash; Computer Programming 2 (14 weeks)</summary>
+      <div class="notebook-table-wrap">
+        <table class="notebook-table">
+          <thead><tr><th>Wk</th><th>Topic</th><th>Core</th><th>HW</th><th>Check</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Schema Validation</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W01_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W01_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W01_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>2</td><td>Dict Analytics</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W02_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W02_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W02_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>3</td><td>Configurable Cleaning</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W03_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W03_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W03_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>4</td><td>Data Quality</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W04_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W04_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W04_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>5</td><td>Matplotlib</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W05_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W05_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W05_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>6</td><td>Reports</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W06_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W06_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W06_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>7</td><td>NumPy</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W07_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W07_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W07_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>8</td><td>Timing</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W08_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W08_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W08_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>9</td><td>Testing</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W09_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W09_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W09_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>10</td><td>Golden Outputs</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W10_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W10_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W10_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>11</td><td>Modularize</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W11_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W11_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W11_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>12</td><td>Package Hygiene</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W12_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W12_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W12_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>13</td><td>Integration</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W13_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W13_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W13_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>14</td><td>v2 Release</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W14_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W14_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/cp2/W14_check.ipynb" target="_blank">Check</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <!-- OOP -->
+    <details class="fade-up">
+      <summary>OOP &mdash; Object-Oriented Programming (14 weeks)</summary>
+      <div class="notebook-table-wrap">
+        <table class="notebook-table">
+          <thead><tr><th>Wk</th><th>Topic</th><th>Core</th><th>HW</th><th>Check</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Classes</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W01_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W01_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W01_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>2</td><td>Composition</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W02_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W02_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W02_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>3</td><td>Cleaner</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W03_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W03_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W03_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>4</td><td>Analyzer</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W04_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W04_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W04_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>5</td><td>Plotter &amp; Reporter</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W05_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W05_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W05_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>6</td><td>Exceptions</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W06_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W06_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W06_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>7</td><td>SOLID</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W07_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W07_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W07_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>8</td><td>Strategy Pattern</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W08_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W08_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W08_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>9</td><td>Factory Pattern</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W09_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W09_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W09_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>10</td><td>pytest</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W10_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W10_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W10_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>11</td><td>Hygiene</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W11_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W11_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W11_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>12</td><td>Plugin</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W12_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W12_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W12_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>13</td><td>Freeze</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W13_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W13_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W13_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>14</td><td>v3 Demo</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W14_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W14_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/oop/W14_check.ipynb" target="_blank">Check</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <!-- DSA -->
+    <details class="fade-up">
+      <summary>DSA &mdash; Data Structures &amp; Algorithms (14 weeks)</summary>
+      <div class="notebook-table-wrap">
+        <table class="notebook-table">
+          <thead><tr><th>Wk</th><th>Topic</th><th>Core</th><th>HW</th><th>Check</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Big-O</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W01_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W01_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W01_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>2</td><td>Benchmarks</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W02_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W02_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W02_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>3</td><td>Searching</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W03_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W03_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W03_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>4</td><td>Sorting</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W04_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W04_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W04_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>5</td><td>Hashing</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W05_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W05_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W05_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>6</td><td>Heap</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W06_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W06_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W06_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>7</td><td>Sprint 1</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W07_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W07_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W07_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>8</td><td>Sprint 2</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W08_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W08_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W08_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>9</td><td>Trees</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W09_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W09_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W09_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>10</td><td>Graphs</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W10_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W10_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W10_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>11</td><td>Shortest Paths</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W11_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W11_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W11_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>12</td><td>Dynamic Programming</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W12_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W12_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W12_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>13</td><td>Integration</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W13_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W13_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W13_check.ipynb" target="_blank">Check</a></td></tr>
+            <tr><td>14</td><td>Final Report</td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W14_core.ipynb" target="_blank">Core</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W14_hw.ipynb" target="_blank">HW</a></td><td><a href="https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks/dsa/W14_check.ipynb" target="_blank">Check</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+  </div>
+</section>
+
+<!-- ════════════ FOOTER ════════════ -->
+<footer>
+  <div class="container">
+    <p style="font-weight:700; font-size:1.1rem; margin-bottom:8px;">
+      <span class="gradient-text">CourseOS</span>
+    </p>
+    <p>Mechatronics Engineering &middot; <a href="https://github.com/ArifSolmaz/courseos-curriculum" target="_blank">GitHub</a></p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CourseOS</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#fcfcfc;color:#232323;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+.wrap{max-width:780px;margin:0 auto;padding:0 28px}
+
+/* Hero */
+.hero{padding:100px 0 60px;text-align:center}
+.hero h1{font-size:3.2rem;font-weight:700;letter-spacing:-.04em;line-height:1.1;color:#111}
+.hero .accent{background:linear-gradient(135deg,#6366f1,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{margin-top:18px;font-size:1.05rem;color:#777;max-width:460px;margin-left:auto;margin-right:auto;line-height:1.6}
+
+/* Pipeline */
+.pipe{display:flex;align-items:stretch;margin:50px 0 0;border-radius:16px;overflow:hidden;border:1px solid #eee}
+.pipe-s{flex:1;padding:28px 16px;text-align:center;background:#fff;border-right:1px solid #eee;transition:background .2s}
+.pipe-s:last-child{border-right:none}
+.pipe-s:hover{background:#faf8ff}
+.pipe-v{font-family:'DM Mono',monospace;font-size:1.6rem;font-weight:500;color:#6366f1}
+.pipe-n{font-size:.82rem;font-weight:600;color:#333;margin-top:4px}
+.pipe-d{font-size:.72rem;color:#aaa;margin-top:2px}
+
+/* Sections */
+.sec{margin-top:72px}
+.sec-label{font-size:.65rem;text-transform:uppercase;letter-spacing:2px;color:#bbb;font-weight:600;margin-bottom:18px}
+
+/* Tracks */
+.tracks{display:flex;gap:10px}
+.tr{flex:1;text-align:center;padding:24px 8px;border-radius:14px;background:#fff;border:1px solid #eee;transition:all .2s}
+.tr:hover{border-color:#d4d0ff;transform:translateY(-3px);box-shadow:0 8px 24px rgba(99,102,241,.08)}
+.tr-i{font-size:1.8rem;margin-bottom:6px}
+.tr-n{font-size:.8rem;font-weight:600;color:#333}
+.tr-p{font-size:.68rem;color:#aaa;margin-top:2px}
+
+/* Courses */
+.courses{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.crs{padding:24px;border-radius:14px;background:#fff;border:1px solid #eee;transition:all .2s}
+.crs:hover{border-color:#d4d0ff;box-shadow:0 4px 16px rgba(99,102,241,.06)}
+.crs-code{font-family:'DM Mono',monospace;font-size:.7rem;color:#6366f1;font-weight:500;letter-spacing:.5px}
+.crs h3{font-size:.95rem;font-weight:600;margin:6px 0 4px}
+.crs p{font-size:.82rem;color:#888;line-height:1.5}
+.crs-meta{display:flex;gap:10px;margin-top:10px;font-size:.72rem;color:#bbb}
+
+/* Contract */
+.code-block{background:#1a1a2e;border-radius:14px;padding:28px 32px;font-family:'DM Mono',monospace;font-size:.82rem;line-height:2.1;color:#c4b5fd;overflow-x:auto}
+.code-block .fn{color:#a5b4fc}
+.code-block .ar{color:#6ee7b7}
+.code-block .cm{color:#555}
+
+/* Journey */
+.journey{font-size:.9rem;color:#555;line-height:1.85}
+.journey h3{font-size:.95rem;font-weight:600;color:#232323;margin:28px 0 8px}
+.journey h3:first-child{margin-top:0}
+.journey ol,.journey ul{margin-left:20px}
+.journey li{margin-bottom:2px}
+.journey strong{color:#333}
+.journey code{font-family:'DM Mono',monospace;font-size:.82rem;background:#f3f0ff;padding:1px 6px;border-radius:4px;color:#6366f1}
+
+/* Weeks */
+details{border-radius:14px;background:#fff;border:1px solid #eee;margin-bottom:10px;overflow:hidden}
+summary{padding:16px 22px;font-weight:600;font-size:.9rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;list-style:none;transition:background .15s;color:#333}
+summary:hover{background:#faf8ff}
+summary::after{content:'+';font-size:1.1rem;color:#ccc;font-family:'DM Mono',monospace}
+details[open] summary::after{content:'−'}
+details[open] summary{border-bottom:1px solid #f0f0f0}
+.det-body{padding:16px 22px}
+
+.wk{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #f7f7f7;gap:12px}
+.wk:last-child{border-bottom:none}
+.wk-n{font-family:'DM Mono',monospace;font-size:.78rem;color:#6366f1;width:24px;text-align:center;flex-shrink:0;font-weight:500}
+.wk-t{flex:1;font-size:.85rem;color:#444}
+.wk-l{display:flex;gap:5px;flex-shrink:0}
+.wk-l a{font-size:.65rem;font-weight:600;padding:3px 9px;border-radius:6px;transition:all .15s;letter-spacing:.3px}
+.wk-l .core{background:#f3f0ff;color:#6366f1}
+.wk-l .core:hover{background:#6366f1;color:#fff}
+.wk-l .hw{background:#fef9ee;color:#d97706}
+.wk-l .hw:hover{background:#d97706;color:#fff}
+.wk-l .chk{background:#ecfdf5;color:#059669}
+.wk-l .chk:hover{background:#059669;color:#fff}
+.browse{font-size:.75rem;color:#aaa;margin-top:12px}
+.browse a{color:#6366f1}
+
+/* Weekly flow */
+.flow{display:flex;gap:20px;text-align:center;margin-top:8px}
+.flow-item{flex:1}
+.flow-icon{font-size:1.4rem;margin-bottom:4px}
+.flow-name{font-size:.82rem;font-weight:600;color:#333}
+.flow-desc{font-size:.72rem;color:#aaa;margin-top:1px}
+
+/* Footer */
+.foot{text-align:center;padding:56px 0 40px;font-size:.75rem;color:#ccc}
+.foot a{color:#999}
+.foot a:hover{color:#6366f1}
+
+/* Divider */
+.div{height:1px;background:#f0f0f0;margin:0}
+
+/* Responsive */
+@media(max-width:640px){
+  .hero h1{font-size:2.2rem}
+  .pipe{flex-direction:column}
+  .pipe-s{border-right:none;border-bottom:1px solid #eee}
+  .pipe-s:last-child{border-bottom:none}
+  .tracks{flex-wrap:wrap}
+  .tr{min-width:calc(33% - 8px)}
+  .courses{grid-template-columns:1fr}
+  .flow{flex-wrap:wrap}
+  .flow-item{min-width:calc(33% - 14px)}
+  .wk-l{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="hero">
+  <h1>One project.<br><span class="accent">Four courses.</span><br>Two years.</h1>
+  <p>Build a real tool from scratch and evolve it into something portfolio-worthy.</p>
+</div>
+
+<div class="pipe">
+  <div class="pipe-s"><div class="pipe-v">v1</div><div class="pipe-n">CP1</div><div class="pipe-d">It works</div></div>
+  <div class="pipe-s"><div class="pipe-v">v2</div><div class="pipe-n">CP2</div><div class="pipe-d">It's robust</div></div>
+  <div class="pipe-s"><div class="pipe-v">v3</div><div class="pipe-n">OOP</div><div class="pipe-d">It's architected</div></div>
+  <div class="pipe-s"><div class="pipe-v">v3</div><div class="pipe-n">DSA</div><div class="pipe-d">It's fast</div></div>
+</div>
+
+<div class="sec">
+  <div class="sec-label">Pick a track</div>
+  <div class="tracks">
+    <div class="tr"><div class="tr-i">🤖</div><div class="tr-n">Robotics</div><div class="tr-p">MechaSense Studio</div></div>
+    <div class="tr"><div class="tr-i">📊</div><div class="tr-n">Data / AI</div><div class="tr-p">CleanReport Pipeline</div></div>
+    <div class="tr"><div class="tr-i">🎮</div><div class="tr-n">Simulation</div><div class="tr-p">SimLab Engine</div></div>
+    <div class="tr"><div class="tr-i">🌌</div><div class="tr-n">Space</div><div class="tr-p">Lightcurve Explorer</div></div>
+    <div class="tr"><div class="tr-i">📡</div><div class="tr-n">IoT</div><div class="tr-p">AutoDashboard</div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-label">Four courses, one repo</div>
+  <div class="courses">
+    <div class="crs"><div class="crs-code">CP1</div><h3>Computer Programming 1</h3><p>Python fundamentals → v1 functional pipeline</p><div class="crs-meta"><span>Year 1, Sem 1</span><span>5h/week</span><span>14 weeks</span></div></div>
+    <div class="crs"><div class="crs-code">CP2</div><h3>Computer Programming 2</h3><p>Robust data handling → v2 professional tool</p><div class="crs-meta"><span>Year 1, Sem 2</span><span>5h/week</span><span>14 weeks</span></div></div>
+    <div class="crs"><div class="crs-code">OOP</div><h3>Object-Oriented Programming</h3><p>Refactor into architecture → v3 components</p><div class="crs-meta"><span>Year 2, Sem 3</span><span>3h/week</span><span>14 weeks</span></div></div>
+    <div class="crs"><div class="crs-code">DSA</div><h3>Data Structures & Algorithms</h3><p>Optimize + benchmark → v3 performance proof</p><div class="crs-meta"><span>Year 2, Sem 4</span><span>3h/week</span><span>14 weeks</span></div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-label">The contract</div>
+  <div class="code-block"><span class="cm"># Every track implements these in /src/</span><br><span class="fn">load_data</span>(config) <span class="ar">→ data</span><br><span class="fn">clean_data</span>(data, config) <span class="ar">→ clean_data</span><br><span class="fn">analyze</span>(clean_data, config) <span class="ar">→ results</span><br><span class="fn">plot</span>(clean_data, results, config) <span class="ar">→ figures</span><br><span class="fn">export_results</span>(clean_data, results, figures, config) <span class="ar">→ paths</span><br><span class="fn">self_check</span>() <span class="ar">→ None</span></div>
+</div>
+
+<div class="sec">
+  <div class="sec-label">Your journey</div>
+  <div class="journey">
+    <h3>How it works</h3>
+    <p>You keep <strong>one GitHub repository</strong> for two years. Every week you open a Colab notebook, learn a concept, and apply it to your project. By the end, you have a portfolio-quality tool that you built from scratch. There are no exams — your grade comes from what you build and what you can explain.</p>
+
+    <h3>Year 1</h3>
+    <p><strong>CP1:</strong> Start from <code>print("hello")</code> and by Week 14 you have a working data pipeline. Every week adds one concept: variables, conditionals, loops, functions, file I/O. Each session is 5 hours.</p>
+    <p><strong>CP2:</strong> Your v1 works but it's fragile. Now you add schema validation, configurable cleaning, professional plots, reports, tests, and move all code into <code>/src</code>.</p>
+
+    <h3>Year 2</h3>
+    <p><strong>OOP:</strong> Refactor v2 into components — DataSource, Cleaner, Analyzer, Plotter, Reporter. Learn design patterns, write pytest tests, build a plugin system. Sessions are 3 hours.</p>
+    <p><strong>DSA:</strong> Find the bottleneck and optimize it — hash tables, heaps, binary search, trees. Prove improvement with benchmarks, Big-O analysis, timing plots.</p>
+
+    <h3>Typical week</h3>
+    <ol>
+      <li>Open the <strong>Core Notebook</strong> in Colab — learn the concept</li>
+      <li>Open your <strong>Studio Notebook</strong> — apply it to your project</li>
+      <li>Finish the <strong>must-pass core</strong> first, then standard, then stretch</li>
+      <li>Run the <strong>Universal Check</strong> — pass or fail</li>
+      <li>Fix failures in <code>/src</code>, not in the notebook</li>
+      <li>Complete the <strong>reflection</strong> and submit</li>
+      <li>Do the <strong>Homework</strong> before next week</li>
+    </ol>
+
+    <h3>What if I fall behind?</h3>
+    <p>Every week has three levels. Can't finish the standard target? <strong>Finish the must-pass core</strong> — that keeps you safe. Can't even do that? Submit a <strong>recovery ticket</strong>. You get 3 per semester with full credit. After that, weeks are capped at core level. Nobody fails silently — but you have to show up.</p>
+
+    <h3>Tracks</h3>
+    <p>Explore all 5 during Weeks 1–2. <strong>Confirm by Week 3.</strong> Locked for the rest of Year 1. One exceptional reset possible before Year 2. No changes during OOP or DSA.</p>
+
+    <h3>Grading</h3>
+    <ul>
+      <li>Weekly submissions + checks: <strong>50%</strong></li>
+      <li>Quizzes / oral explain-your-code: <strong>20%</strong></li>
+      <li>Release demo: <strong>20%</strong></li>
+      <li>Professional habits: <strong>10%</strong></li>
+    </ul>
+    <p style="margin-top:6px;">Teamwork is allowed but understanding is individual. Can't explain the code? <strong>You</strong> get the penalty.</p>
+
+    <h3>AI tools</h3>
+    <p>If allowed: disclose usage, explain everything. <strong>"It runs" is not enough — you must know why.</strong></p>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-label">Notebooks — open in Colab</div>
+
+  <script>
+  const R="ArifSolmaz/courseos-curriculum",B="course-content/notebooks";
+  function c(course,f){return`https://colab.research.google.com/github/${R}/blob/main/${B}/${course}/${f}`}
+  function g(course){return`https://github.com/${R}/tree/main/${B}/${course}`}
+  const W={
+  cp1:[[1,"Welcome to Python & Your Pipeline"],[2,"Variables, Types & Numbers"],[3,"Making Decisions (Conditionals)"],[4,"Decision Logic & Classification"],[5,"Loops: Scanning Data"],[6,"Loops: Counting Events"],[7,"Lists: Indexing & Windows"],[8,"Strings: Parsing Data"],[9,"Functions: Building Blocks"],[10,"Functions: Decomposition & Reuse"],[11,"Exceptions: Handling Errors"],[12,"File I/O: Reading & Writing"],[13,"Integration: End-to-End Pipeline"],[14,"v1 Release & Demo"]],
+  cp2:[[1,"Schema Validation"],[2,"Dict Analytics"],[3,"Configurable Cleaning Pipeline"],[4,"Data Quality Reports"],[5,"Matplotlib Standards"],[6,"Report Generation"],[7,"NumPy Introduction"],[8,"Timing & Performance"],[9,"Testing: Expanded Self-Check"],[10,"Golden Outputs"],[11,"Modularize into /src"],[12,"Package Hygiene"],[13,"Integration on Larger Data"],[14,"v2 Release & Demo"]],
+  oop:[[1,"OOP Kickoff: Classes & Objects"],[2,"Composition: DataSource & Dataset"],[3,"Cleaner Component"],[4,"Analyzer Component"],[5,"Plotter & Reporter Components"],[6,"Domain Exceptions & Validation"],[7,"SOLID Principles (SRP/OCP)"],[8,"Strategy Pattern"],[9,"Factory & Registry Pattern"],[10,"Testing with pytest"],[11,"Package Hygiene"],[12,"Plugin Exercise"],[13,"Architecture Freeze"],[14,"v3 Architecture Demo"]],
+  dsa:[[1,"Big-O & Python Cost Model"],[2,"Benchmark Literacy"],[3,"Searching: Linear vs Binary"],[4,"Sorting Algorithms"],[5,"Hashing & Indexing"],[6,"Heap & Priority Queue"],[7,"Performance Sprint 1"],[8,"Performance Sprint 2"],[9,"Trees & BST"],[10,"Graphs: BFS & DFS"],[11,"Shortest Paths"],[12,"Dynamic Programming"],[13,"Final Integration"],[14,"Final Performance Report"]]
+  };
+  const L={cp1:"CP1 — Python Fundamentals",cp2:"CP2 — Professional Tool",oop:"OOP — Architecture",dsa:"DSA — Performance"};
+  document.addEventListener("DOMContentLoaded",()=>{
+    const el=document.getElementById("nb");
+    let h="";
+    for(const[code,weeks]of Object.entries(W)){
+      const p=(n)=>String(n).padStart(2,'0');
+      h+=`<details${code==='cp1'?' open':''}>
+        <summary>${L[code]}</summary>
+        <div class="det-body">
+          ${weeks.map(([n,t])=>`<div class="wk">
+            <div class="wk-n">${p(n)}</div>
+            <div class="wk-t">${t}</div>
+            <div class="wk-l">
+              <a class="core" href="${c(code,'W'+p(n)+'_core.ipynb')}" target="_blank">Core</a>
+              <a class="hw" href="${c(code,'W'+p(n)+'_homework.ipynb')}" target="_blank">HW</a>
+              <a class="chk" href="${c(code,'W'+p(n)+'_check.ipynb')}" target="_blank">Check</a>
+            </div>
+          </div>`).join("")}
+          <div class="browse">Studio notebooks per track: <a href="${g(code)}" target="_blank">Browse all →</a></div>
+        </div>
+      </details>`;
+    }
+    el.innerHTML=h;
+  });
+  </script>
+  <div id="nb"></div>
+</div>
+
+<div class="sec">
+  <div class="sec-label">Every week</div>
+  <div class="flow">
+    <div class="flow-item"><div class="flow-icon">📓</div><div class="flow-name">Core</div><div class="flow-desc">Concepts + examples</div></div>
+    <div class="flow-item"><div class="flow-icon">🔧</div><div class="flow-name">Studio</div><div class="flow-desc">Build your project</div></div>
+    <div class="flow-item"><div class="flow-icon">✅</div><div class="flow-name">Check</div><div class="flow-desc">Pass or fail</div></div>
+    <div class="flow-item"><div class="flow-icon">📝</div><div class="flow-name">Homework</div><div class="flow-desc">Practice at home</div></div>
+  </div>
+</div>
+
+<div class="foot">
+  CourseOS — Mechatronics Engineering · <a href="https://github.com/ArifSolmaz/courseos-curriculum" target="_blank">GitHub</a>
+</div>
+
+</div>
+</body>
+</html>

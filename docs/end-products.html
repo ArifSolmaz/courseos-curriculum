@@ -511,7 +511,7 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
 <span class="ok">Saved: reports/figures/summary.png</span><br>
 <span class="ok">Saved: reports/report.json</span><br><br>
 <span class="cmd">$ python -c "from lightcurve.dsa import WindowStats; w = WindowStats(flux); print(w.mean(1000, 2000))"</span><br>
-<span class="out">0.99847 (prefix sum, ~0.001ms vs ~0.12ms naive)</span>
+<span class="out">0.99847 (prefix sum — illustrative example timing: ~0.001ms vs ~0.12ms naive)</span>
 </div>
 </div>
 
@@ -569,8 +569,8 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
       <li>Strategy pattern for detrending algorithm selection</li>
       <li>Custom exceptions (NoDataError, InsufficientTransits)</li>
       <li>pytest with synthetic transit injection tests</li>
-      <li>PrefixSum array for constant-time windowed statistics</li>
-      <li>Fast mean/std/min/max over any time range</li>
+      <li>Prefix-sum array for constant-time range-sum queries after preprocessing</li>
+      <li>Fast range means; variance/std supported with additional squared-sum prefixes</li>
       <li>Benchmark: naive per-window summation vs precomputed prefix sums</li>
     </ul>
   </div>

@@ -221,12 +221,12 @@ tr:hover td{background:#fafafb}
         <li><span class="icon">✓</span> Lightcurve plots with dip annotations</li>
         <li><span class="icon">✓</span> Sector-by-sector summary reports</li>
         <li><span class="icon">✓</span> OOP: pluggable detrenders (Strategy pattern)</li>
-        <li><span class="icon">✓</span> DSA: prefix sums for constant-time range-sum queries and fast rolling statistics after preprocessing</li>
+        <li><span class="icon">✓</span> DSA: prefix sums for constant-time range-sum and range-mean queries after O(n) preprocessing</li>
       </ul>
     </div>
     <div class="tc-col">
       <div class="tc-col-label blue">End product after 2 years</div>
-      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes raw star brightness data, cleans it, removes instrument noise via detrending, scans for significant flux dips, marks candidate transit events, and produces annotated lightcurve plots with a structured JSON report. Prefix-sum optimization enables very fast windowed statistics after preprocessing, with constant-time query complexity.</p>
+      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes raw star brightness data, cleans it, removes instrument noise via detrending, scans for significant flux dips, marks candidate transit events, and produces annotated lightcurve plots with a structured JSON report. Prefix-sum optimization enables constant-time range-sum and mean queries after one-time preprocessing.</p>
       <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"Star TIC-29837: 2 dips detected at t=45.2d (depth 0.8%) and t=91.7d (depth 0.9%). Estimated period: ~46.5 days. Confidence: moderate."</p></div>
     </div>
     <div class="tc-col">

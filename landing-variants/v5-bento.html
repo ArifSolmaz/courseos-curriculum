@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseOS — One project. Four courses. Two years.</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: #fafaf8;
+            color: #1d1d1f;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a { color: #5e6ad2; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        .bento-container {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 40px 24px 0;
+        }
+
+        /* ── BENTO GRID ──────────────────────────── */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px;
+        }
+
+        .bento-box {
+            background: #fff;
+            border-radius: 22px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.03);
+            transition: transform 0.3s cubic-bezier(.25,.46,.45,.94), box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        .bento-box:hover {
+            transform: scale(1.015);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.04);
+        }
+
+        /* ── HERO ────────────────────────────────── */
+        .hero-bento {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 72px 40px 64px;
+            background: linear-gradient(135deg, #fefefe 0%, #f8f8f6 100%);
+        }
+        .hero-bento .eyebrow {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #86868b;
+            margin-bottom: 16px;
+        }
+        .hero-bento h1 {
+            font-size: 3.4rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            color: #1d1d1f;
+            margin-bottom: 20px;
+        }
+        .hero-bento h1 .accent { color: #5e6ad2; }
+        .hero-bento .subtitle {
+            font-size: 1.15rem;
+            color: #86868b;
+            max-width: 520px;
+            margin: 0 auto;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+
+        /* ── STATS ROW ───────────────────────────── */
+        .stat-bento {
+            grid-column: span 3;
+            text-align: center;
+            padding: 28px 20px;
+        }
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .stat-label {
+            font-size: 0.82rem;
+            color: #86868b;
+            font-weight: 500;
+        }
+        .stat-bento:nth-child(2) .stat-number { color: #5e6ad2; }
+        .stat-bento:nth-child(3) .stat-number { color: #34a261; }
+        .stat-bento:nth-child(4) .stat-number { color: #c27527; }
+        .stat-bento:nth-child(5) .stat-number { color: #9b59b6; }
+
+        /* ── PIPELINE ────────────────────────────── */
+        .pipeline-bento {
+            grid-column: 1 / -1;
+            padding: 36px 40px;
+        }
+        .pipeline-bento .bento-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #86868b;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .pipeline-row {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #e8e8e6;
+        }
+        .pipe-stage {
+            flex: 1;
+            text-align: center;
+            padding: 28px 16px;
+            border-right: 1px solid #e8e8e6;
+            position: relative;
+            transition: background 0.25s;
+        }
+        .pipe-stage:last-child { border-right: none; }
+        .pipe-stage:hover { background: #f8f8ff; }
+        .pipe-version {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 4px;
+        }
+        .pipe-stage:nth-child(1) .pipe-version { color: #5e6ad2; }
+        .pipe-stage:nth-child(2) .pipe-version { color: #34a261; }
+        .pipe-stage:nth-child(3) .pipe-version { color: #c27527; }
+        .pipe-stage:nth-child(4) .pipe-version { color: #9b59b6; }
+        .pipe-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1d1d1f;
+        }
+        .pipe-sub {
+            font-size: 0.75rem;
+            color: #86868b;
+            margin-top: 2px;
+        }
+        .pipe-connector {
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+            width: 24px;
+            height: 24px;
+            background: #fff;
+            border: 1px solid #e8e8e6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #86868b;
+        }
+
+        /* ── TRACKS ──────────────────────────────── */
+        .tracks-section-label {
+            grid-column: 1 / -1;
+            padding: 0;
+            margin-top: 8px;
+        }
+        .tracks-section-label .bento-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #86868b;
+            font-weight: 600;
+        }
+
+        .track-bento {
+            grid-column: span 4;
+            text-align: center;
+            padding: 32px 20px;
+            cursor: default;
+        }
+        .track-emoji {
+            font-size: 2.6rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+        .track-name {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-bottom: 4px;
+        }
+        .track-product {
+            font-size: 0.78rem;
+            color: #86868b;
+        }
+        /* Special sizing: 3 top, 2 bottom centered */
+
+        /* ── COURSES ─────────────────────────────── */
+        .courses-label {
+            grid-column: 1 / -1;
+            padding: 0;
+            margin-top: 8px;
+        }
+        .courses-label .bento-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #86868b;
+            font-weight: 600;
+        }
+
+        .course-bento {
+            grid-column: span 6;
+            padding: 28px 30px;
+        }
+        .course-code {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+        }
+        .course-bento:nth-child(1) .course-code { background: #eef0ff; color: #5e6ad2; }
+        .course-bento:nth-child(2) .course-code { background: #eaf7ef; color: #34a261; }
+        .course-bento:nth-child(3) .course-code { background: #fef5ea; color: #c27527; }
+        .course-bento:nth-child(4) .course-code { background: #f5eefa; color: #9b59b6; }
+        .course-bento h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #1d1d1f;
+        }
+        .course-bento .desc {
+            font-size: 0.88rem;
+            color: #6e6e73;
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+        .course-meta {
+            display: flex;
+            gap: 14px;
+            font-size: 0.75rem;
+            color: #86868b;
+        }
+        .course-meta span {
+            background: #f5f5f3;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        /* ── CONTRACT ────────────────────────────── */
+        .contract-bento {
+            grid-column: 1 / -1;
+            padding: 36px 40px;
+            background: #1d1d1f;
+            color: #f5f5f7;
+        }
+        .contract-bento:hover {
+            background: #2d2d2f;
+        }
+        .contract-bento .bento-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #86868b;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .contract-bento h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: #f5f5f7;
+        }
+        .contract-code {
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.88rem;
+            line-height: 2.2;
+        }
+        .contract-code .fn { color: #7aafff; }
+        .contract-code .params { color: #86868b; }
+        .contract-code .arrow { color: #86868b; }
+        .contract-code .ret { color: #a8d8a8; }
+
+        /* ── JOURNEY (below grid) ────────────────── */
+        .journey-section {
+            max-width: 780px;
+            margin: 56px auto 0;
+            padding: 0 24px;
+        }
+        .journey-section .section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #86868b;
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+        .journey-section h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1d1d1f;
+            margin-top: 36px;
+            margin-bottom: 12px;
+        }
+        .journey-section h3:first-of-type { margin-top: 0; }
+        .journey-section p {
+            font-size: 0.95rem;
+            color: #424245;
+            line-height: 1.8;
+            margin-bottom: 10px;
+        }
+        .journey-section ol,
+        .journey-section ul {
+            margin-left: 22px;
+            font-size: 0.95rem;
+            color: #424245;
+            line-height: 1.9;
+            margin-bottom: 10px;
+        }
+        .journey-section code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            background: #f0f0ee;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* ── NOTEBOOKS ───────────────────────────── */
+        .notebooks-section {
+            max-width: 780px;
+            margin: 56px auto 0;
+            padding: 0 24px;
+        }
+        .notebooks-section .section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #86868b;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        details {
+            background: #fff;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.03);
+            overflow: hidden;
+        }
+        details summary {
+            padding: 18px 24px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.15s;
+            color: #1d1d1f;
+        }
+        details summary::-webkit-details-marker { display: none; }
+        details summary:hover { background: #fafaf8; }
+        details summary::after {
+            content: '+';
+            font-size: 1.3rem;
+            color: #86868b;
+            font-weight: 300;
+        }
+        details[open] summary::after { content: '\2212'; }
+        details[open] summary { border-bottom: 1px solid #f0f0ee; }
+        .details-body { padding: 20px 24px; }
+
+        .wk {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f3;
+            gap: 12px;
+        }
+        .wk:last-child { border-bottom: none; }
+        .wk-num {
+            width: 30px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: #5e6ad2;
+            flex-shrink: 0;
+        }
+        .wk-title {
+            flex: 1;
+            font-size: 0.88rem;
+            color: #424245;
+        }
+        .wk-sprint {
+            font-size: 0.72rem;
+            color: #86868b;
+            width: 36px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .wk-links {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        .wk-links a {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .wk-links a.core { background: #eef0ff; color: #5e6ad2; }
+        .wk-links a.core:hover { background: #5e6ad2; color: #fff; text-decoration: none; }
+        .wk-links a.hw { background: #fef5ea; color: #c27527; }
+        .wk-links a.hw:hover { background: #c27527; color: #fff; text-decoration: none; }
+        .wk-links a.check { background: #eaf7ef; color: #34a261; }
+        .wk-links a.check:hover { background: #34a261; color: #fff; text-decoration: none; }
+
+        /* ── FOOTER ──────────────────────────────── */
+        .footer {
+            text-align: center;
+            padding: 56px 24px 40px;
+            font-size: 0.8rem;
+            color: #86868b;
+        }
+        .footer a { color: #86868b; transition: color 0.2s; }
+        .footer a:hover { color: #5e6ad2; text-decoration: none; }
+
+        /* ── RESPONSIVE ──────────────────────────── */
+        @media (max-width: 900px) {
+            .bento-grid { grid-template-columns: repeat(6, 1fr); }
+            .hero-bento { grid-column: 1 / -1; }
+            .hero-bento h1 { font-size: 2.4rem; }
+            .stat-bento { grid-column: span 3; }
+            .pipeline-bento { grid-column: 1 / -1; }
+            .track-bento { grid-column: span 3; }
+            .course-bento { grid-column: span 6; }
+            .contract-bento { grid-column: 1 / -1; }
+            .tracks-section-label, .courses-label { grid-column: 1 / -1; }
+        }
+
+        @media (max-width: 640px) {
+            .bento-container { padding: 20px 14px 0; }
+            .bento-grid { grid-template-columns: 1fr; gap: 12px; }
+            .hero-bento { padding: 48px 24px 40px; grid-column: 1 / -1; }
+            .hero-bento h1 { font-size: 1.9rem; }
+            .stat-bento { grid-column: 1 / -1; padding: 20px; }
+            .stat-number { font-size: 2.2rem; }
+            .pipeline-bento { grid-column: 1 / -1; padding: 24px 20px; }
+            .pipeline-row { flex-direction: column; }
+            .pipe-stage { border-right: none; border-bottom: 1px solid #e8e8e6; padding: 20px 16px; }
+            .pipe-stage:last-child { border-bottom: none; }
+            .pipe-connector { display: none; }
+            .track-bento { grid-column: 1 / -1; }
+            .course-bento { grid-column: 1 / -1; }
+            .contract-bento { grid-column: 1 / -1; padding: 28px 24px; }
+            .contract-code { font-size: 0.78rem; }
+            .tracks-section-label, .courses-label { grid-column: 1 / -1; }
+            .wk { flex-wrap: wrap; }
+            .wk-links { width: 100%; margin-top: 6px; }
+        }
+
+        /* stat grid on mobile: 2x2 */
+        @media (max-width: 640px) {
+            .stats-wrapper {
+                display: contents;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bento-container">
+    <div class="bento-grid">
+
+        <!-- ── HERO ──────────────────────────────── -->
+        <div class="bento-box hero-bento">
+            <div class="eyebrow">CourseOS Curriculum</div>
+            <h1>One project.<br><span class="accent">Four courses.</span><br>Two years.</h1>
+            <p class="subtitle">Build a real tool from scratch and evolve it into a portfolio-quality product across CP1, CP2, OOP, and DSA.</p>
+        </div>
+
+        <!-- ── STATS ─────────────────────────────── -->
+        <div class="bento-box stat-bento">
+            <div class="stat-number">56</div>
+            <div class="stat-label">weeks of curriculum</div>
+        </div>
+        <div class="bento-box stat-bento">
+            <div class="stat-number">448</div>
+            <div class="stat-label">Colab notebooks</div>
+        </div>
+        <div class="bento-box stat-bento">
+            <div class="stat-number">5</div>
+            <div class="stat-label">project tracks</div>
+        </div>
+        <div class="bento-box stat-bento">
+            <div class="stat-number">2</div>
+            <div class="stat-label">years, one repo</div>
+        </div>
+
+        <!-- ── PIPELINE ──────────────────────────── -->
+        <div class="bento-box pipeline-bento">
+            <div class="bento-label">The pipeline</div>
+            <div class="pipeline-row">
+                <div class="pipe-stage">
+                    <div class="pipe-version">v1</div>
+                    <div class="pipe-label">CP1</div>
+                    <div class="pipe-sub">It works</div>
+                    <div class="pipe-connector">&rarr;</div>
+                </div>
+                <div class="pipe-stage">
+                    <div class="pipe-version">v2</div>
+                    <div class="pipe-label">CP2</div>
+                    <div class="pipe-sub">It's robust</div>
+                    <div class="pipe-connector">&rarr;</div>
+                </div>
+                <div class="pipe-stage">
+                    <div class="pipe-version">v3</div>
+                    <div class="pipe-label">OOP</div>
+                    <div class="pipe-sub">It's architected</div>
+                    <div class="pipe-connector">&rarr;</div>
+                </div>
+                <div class="pipe-stage">
+                    <div class="pipe-version">v3</div>
+                    <div class="pipe-label">DSA</div>
+                    <div class="pipe-sub">It's fast</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── TRACKS ────────────────────────────── -->
+        <div class="tracks-section-label">
+            <div class="bento-label">Pick a track</div>
+        </div>
+
+        <div class="bento-box track-bento" style="grid-column: span 4;">
+            <span class="track-emoji">🤖</span>
+            <div class="track-name">Robotics</div>
+            <div class="track-product">MechaSense Studio</div>
+        </div>
+        <div class="bento-box track-bento" style="grid-column: span 4;">
+            <span class="track-emoji">📊</span>
+            <div class="track-name">Data / AI</div>
+            <div class="track-product">CleanReport Pipeline</div>
+        </div>
+        <div class="bento-box track-bento" style="grid-column: span 4;">
+            <span class="track-emoji">🎮</span>
+            <div class="track-name">Simulation</div>
+            <div class="track-product">SimLab Engine</div>
+        </div>
+        <div class="bento-box track-bento" style="grid-column: span 6;">
+            <span class="track-emoji">🌌</span>
+            <div class="track-name">Space / Astro</div>
+            <div class="track-product">Lightcurve Explorer</div>
+        </div>
+        <div class="bento-box track-bento" style="grid-column: span 6;">
+            <span class="track-emoji">📡</span>
+            <div class="track-name">IoT</div>
+            <div class="track-product">AutoDashboard</div>
+        </div>
+
+        <!-- ── COURSES ───────────────────────────── -->
+        <div class="courses-label">
+            <div class="bento-label">Four courses, one repo</div>
+        </div>
+
+        <div class="bento-box course-bento">
+            <div class="course-code">CP1 &mdash; Semester 1</div>
+            <h3>Computer Programming 1</h3>
+            <p class="desc">Python fundamentals &rarr; v1 functional pipeline</p>
+            <div class="course-meta">
+                <span>Year 1</span>
+                <span>5h / week</span>
+                <span>14 weeks</span>
+            </div>
+        </div>
+        <div class="bento-box course-bento">
+            <div class="course-code">CP2 &mdash; Semester 2</div>
+            <h3>Computer Programming 2</h3>
+            <p class="desc">Robust data handling &rarr; v2 professional tool</p>
+            <div class="course-meta">
+                <span>Year 1</span>
+                <span>5h / week</span>
+                <span>14 weeks</span>
+            </div>
+        </div>
+        <div class="bento-box course-bento">
+            <div class="course-code">OOP &mdash; Semester 3</div>
+            <h3>Object-Oriented Programming</h3>
+            <p class="desc">Refactor into architecture &rarr; v3 components</p>
+            <div class="course-meta">
+                <span>Year 2</span>
+                <span>3h / week</span>
+                <span>14 weeks</span>
+            </div>
+        </div>
+        <div class="bento-box course-bento">
+            <div class="course-code">DSA &mdash; Semester 4</div>
+            <h3>Data Structures &amp; Algorithms</h3>
+            <p class="desc">Optimize + benchmark &rarr; v3 performance proof</p>
+            <div class="course-meta">
+                <span>Year 2</span>
+                <span>3h / week</span>
+                <span>14 weeks</span>
+            </div>
+        </div>
+
+        <!-- ── CONTRACT ──────────────────────────── -->
+        <div class="bento-box contract-bento">
+            <div class="bento-label">The contract</div>
+            <h3>Every track implements these in /src/</h3>
+            <div class="contract-code">
+                <span class="fn">load_data</span><span class="params">(config)</span> <span class="arrow">&rarr;</span> <span class="ret">data</span><br>
+                <span class="fn">clean_data</span><span class="params">(data, config)</span> <span class="arrow">&rarr;</span> <span class="ret">clean_data</span><br>
+                <span class="fn">analyze</span><span class="params">(clean_data, config)</span> <span class="arrow">&rarr;</span> <span class="ret">results</span><br>
+                <span class="fn">plot</span><span class="params">(clean_data, results, config)</span> <span class="arrow">&rarr;</span> <span class="ret">figures</span><br>
+                <span class="fn">export_results</span><span class="params">(clean_data, results, figures, config)</span> <span class="arrow">&rarr;</span> <span class="ret">paths</span><br>
+                <span class="fn">self_check</span><span class="params">()</span> <span class="arrow">&rarr;</span> <span class="ret">None</span>
+            </div>
+        </div>
+
+    </div><!-- /bento-grid -->
+</div><!-- /bento-container -->
+
+<!-- ── JOURNEY ──────────────────────────────────── -->
+<div class="journey-section">
+    <div class="section-label">Your journey</div>
+
+    <h3>How it works</h3>
+    <p>You keep <strong>one GitHub repository</strong> for two years. Every week you open a Colab notebook, learn a concept, and apply it to your project. By the end, you have a portfolio-quality tool that you built from scratch.</p>
+    <p>There are no exams. Your grade comes from what you build, what you can explain, and the evidence you produce every week.</p>
+
+    <h3>Year 1 &mdash; Learn to code, build a working tool</h3>
+    <p><strong>CP1 (Semester 1):</strong> You start from zero &mdash; <code>print("hello")</code> &mdash; and by Week 14 you have a working data pipeline. Every week adds one concept: variables, conditionals, loops, functions, file I/O. Each session is 5 hours: learn the concept, apply it to your project, run the check, submit.</p>
+    <p><strong>CP2 (Semester 2):</strong> Your v1 pipeline works but it's fragile. Now you make it robust: validate input schemas, add configurable cleaning rules, create professional plots, generate reports, write tests, and move all code into <code>/src</code>. By Week 14 your tool is something you'd be proud to show.</p>
+
+    <h3>Year 2 &mdash; Engineer it, optimize it</h3>
+    <p><strong>OOP (Semester 3):</strong> You refactor your v2 code into an architecture with components &mdash; DataSource, Cleaner, Analyzer, Plotter, Reporter. You learn design patterns (Strategy, Factory), write pytest tests, and build a plugin system. Sessions are 3 hours.</p>
+    <p><strong>DSA (Semester 4):</strong> You find the bottleneck in your pipeline and optimize it using the right data structure &mdash; hash tables, heaps, binary search, trees. You prove the improvement with benchmarks: baseline vs optimized, Big-O analysis, timing plots. Your tool is now fast <em>and</em> you can explain why.</p>
+
+    <h3>What does a typical week look like?</h3>
+    <ol>
+        <li>Open the <strong>Core Notebook</strong> in Colab &mdash; learn the concept with worked examples</li>
+        <li>Open your <strong>Studio Notebook</strong> &mdash; apply the concept to your project</li>
+        <li>Finish the <strong>must-pass core</strong> first, then the standard target, then stretch if time</li>
+        <li>Run the <strong>Universal Check</strong> &mdash; it tells you pass or fail</li>
+        <li>Fix failures in <code>/src</code>, not in the notebook</li>
+        <li>Complete the <strong>reflection</strong> and submit</li>
+        <li>Do the <strong>Homework</strong> at home before next week</li>
+    </ol>
+
+    <h3>What if I fall behind?</h3>
+    <p>Every week has three levels. If you can't finish the standard target, <strong>finish the must-pass core</strong> &mdash; that keeps you safe. If you can't even finish that, submit a <strong>recovery ticket</strong> (what failed, what you tried, what you'll do next). The instructor will help you get back on track.</p>
+    <p>You get <strong>up to 3 recovery tickets per semester</strong> with full credit. After that, missed weeks are capped at the core level. The system is designed so nobody fails silently &mdash; but you have to show up and try.</p>
+
+    <h3>Tracks &amp; switching</h3>
+    <p>You explore all 5 tracks during Weeks 1&ndash;2 and <strong>confirm your choice by Week 3</strong>. After that, your track is locked for the rest of Year 1. Before Year 2 starts, one exceptional reset may be approved. No changes during OOP or DSA.</p>
+
+    <h3>Grading</h3>
+    <p>All tracks are graded the same way:</p>
+    <ul>
+        <li>Weekly submissions + universal checks: <strong>50%</strong></li>
+        <li>Quizzes / oral explain-your-code: <strong>20%</strong></li>
+        <li>Release demo (v1 / v2 / v3): <strong>20%</strong></li>
+        <li>Professional habits (reflections, recovery, compliance): <strong>10%</strong></li>
+    </ul>
+    <p>Teamwork is allowed, but understanding is individual. If your team submits passing code and you can't explain it, <strong>you</strong> get the penalty.</p>
+
+    <h3>AI tools</h3>
+    <p>If the instructor allows AI tools: you must understand and explain everything you submit. Disclose AI usage in reflections. <strong>"It runs" is not enough &mdash; you must know why it works.</strong></p>
+</div>
+
+<!-- ── NOTEBOOKS ─────────────────────────────────── -->
+<div class="notebooks-section">
+    <div class="section-label">Notebooks &mdash; open in Colab</div>
+    <div id="notebooks-container"></div>
+</div>
+
+<script>
+const REPO = "ArifSolmaz/courseos-curriculum";
+const BASE = "course-content/notebooks";
+function colab(course, file) {
+    return `https://colab.research.google.com/github/${REPO}/blob/main/${BASE}/${course}/${file}`;
+}
+
+const WEEKS = {
+    cp1: [
+        [1,"Welcome to Python & Your Pipeline","S1"],
+        [2,"Variables, Types & Numbers","S1"],
+        [3,"Making Decisions (Conditionals)","S2"],
+        [4,"Decision Logic & Classification","S2"],
+        [5,"Loops: Scanning Data","S3"],
+        [6,"Loops: Counting Events","S3"],
+        [7,"Lists: Indexing & Windows","S4"],
+        [8,"Strings: Parsing Data","S4"],
+        [9,"Functions: Building Blocks","S5"],
+        [10,"Functions: Decomposition & Reuse","S5"],
+        [11,"Exceptions: Handling Errors","S6"],
+        [12,"File I/O: Reading & Writing","S6"],
+        [13,"Integration: End-to-End Pipeline","S6"],
+        [14,"v1 Release & Demo","S6"],
+    ],
+    cp2: [
+        [1,"Schema Validation","S7"],[2,"Dict Analytics","S7"],
+        [3,"Configurable Cleaning Pipeline","S8"],[4,"Data Quality Reports","S8"],
+        [5,"Matplotlib Standards","S9"],[6,"Report Generation","S9"],
+        [7,"NumPy Introduction","S10"],[8,"Timing & Performance","S10"],
+        [9,"Testing: Expanded Self-Check","S11"],[10,"Golden Outputs","S11"],
+        [11,"Modularize into /src","S12"],[12,"Package Hygiene","S12"],
+        [13,"Integration on Larger Data","S12"],[14,"v2 Release & Demo","S12"],
+    ],
+    oop: [
+        [1,"OOP Kickoff: Classes & Objects",""],[2,"Composition: DataSource & Dataset",""],
+        [3,"Cleaner Component",""],[4,"Analyzer Component",""],
+        [5,"Plotter & Reporter Components",""],[6,"Domain Exceptions & Validation",""],
+        [7,"SOLID Principles (SRP/OCP)",""],[8,"Strategy Pattern",""],
+        [9,"Factory & Registry Pattern",""],[10,"Testing with pytest",""],
+        [11,"Package Hygiene",""],[12,"Plugin Exercise",""],
+        [13,"Architecture Freeze",""],[14,"v3 Architecture Demo",""],
+    ],
+    dsa: [
+        [1,"Big-O & Python Cost Model",""],[2,"Benchmark Literacy",""],
+        [3,"Searching: Linear vs Binary",""],[4,"Sorting Algorithms",""],
+        [5,"Hashing & Indexing",""],[6,"Heap & Priority Queue",""],
+        [7,"Performance Sprint 1",""],[8,"Performance Sprint 2",""],
+        [9,"Trees & BST",""],[10,"Graphs: BFS & DFS",""],
+        [11,"Shortest Paths",""],[12,"Dynamic Programming",""],
+        [13,"Final Integration",""],[14,"Final Performance Report",""],
+    ],
+};
+
+const COURSE_LABELS = {
+    cp1: "CP1 \u2014 Python Fundamentals",
+    cp2: "CP2 \u2014 Professional Tool",
+    oop: "OOP \u2014 Architecture",
+    dsa: "DSA \u2014 Performance",
+};
+
+function renderWeeks() {
+    const el = document.getElementById("notebooks-container");
+    let html = "";
+    for (const [code, weeks] of Object.entries(WEEKS)) {
+        const wn = (n) => String(n).padStart(2, '0');
+        html += `<details${code === 'cp1' ? ' open' : ''}>
+            <summary>${COURSE_LABELS[code]} (14 weeks)</summary>
+            <div class="details-body">
+                ${weeks.map(([num, title, sprint]) => `
+                <div class="wk">
+                    <div class="wk-num">${num}</div>
+                    <div class="wk-title">${title}</div>
+                    <div class="wk-sprint">${sprint}</div>
+                    <div class="wk-links">
+                        <a href="${colab(code, 'W'+wn(num)+'_core.ipynb')}" target="_blank" class="core">Core</a>
+                        <a href="${colab(code, 'W'+wn(num)+'_homework.ipynb')}" target="_blank" class="hw">HW</a>
+                        <a href="${colab(code, 'W'+wn(num)+'_check.ipynb')}" target="_blank" class="check">Check</a>
+                    </div>
+                </div>`).join("")}
+            </div>
+        </details>`;
+    }
+    el.innerHTML = html;
+}
+document.addEventListener("DOMContentLoaded", renderWeeks);
+</script>
+
+<!-- ── FOOTER ────────────────────────────────────── -->
+<div class="footer">
+    <p>CourseOS &mdash; Mechatronics Engineering &middot; <a href="https://github.com/ArifSolmaz/courseos-curriculum">GitHub</a></p>
+</div>
+
+</body>
+</html>

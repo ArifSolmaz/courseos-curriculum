@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CourseOS — One Project. Four Courses. Two Years.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a0f;
+  --bg-raised: #0f0f18;
+  --bg-card: #12121e;
+  --border: #1a1a2e;
+  --border-glow: #00ffc840;
+  --green: #00ffc8;
+  --cyan: #00d4ff;
+  --yellow: #ffd700;
+  --orange: #ff9f43;
+  --pink: #ff6b9d;
+  --purple: #c084fc;
+  --red: #ff6b6b;
+  --text: #c8c8d4;
+  --text-dim: #6b6b80;
+  --text-bright: #e8e8f0;
+  --comment: #5c6370;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--green);
+  color: var(--bg);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+/* Layout */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+a { color: var(--green); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--cyan); }
+
+/* Terminal window chrome */
+.terminal {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.terminal:hover {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 20px #00ffc810;
+}
+.terminal-bar {
+  background: #16162a;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.terminal-dot {
+  width: 12px; height: 12px; border-radius: 50%;
+}
+.terminal-dot.red { background: #ff5f57; }
+.terminal-dot.yellow { background: #febc2e; }
+.terminal-dot.green { background: #28c840; }
+.terminal-title {
+  color: var(--text-dim);
+  font-size: 12px;
+  margin-left: 8px;
+}
+.terminal-body {
+  padding: 24px;
+}
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 0 40px;
+}
+.hero-prompt {
+  color: var(--text-dim);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.hero-title {
+  font-size: clamp(22px, 4vw, 36px);
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.cursor {
+  display: inline-block;
+  width: 10px;
+  height: 1.1em;
+  background: var(--green);
+  vertical-align: text-bottom;
+  animation: blink 1s step-end infinite;
+  margin-left: 2px;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.hero-sub {
+  font-size: clamp(14px, 2vw, 18px);
+  color: var(--text-dim);
+  margin-top: 12px;
+}
+.hero-sub .hl { color: var(--cyan); }
+.hero-pipeline-cmd {
+  margin-top: 32px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 15px;
+  display: inline-block;
+}
+.hero-pipeline-cmd .prompt { color: var(--green); }
+.hero-pipeline-cmd .cmd { color: var(--yellow); }
+.hero-pipeline-cmd .flag { color: var(--cyan); }
+.hero-pipeline-cmd .arg { color: var(--text-bright); }
+
+/* Section headers */
+.section {
+  padding: 80px 0;
+}
+.section-label {
+  color: var(--comment);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 8px;
+}
+.section-title {
+  font-size: clamp(18px, 3vw, 26px);
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 32px;
+}
+
+/* ===== PIPELINE ===== */
+.pipeline-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.pipeline-node {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 16px 24px;
+  border-radius: 6px;
+  text-align: center;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  min-width: 140px;
+}
+.pipeline-node:hover {
+  border-color: var(--green);
+  box-shadow: 0 0 15px #00ffc815;
+}
+.pipeline-node .version {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--green);
+}
+.pipeline-node .label {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+.pipeline-arrow {
+  color: var(--text-dim);
+  font-size: 20px;
+  padding: 0 8px;
+}
+
+/* ===== TRACKS ===== */
+.track-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.track-table thead th {
+  text-align: left;
+  color: var(--cyan);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.track-table tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #1a1a2808;
+  vertical-align: top;
+}
+.track-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.track-table tbody tr:hover {
+  background: #ffffff05;
+}
+.track-id { color: var(--yellow); font-weight: 600; white-space: nowrap; }
+.track-name { color: var(--text-bright); font-weight: 500; }
+.track-desc { color: var(--text-dim); font-size: 12px; }
+.track-ascii-header {
+  color: var(--text-dim);
+  font-size: 12px;
+  margin-bottom: 12px;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* ===== COURSES ===== */
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+.course-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.course-card:hover {
+  border-color: var(--border-glow);
+  box-shadow: 0 0 20px #00ffc810;
+}
+.course-tag {
+  font-size: 11px;
+  color: var(--bg);
+  background: var(--green);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.course-card h3 {
+  color: var(--text-bright);
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.course-meta {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.course-meta span { display: block; margin-bottom: 2px; }
+.course-meta .key { color: var(--cyan); }
+.course-desc {
+  color: var(--text);
+  font-size: 13px;
+}
+
+/* ===== CONTRACT (Python code) ===== */
+.code-block {
+  padding: 24px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.code-block .ln {
+  display: inline-block;
+  width: 32px;
+  text-align: right;
+  color: var(--text-dim);
+  margin-right: 16px;
+  user-select: none;
+  font-size: 12px;
+}
+.kw { color: var(--purple); }       /* keyword */
+.fn { color: var(--cyan); }         /* function name */
+.st { color: var(--green); }        /* string */
+.cm { color: var(--comment); font-style: italic; }  /* comment */
+.nu { color: var(--orange); }       /* number */
+.op { color: var(--text); }         /* operator */
+.bi { color: var(--yellow); }       /* builtin */
+.dc { color: var(--pink); }         /* decorator */
+.vr { color: var(--text-bright); }  /* variable */
+.tp { color: var(--cyan); }         /* type */
+.nl { color: var(--orange); }       /* None/bool literal */
+
+/* ===== JOURNEY ===== */
+.journey-section {
+  margin-bottom: 32px;
+}
+.journey-section h3 {
+  color: var(--cyan);
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.journey-section h3::before {
+  content: '## ';
+  color: var(--text-dim);
+}
+.journey-section p, .journey-section ul {
+  color: var(--text);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.journey-section ul {
+  padding-left: 24px;
+}
+.journey-section li {
+  margin-bottom: 6px;
+}
+.journey-section li::marker {
+  color: var(--green);
+}
+.journey-section code {
+  background: var(--bg-card);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--yellow);
+  font-size: 12px;
+}
+
+/* ===== WEEKS (git log style) ===== */
+.course-weeks {
+  margin-bottom: 24px;
+}
+.course-weeks-header {
+  padding: 16px 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: border-color 0.3s;
+}
+.course-weeks-header:hover {
+  border-color: var(--border-glow);
+}
+.course-weeks-header h3 {
+  color: var(--green);
+  font-size: 15px;
+  font-weight: 600;
+}
+.course-weeks-header .toggle {
+  color: var(--text-dim);
+  font-size: 14px;
+  transition: transform 0.3s;
+}
+.course-weeks-header.open .toggle {
+  transform: rotate(90deg);
+}
+.course-weeks-body {
+  display: none;
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  overflow: hidden;
+}
+.course-weeks-body.open {
+  display: block;
+}
+
+.git-log-entry {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.git-log-entry:last-child { border-bottom: none; }
+.git-log-entry:hover { background: #ffffff05; }
+.git-log-hash {
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 600;
+}
+.git-log-msg {
+  color: var(--text-bright);
+  font-size: 13px;
+  margin: 4px 0;
+}
+.git-log-links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.git-log-links a {
+  font-size: 11px;
+  color: var(--cyan);
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.git-log-links a:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 0;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 12px;
+}
+.footer a { color: var(--green); }
+.footer .gh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: border-color 0.3s;
+}
+.footer .gh-link:hover {
+  border-color: var(--green);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  body { font-size: 13px; }
+  .container { padding: 0 16px; }
+  .section { padding: 48px 0; }
+  .hero { min-height: 60vh; padding: 48px 0 24px; }
+  .pipeline-flow { flex-direction: column; }
+  .pipeline-arrow { transform: rotate(90deg); }
+  .pipeline-node { min-width: 200px; }
+  .courses-grid { grid-template-columns: 1fr; }
+  .code-block { font-size: 11px; padding: 16px; }
+  .code-block .ln { width: 24px; margin-right: 8px; }
+  .track-table { font-size: 12px; }
+  .track-table thead th, .track-table tbody td { padding: 6px 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+<div class="container">
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span class="terminal-title">courseos &mdash; bash</span>
+    </div>
+    <div class="terminal-body">
+      <div class="hero-prompt">user@courseos:~$</div>
+      <div class="hero-title">&gt; One project. Four courses. Two years.<span class="cursor"></span></div>
+      <div class="hero-sub">
+        Build a <span class="hl">real data pipeline</span> from scratch &mdash; then rebuild it
+        <span class="hl">three more times</span>, each time with deeper CS fundamentals.
+      </div>
+      <div class="hero-pipeline-cmd">
+        <span class="prompt">$ </span><span class="cmd">./pipeline</span>
+        <span class="flag">--evolve</span>
+        <span class="arg">v1</span>
+        <span class="arg">v2</span>
+        <span class="arg">v3</span>
+        <span class="arg">v3+</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ==================== PIPELINE ==================== -->
+<section class="section" id="pipeline">
+<div class="container">
+  <div class="section-label">// pipeline</div>
+  <div class="section-title">$ cat evolution.log</div>
+
+  <div class="pipeline-flow">
+    <div class="pipeline-node">
+      <div class="version">v1</div>
+      <div class="label">Scripting</div>
+    </div>
+    <div class="pipeline-arrow">&rarr;</div>
+    <div class="pipeline-node">
+      <div class="version">v2</div>
+      <div class="label">Data &amp; Libraries</div>
+    </div>
+    <div class="pipeline-arrow">&rarr;</div>
+    <div class="pipeline-node">
+      <div class="version">v3</div>
+      <div class="label">OOP Architecture</div>
+    </div>
+    <div class="pipeline-arrow">&rarr;</div>
+    <div class="pipeline-node">
+      <div class="version">v3+</div>
+      <div class="label">DSA Optimization</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ==================== TRACKS ==================== -->
+<section class="section" id="tracks">
+<div class="container">
+  <div class="section-label">// tracks</div>
+  <div class="section-title">$ ls -la ./tracks/</div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span class="terminal-title">5 tracks available</span>
+    </div>
+    <div class="terminal-body" style="padding: 0;">
+      <div class="track-ascii-header" style="padding: 16px 24px 0;">
+┌─────┬──────────────────────┬───────────────────────────────────────────┐
+│ ID  │ PRODUCT              │ DOMAIN                                   │</div>
+      <table class="track-table">
+        <thead><tr>
+          <th style="width:60px;">#</th>
+          <th style="width:200px;">Product</th>
+          <th>Domain</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="track-id">T1</td>
+            <td class="track-name">CleanSweep</td>
+            <td class="track-desc">Student-survey data &mdash; clean, validate, and report on campus feedback</td>
+          </tr>
+          <tr>
+            <td class="track-id">T2</td>
+            <td class="track-name">FitLog</td>
+            <td class="track-desc">Wearable-fitness CSV logs &mdash; aggregate steps, heart rate, and sleep trends</td>
+          </tr>
+          <tr>
+            <td class="track-id">T3</td>
+            <td class="track-name">BudgetLens</td>
+            <td class="track-desc">Personal-finance transactions &mdash; categorize spending and visualize budgets</td>
+          </tr>
+          <tr>
+            <td class="track-id">T4</td>
+            <td class="track-name">WeatherPulse</td>
+            <td class="track-desc">Historical weather station data &mdash; detect anomalies and forecast patterns</td>
+          </tr>
+          <tr>
+            <td class="track-id">T5</td>
+            <td class="track-name">GameStats</td>
+            <td class="track-desc">Esports match logs &mdash; rank players, compute stats, and generate leaderboards</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ==================== COURSES ==================== -->
+<section class="section" id="courses">
+<div class="container">
+  <div class="section-label">// courses</div>
+  <div class="section-title">$ find ./courses -type f | sort</div>
+
+  <div class="courses-grid">
+    <div class="course-card">
+      <span class="course-tag">YEAR 1 &middot; FALL</span>
+      <h3>CP1 &mdash; Core Python 1</h3>
+      <div class="course-meta">
+        <span><span class="key">version:</span> v1 (scripting)</span>
+        <span><span class="key">weeks:</span> 14</span>
+        <span><span class="key">focus:</span> fundamentals &amp; first pipeline</span>
+      </div>
+      <div class="course-desc">Variables, conditionals, loops, lists, strings, functions, file I/O. Ship a working v1 pipeline from scratch.</div>
+    </div>
+    <div class="course-card">
+      <span class="course-tag">YEAR 1 &middot; SPRING</span>
+      <h3>CP2 &mdash; Core Python 2</h3>
+      <div class="course-meta">
+        <span><span class="key">version:</span> v2 (data &amp; libraries)</span>
+        <span><span class="key">weeks:</span> 14</span>
+        <span><span class="key">focus:</span> data processing &amp; visualization</span>
+      </div>
+      <div class="course-desc">Dicts, validation, Matplotlib, NumPy, testing, packaging. Rebuild the pipeline with real data-science libraries.</div>
+    </div>
+    <div class="course-card">
+      <span class="course-tag">YEAR 2 &middot; FALL</span>
+      <h3>OOP &mdash; Object-Oriented Programming</h3>
+      <div class="course-meta">
+        <span><span class="key">version:</span> v3 (architecture)</span>
+        <span><span class="key">weeks:</span> 14</span>
+        <span><span class="key">focus:</span> design patterns &amp; extensibility</span>
+      </div>
+      <div class="course-desc">Classes, composition, SOLID, Strategy, Factory, pytest, plugin architecture. Architect a v3 you can extend forever.</div>
+    </div>
+    <div class="course-card">
+      <span class="course-tag">YEAR 2 &middot; SPRING</span>
+      <h3>DSA &mdash; Data Structures &amp; Algorithms</h3>
+      <div class="course-meta">
+        <span><span class="key">version:</span> v3+ (optimization)</span>
+        <span><span class="key">weeks:</span> 14</span>
+        <span><span class="key">focus:</span> performance &amp; algorithmic thinking</span>
+      </div>
+      <div class="course-desc">Big-O, searching, sorting, hashing, heaps, trees, graphs, DP. Optimize your v3 pipeline with proper algorithms.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ==================== CONTRACT ==================== -->
+<section class="section" id="contract">
+<div class="container">
+  <div class="section-label">// contract</div>
+  <div class="section-title">$ cat contract.py</div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span class="terminal-title">contract.py</span>
+    </div>
+    <div class="code-block">
+<span class="ln"> 1</span><span class="cm">"""</span>
+<span class="ln"> 2</span><span class="cm">CourseOS Learning Contract</span>
+<span class="ln"> 3</span><span class="cm">Every student signs this with their first commit.</span>
+<span class="ln"> 4</span><span class="cm">"""</span>
+<span class="ln"> 5</span>
+<span class="ln"> 6</span><span class="kw">from</span> <span class="vr">dataclasses</span> <span class="kw">import</span> <span class="vr">dataclass</span>
+<span class="ln"> 7</span><span class="kw">from</span> <span class="vr">enum</span> <span class="kw">import</span> <span class="vr">Enum</span>
+<span class="ln"> 8</span><span class="kw">from</span> <span class="vr">typing</span> <span class="kw">import</span> <span class="tp">List</span>
+<span class="ln"> 9</span>
+<span class="ln">10</span>
+<span class="ln">11</span><span class="kw">class</span> <span class="tp">Effort</span>(<span class="tp">Enum</span>):
+<span class="ln">12</span>    <span class="vr">INCOMPLETE</span>  <span class="op">=</span> <span class="nu">0</span>   <span class="cm"># nothing submitted</span>
+<span class="ln">13</span>    <span class="vr">ATTEMPTED</span>   <span class="op">=</span> <span class="nu">1</span>   <span class="cm"># ran but errors remain</span>
+<span class="ln">14</span>    <span class="vr">COMPLETE</span>    <span class="op">=</span> <span class="nu">2</span>   <span class="cm"># all checks pass</span>
+<span class="ln">15</span>    <span class="vr">POLISHED</span>    <span class="op">=</span> <span class="nu">3</span>   <span class="cm"># clean, documented, tested</span>
+<span class="ln">16</span>
+<span class="ln">17</span>
+<span class="ln">18</span><span class="dc">@dataclass</span>
+<span class="ln">19</span><span class="kw">class</span> <span class="tp">Week</span>:
+<span class="ln">20</span>    <span class="vr">number</span>: <span class="tp">int</span>
+<span class="ln">21</span>    <span class="vr">topic</span>: <span class="tp">str</span>
+<span class="ln">22</span>    <span class="vr">colab_done</span>: <span class="tp">bool</span> <span class="op">=</span> <span class="nl">False</span>
+<span class="ln">23</span>    <span class="vr">homework_done</span>: <span class="tp">bool</span> <span class="op">=</span> <span class="nl">False</span>
+<span class="ln">24</span>    <span class="vr">check_passed</span>: <span class="tp">bool</span> <span class="op">=</span> <span class="nl">False</span>
+<span class="ln">25</span>    <span class="vr">effort</span>: <span class="tp">Effort</span> <span class="op">=</span> <span class="tp">Effort</span>.<span class="vr">INCOMPLETE</span>
+<span class="ln">26</span>
+<span class="ln">27</span>
+<span class="ln">28</span><span class="dc">@dataclass</span>
+<span class="ln">29</span><span class="kw">class</span> <span class="tp">Contract</span>:
+<span class="ln">30</span>    <span class="vr">student</span>: <span class="tp">str</span>
+<span class="ln">31</span>    <span class="vr">track</span>: <span class="tp">str</span>            <span class="cm"># e.g. "CleanSweep"</span>
+<span class="ln">32</span>    <span class="vr">weeks</span>: <span class="tp">List</span>[<span class="tp">Week</span>]
+<span class="ln">33</span>    <span class="vr">version</span>: <span class="tp">str</span> <span class="op">=</span> <span class="st">"v1"</span>
+<span class="ln">34</span>
+<span class="ln">35</span>    <span class="kw">def</span> <span class="fn">progress</span>(<span class="vr">self</span>) <span class="op">-></span> <span class="tp">float</span>:
+<span class="ln">36</span>        <span class="cm">"""Fraction of weeks at COMPLETE or above."""</span>
+<span class="ln">37</span>        <span class="vr">done</span> <span class="op">=</span> <span class="bi">sum</span>(<span class="nu">1</span> <span class="kw">for</span> <span class="vr">w</span> <span class="kw">in</span> <span class="vr">self</span>.<span class="vr">weeks</span> <span class="kw">if</span> <span class="vr">w</span>.<span class="vr">effort</span>.<span class="vr">value</span> <span class="op">>=</span> <span class="nu">2</span>)
+<span class="ln">38</span>        <span class="kw">return</span> <span class="vr">done</span> <span class="op">/</span> <span class="bi">len</span>(<span class="vr">self</span>.<span class="vr">weeks</span>)
+<span class="ln">39</span>
+<span class="ln">40</span>    <span class="kw">def</span> <span class="fn">can_advance</span>(<span class="vr">self</span>) <span class="op">-></span> <span class="tp">bool</span>:
+<span class="ln">41</span>        <span class="cm">"""Must complete >= 80% to move to the next version."""</span>
+<span class="ln">42</span>        <span class="kw">return</span> <span class="vr">self</span>.<span class="fn">progress</span>() <span class="op">>=</span> <span class="nu">0.80</span>
+<span class="ln">43</span>
+<span class="ln">44</span>    <span class="kw">def</span> <span class="fn">sign</span>(<span class="vr">self</span>) <span class="op">-></span> <span class="tp">str</span>:
+<span class="ln">45</span>        <span class="kw">return</span> <span class="st">f"I, </span><span class="op">{</span><span class="vr">self</span>.<span class="vr">student</span><span class="op">}</span><span class="st">, commit to building </span><span class="op">{</span><span class="vr">self</span>.<span class="vr">track</span><span class="op">}</span><span class="st"> </span><span class="op">{</span><span class="vr">self</span>.<span class="vr">version</span><span class="op">}</span><span class="st">."</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ==================== JOURNEY ==================== -->
+<section class="section" id="journey">
+<div class="container">
+  <div class="section-label">// journey</div>
+  <div class="section-title">$ man courseos</div>
+
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot red"></div>
+      <div class="terminal-dot yellow"></div>
+      <div class="terminal-dot green"></div>
+      <span class="terminal-title">COURSEOS(1) &mdash; Manual Page</span>
+    </div>
+    <div class="terminal-body">
+
+      <div class="journey-section">
+        <h3>How It Works</h3>
+        <p>CourseOS is a project-based curriculum where every student builds the <strong style="color:var(--green)">same type of product</strong> &mdash; a data pipeline &mdash; across four consecutive courses. You pick a track (domain), and your pipeline evolves from a simple Python script into a fully architected, algorithmically optimized system. Each course rebuilds the pipeline using the new skills you learn that semester.</p>
+      </div>
+
+      <div class="journey-section">
+        <h3>Year 1 &mdash; Foundations</h3>
+        <p><strong style="color:var(--cyan)">Fall (CP1):</strong> You start from zero. No prior programming experience required. By week 14 you ship <code>v1</code> &mdash; a working pipeline written in pure Python scripts. It reads data, cleans it, and prints a summary.</p>
+        <p><strong style="color:var(--cyan)">Spring (CP2):</strong> You add real tools. Dictionaries for config, Matplotlib for charts, NumPy for speed, pytest for confidence. By week 14 you ship <code>v2</code> &mdash; a packaged, tested, data-science-grade pipeline.</p>
+      </div>
+
+      <div class="journey-section">
+        <h3>Year 2 &mdash; Mastery</h3>
+        <p><strong style="color:var(--cyan)">Fall (OOP):</strong> You redesign everything with classes, patterns, and plugin architecture. By week 14 you demo <code>v3</code> &mdash; a system anyone could extend without touching the core.</p>
+        <p><strong style="color:var(--cyan)">Spring (DSA):</strong> You profile your v3 and swap in proper algorithms. Hashing for lookups, heaps for priority queues, graphs for dependencies. The final report proves your pipeline is fast <em>and</em> correct.</p>
+      </div>
+
+      <div class="journey-section">
+        <h3>A Typical Week</h3>
+        <ul>
+          <li><strong style="color:var(--green)">Colab notebook</strong> &mdash; guided walkthrough of the week's concept (done before class or during lab)</li>
+          <li><strong style="color:var(--green)">Homework notebook</strong> &mdash; apply the concept directly to your track's pipeline</li>
+          <li><strong style="color:var(--green)">Check notebook</strong> &mdash; automated self-grading; run it to see if you pass</li>
+          <li>Estimated time: 4-6 hours per week (lab + homework + reading)</li>
+        </ul>
+      </div>
+
+      <div class="journey-section">
+        <h3>Falling Behind &amp; Recovery</h3>
+        <p>Life happens. If you miss a week, the next week's Colab always starts with a recap. The <code>check</code> notebooks tell you exactly where you stand. You can catch up at your own pace &mdash; the system is designed so each week builds on the last but doesn't require perfection. The 80% completion threshold (not 100%) gives you breathing room.</p>
+      </div>
+
+      <div class="journey-section">
+        <h3>Track Switching</h3>
+        <p>You can switch tracks between courses (e.g., start with CleanSweep in CP1, switch to GameStats in CP2). The pipeline structure is identical across tracks &mdash; only the data domain changes. Switching mid-course is not recommended but possible with instructor approval.</p>
+      </div>
+
+      <div class="journey-section">
+        <h3>Grading</h3>
+        <p>Grading is <strong style="color:var(--green)">effort-based</strong>, not perfection-based. Each week earns an effort score:</p>
+        <ul>
+          <li><code>INCOMPLETE (0)</code> &mdash; nothing submitted</li>
+          <li><code>ATTEMPTED (1)</code> &mdash; ran but errors remain</li>
+          <li><code>COMPLETE (2)</code> &mdash; all checks pass</li>
+          <li><code>POLISHED (3)</code> &mdash; clean, documented, tested beyond requirements</li>
+        </ul>
+        <p>Your course grade maps to the fraction of weeks at COMPLETE or above. >= 80% earns full credit. The contract's <code>can_advance()</code> method is not a metaphor &mdash; it's real code that runs on your repo.</p>
+      </div>
+
+      <div class="journey-section">
+        <h3>AI Policy</h3>
+        <p>AI tools (ChatGPT, Copilot, Claude, etc.) are <strong style="color:var(--yellow)">allowed and encouraged</strong> &mdash; with one rule: <strong style="color:var(--green)">you must understand every line you submit</strong>. The check notebooks include conceptual questions that AI cannot answer for you if you don't understand the code. We treat AI like a calculator in a math class: use it, but know what it's doing.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ==================== WEEK-BY-WEEK ==================== -->
+<section class="section" id="weeks">
+<div class="container">
+  <div class="section-label">// weeks</div>
+  <div class="section-title">$ git log --oneline --all</div>
+
+  <!-- CP1 -->
+  <div class="course-weeks">
+    <div class="course-weeks-header" onclick="toggleWeeks(this)">
+      <h3>CP1 &mdash; Core Python 1 (14 weeks)</h3>
+      <span class="toggle">&#9654;</span>
+    </div>
+    <div class="course-weeks-body" id="weeks-cp1"></div>
+  </div>
+
+  <!-- CP2 -->
+  <div class="course-weeks">
+    <div class="course-weeks-header" onclick="toggleWeeks(this)">
+      <h3>CP2 &mdash; Core Python 2 (14 weeks)</h3>
+      <span class="toggle">&#9654;</span>
+    </div>
+    <div class="course-weeks-body" id="weeks-cp2"></div>
+  </div>
+
+  <!-- OOP -->
+  <div class="course-weeks">
+    <div class="course-weeks-header" onclick="toggleWeeks(this)">
+      <h3>OOP &mdash; Object-Oriented Programming (14 weeks)</h3>
+      <span class="toggle">&#9654;</span>
+    </div>
+    <div class="course-weeks-body" id="weeks-oop"></div>
+  </div>
+
+  <!-- DSA -->
+  <div class="course-weeks">
+    <div class="course-weeks-header" onclick="toggleWeeks(this)">
+      <h3>DSA &mdash; Data Structures &amp; Algorithms (14 weeks)</h3>
+      <span class="toggle">&#9654;</span>
+    </div>
+    <div class="course-weeks-body" id="weeks-dsa"></div>
+  </div>
+
+</div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer">
+<div class="container">
+  <div>CourseOS &copy; 2026 &mdash; A project-based programming curriculum.</div>
+  <a class="gh-link" href="https://github.com/ArifSolmaz/courseos-curriculum" target="_blank" rel="noopener">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    github.com/ArifSolmaz/courseos-curriculum
+  </a>
+</div>
+</footer>
+
+<script>
+// Week data
+const courses = {
+  cp1: {
+    slug: "cp1",
+    weeks: [
+      [1, "Welcome to Python"],
+      [2, "Variables"],
+      [3, "Conditionals"],
+      [4, "Decision Logic"],
+      [5, "Loops Scanning"],
+      [6, "Loops Events"],
+      [7, "Lists"],
+      [8, "Strings"],
+      [9, "Functions"],
+      [10, "Decomposition"],
+      [11, "Exceptions"],
+      [12, "File IO"],
+      [13, "Integration"],
+      [14, "v1 Release"]
+    ]
+  },
+  cp2: {
+    slug: "cp2",
+    weeks: [
+      [1, "Schema Validation"],
+      [2, "Dict Analytics"],
+      [3, "Configurable Cleaning"],
+      [4, "Data Quality"],
+      [5, "Matplotlib"],
+      [6, "Reports"],
+      [7, "NumPy"],
+      [8, "Timing"],
+      [9, "Testing"],
+      [10, "Golden Outputs"],
+      [11, "Modularize"],
+      [12, "Package Hygiene"],
+      [13, "Integration"],
+      [14, "v2 Release"]
+    ]
+  },
+  oop: {
+    slug: "oop",
+    weeks: [
+      [1, "Classes"],
+      [2, "Composition"],
+      [3, "Cleaner"],
+      [4, "Analyzer"],
+      [5, "Plotter Reporter"],
+      [6, "Exceptions"],
+      [7, "SOLID"],
+      [8, "Strategy"],
+      [9, "Factory"],
+      [10, "pytest"],
+      [11, "Hygiene"],
+      [12, "Plugin"],
+      [13, "Freeze"],
+      [14, "v3 Demo"]
+    ]
+  },
+  dsa: {
+    slug: "dsa",
+    weeks: [
+      [1, "Big-O"],
+      [2, "Benchmarks"],
+      [3, "Searching"],
+      [4, "Sorting"],
+      [5, "Hashing"],
+      [6, "Heap"],
+      [7, "Sprint 1"],
+      [8, "Sprint 2"],
+      [9, "Trees"],
+      [10, "Graphs"],
+      [11, "Shortest Paths"],
+      [12, "DP"],
+      [13, "Integration"],
+      [14, "Final Report"]
+    ]
+  }
+};
+
+const BASE = "https://colab.research.google.com/github/ArifSolmaz/courseos-curriculum/blob/main/course-content/notebooks";
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function makeColabURL(course, week, type) {
+  const nn = pad(week);
+  const file = type === 'core' ? `W${nn}_core.ipynb` : type === 'homework' ? `W${nn}_homework.ipynb` : `W${nn}_check.ipynb`;
+  return `${BASE}/${course}/` + file;
+}
+
+function fakeHash() {
+  const chars = '0123456789abcdef';
+  let h = '';
+  for (let i = 0; i < 7; i++) h += chars[Math.floor(Math.random() * 16)];
+  return h;
+}
+
+// Seed random for consistent hashes
+let seed = 42;
+function seededHash() {
+  const chars = '0123456789abcdef';
+  let h = '';
+  for (let i = 0; i < 7; i++) {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    h += chars[seed % 16];
+  }
+  return h;
+}
+
+// Render weeks
+Object.keys(courses).forEach(key => {
+  const c = courses[key];
+  const container = document.getElementById(`weeks-${key}`);
+  let html = '';
+  c.weeks.forEach(([num, topic]) => {
+    const nn = pad(num);
+    const hash = seededHash();
+    html += `
+      <div class="git-log-entry">
+        <div class="git-log-hash">commit ${hash} (W${nn})</div>
+        <div class="git-log-msg">Week ${num}: ${topic}</div>
+        <div class="git-log-links">
+          <a href="${makeColabURL(c.slug, num, 'core')}" target="_blank" rel="noopener">Colab</a>
+          <a href="${makeColabURL(c.slug, num, 'homework')}" target="_blank" rel="noopener">Homework</a>
+          <a href="${makeColabURL(c.slug, num, 'check')}" target="_blank" rel="noopener">Check</a>
+        </div>
+      </div>`;
+  });
+  container.innerHTML = html;
+});
+
+// Toggle
+function toggleWeeks(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  header.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>

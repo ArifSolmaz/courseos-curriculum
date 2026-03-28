@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseOS</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #ffffff;
+            color: #37352f;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 60px 24px 80px;
+        }
+
+        /* ── Page Title ──────────────────────────── */
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: #37352f;
+            margin-bottom: 4px;
+        }
+        .page-subtitle {
+            font-size: 1.15rem;
+            color: #9b9a97;
+            font-weight: 400;
+            margin-bottom: 32px;
+        }
+
+        /* ── Callout Block ────────────────────────── */
+        .callout {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px 18px;
+            background: #f7f6f3;
+            border-radius: 4px;
+            margin-bottom: 32px;
+        }
+        .callout-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            line-height: 1.5;
+        }
+        .callout-text {
+            font-size: 0.95rem;
+            color: #37352f;
+        }
+        .callout-text strong { font-weight: 600; }
+
+        .callout-blue {
+            background: #e8f0fe;
+            border-left: 3px solid #4a86e8;
+        }
+        .callout-green {
+            background: #e6f6eb;
+            border-left: 3px solid #0f9d58;
+        }
+        .callout-yellow {
+            background: #fef7e0;
+            border-left: 3px solid #f4b400;
+        }
+        .callout-red {
+            background: #fce8e6;
+            border-left: 3px solid #db4437;
+        }
+        .callout-purple {
+            background: #f3e8fd;
+            border-left: 3px solid #9334e6;
+        }
+
+        /* ── Divider ──────────────────────────────── */
+        .divider {
+            border: none;
+            border-top: 1px solid #e9e9e7;
+            margin: 36px 0;
+        }
+
+        /* ── Section heading ──────────────────────── */
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #37352f;
+            margin-bottom: 16px;
+        }
+        h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #37352f;
+            margin-bottom: 8px;
+        }
+
+        p { margin-bottom: 10px; font-size: 0.95rem; }
+        p:last-child { margin-bottom: 0; }
+
+        /* ── Inline code ──────────────────────────── */
+        code {
+            font-family: 'SFMono-Regular', Menlo, Consolas, 'PT Mono', monospace;
+            font-size: 0.85em;
+            background: rgba(135,131,120,0.15);
+            color: #eb5757;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+        }
+
+        /* ── Code block (contract) ────────────────── */
+        pre {
+            background: #f7f6f3;
+            border-radius: 4px;
+            padding: 20px 24px;
+            overflow-x: auto;
+            margin-bottom: 10px;
+        }
+        pre code {
+            background: none;
+            color: #37352f;
+            padding: 0;
+            font-size: 0.88rem;
+            line-height: 2;
+        }
+        pre code .fn { color: #9334e6; font-weight: 600; }
+        pre code .cm { color: #9b9a97; }
+
+        /* ── Pipeline (horizontal flow) ───────────── */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 32px;
+            overflow-x: auto;
+        }
+        .pipe-box {
+            flex: 1;
+            text-align: center;
+            padding: 18px 12px;
+            background: #f7f6f3;
+            border: 1px solid #e9e9e7;
+            min-width: 120px;
+        }
+        .pipe-box:first-child { border-radius: 4px 0 0 4px; }
+        .pipe-box:last-child { border-radius: 0 4px 4px 0; }
+        .pipe-box + .pipe-box { border-left: none; }
+        .pipe-ver {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #37352f;
+        }
+        .pipe-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #37352f;
+            margin-top: 2px;
+        }
+        .pipe-desc {
+            font-size: 0.75rem;
+            color: #9b9a97;
+            margin-top: 2px;
+        }
+        .pipe-arrow {
+            font-size: 1.1rem;
+            color: #d3d1cb;
+            padding: 0 2px;
+            flex-shrink: 0;
+        }
+
+        /* ── Tags / Pills ─────────────────────────── */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+        .tag-blue { background: #d3e5ef; color: #183b56; }
+        .tag-green { background: #dbeddb; color: #1a4a1a; }
+        .tag-orange { background: #fadec9; color: #5a3415; }
+        .tag-pink { background: #f5e0e9; color: #4c1f3b; }
+        .tag-purple { background: #e8deee; color: #3b1f5a; }
+
+        /* ── Database Table ───────────────────────── */
+        .db-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            margin-bottom: 10px;
+        }
+        .db-table th {
+            text-align: left;
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9e9e7;
+            font-weight: 500;
+            font-size: 0.78rem;
+            color: #9b9a97;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .db-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0efed;
+            color: #37352f;
+            vertical-align: top;
+        }
+        .db-table tr:last-child td { border-bottom: none; }
+        .db-table tr:hover td { background: #f7f6f3; }
+        .db-table .code-col { font-weight: 600; white-space: nowrap; }
+
+        /* ── Toggle / Details ─────────────────────── */
+        details {
+            margin-bottom: 2px;
+        }
+        details summary {
+            padding: 8px 4px;
+            font-size: 0.95rem;
+            font-weight: 400;
+            color: #37352f;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-radius: 4px;
+            transition: background 0.1s;
+        }
+        details summary:hover { background: #f7f6f3; }
+        details summary::before {
+            content: "\25B6";
+            font-size: 0.6rem;
+            color: #9b9a97;
+            transition: transform 0.15s;
+            display: inline-block;
+            width: 16px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        details[open] > summary::before {
+            transform: rotate(90deg);
+        }
+        details summary::-webkit-details-marker { display: none; }
+        .toggle-body {
+            padding: 4px 0 12px 22px;
+            font-size: 0.93rem;
+        }
+        .toggle-body p { margin-bottom: 8px; }
+        .toggle-body ul, .toggle-body ol {
+            margin: 4px 0 8px 20px;
+            font-size: 0.93rem;
+        }
+        .toggle-body li { margin-bottom: 4px; }
+
+        /* ── Checklist ────────────────────────────── */
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 8px 0 12px 0;
+        }
+        .checklist li {
+            padding: 3px 0;
+            font-size: 0.93rem;
+        }
+        .checklist li::before {
+            content: "\2611";
+            margin-right: 8px;
+            color: #2eaadc;
+        }
+
+        /* ── Week rows (notebook links) ───────────── */
+        .wk-header {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #9b9a97;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e9e9e7;
+        }
+        .wk-header .wh-num { width: 36px; flex-shrink: 0; }
+        .wk-header .wh-title { flex: 1; }
+        .wk-header .wh-sprint { width: 44px; text-align: center; flex-shrink: 0; }
+        .wk-header .wh-links { width: 170px; text-align: right; flex-shrink: 0; }
+
+        .wk {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid #f0efed;
+            font-size: 0.9rem;
+        }
+        .wk:last-child { border-bottom: none; }
+        .wk:hover { background: #f7f6f3; }
+        .wk-num {
+            width: 36px;
+            font-weight: 600;
+            color: #9b9a97;
+            font-size: 0.82rem;
+            flex-shrink: 0;
+        }
+        .wk-title { flex: 1; color: #37352f; }
+        .wk-sprint {
+            width: 44px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #9b9a97;
+            flex-shrink: 0;
+        }
+        .wk-links {
+            width: 170px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+        .wk-links a {
+            font-size: 0.72rem;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 3px;
+            text-decoration: none;
+            transition: opacity 0.15s;
+        }
+        .wk-links a:hover { opacity: 0.8; text-decoration: none; }
+        .wk-links .core-link { background: #d3e5ef; color: #183b56; }
+        .wk-links .hw-link { background: #fadec9; color: #5a3415; }
+        .wk-links .check-link { background: #dbeddb; color: #1a4a1a; }
+
+        /* ── Footer ───────────────────────────────── */
+        .footer {
+            margin-top: 48px;
+            padding-top: 20px;
+            border-top: 1px solid #e9e9e7;
+            text-align: center;
+            font-size: 0.82rem;
+            color: #9b9a97;
+        }
+        .footer a { color: #9b9a97; text-decoration: underline; }
+        .footer a:hover { color: #37352f; }
+
+        /* ── Responsive ───────────────────────────── */
+        @media (max-width: 640px) {
+            .page { padding: 32px 16px 60px; }
+            .page-title { font-size: 1.8rem; }
+            .pipeline { flex-direction: column; }
+            .pipe-box { border-radius: 0 !important; border-left: 1px solid #e9e9e7 !important; }
+            .pipe-box:first-child { border-radius: 4px 4px 0 0 !important; }
+            .pipe-box:last-child { border-radius: 0 0 4px 4px !important; }
+            .pipe-arrow { transform: rotate(90deg); }
+            .db-table { font-size: 0.8rem; }
+            .db-table th, .db-table td { padding: 8px 6px; }
+            .wk-header .wh-links, .wk-links { width: auto; }
+            .wk-links { flex-wrap: wrap; }
+            .wk { flex-wrap: wrap; gap: 4px; }
+            .tags { gap: 6px; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+
+    <!-- ═══ TITLE ════════════════════════════════ -->
+    <h1 class="page-title">CourseOS</h1>
+    <p class="page-subtitle">One project. Four courses. Two years.</p>
+
+    <!-- ═══ CALLOUT ══════════════════════════════ -->
+    <div class="callout callout-blue">
+        <span class="callout-icon">🚀</span>
+        <span class="callout-text"><strong>Build a real tool from scratch</strong> and evolve it across CP1, CP2, OOP, and DSA. One GitHub repo. Four semesters. Portfolio-quality output.</span>
+    </div>
+
+    <!-- ═══ PIPELINE ═════════════════════════════ -->
+    <h2>Pipeline</h2>
+    <div class="pipeline">
+        <div class="pipe-box">
+            <div class="pipe-ver">v1</div>
+            <div class="pipe-name">CP1</div>
+            <div class="pipe-desc">It works</div>
+        </div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-box">
+            <div class="pipe-ver">v2</div>
+            <div class="pipe-name">CP2</div>
+            <div class="pipe-desc">It's robust</div>
+        </div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-box">
+            <div class="pipe-ver">v3</div>
+            <div class="pipe-name">OOP</div>
+            <div class="pipe-desc">It's architected</div>
+        </div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-box">
+            <div class="pipe-ver">v3</div>
+            <div class="pipe-name">DSA</div>
+            <div class="pipe-desc">It's fast</div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ═══ TRACKS ═══════════════════════════════ -->
+    <h2>Tracks</h2>
+    <p style="color:#9b9a97; font-size:0.88rem; margin-bottom:12px;">Explore weeks 1-2, confirm by week 3. All tracks follow the same contract.</p>
+    <div class="tags">
+        <span class="tag tag-blue">🤖 Robotics &mdash; MechaSense Studio</span>
+        <span class="tag tag-green">📊 Data / AI &mdash; CleanReport Pipeline</span>
+        <span class="tag tag-orange">🎮 Simulation &mdash; SimLab Engine</span>
+        <span class="tag tag-pink">🌌 Space / Astro &mdash; Lightcurve Explorer</span>
+        <span class="tag tag-purple">📡 IoT &mdash; AutoDashboard</span>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ═══ COURSES TABLE ════════════════════════ -->
+    <h2>Courses</h2>
+    <table class="db-table">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Year</th>
+                <th>Hours</th>
+                <th>Weeks</th>
+                <th>Target</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="code-col">CP1</td>
+                <td>Computer Programming 1</td>
+                <td>1</td>
+                <td>5 h/wk</td>
+                <td>14</td>
+                <td>v1 functional pipeline</td>
+            </tr>
+            <tr>
+                <td class="code-col">CP2</td>
+                <td>Computer Programming 2</td>
+                <td>1</td>
+                <td>5 h/wk</td>
+                <td>14</td>
+                <td>v2 professional tool</td>
+            </tr>
+            <tr>
+                <td class="code-col">OOP</td>
+                <td>Object-Oriented Programming</td>
+                <td>2</td>
+                <td>3 h/wk</td>
+                <td>14</td>
+                <td>v3 architecture</td>
+            </tr>
+            <tr>
+                <td class="code-col">DSA</td>
+                <td>Data Structures &amp; Algorithms</td>
+                <td>2</td>
+                <td>3 h/wk</td>
+                <td>14</td>
+                <td>v3 performance proof</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr class="divider">
+
+    <!-- ═══ CONTRACT ═════════════════════════════ -->
+    <h2>Contract</h2>
+    <div class="callout callout-purple">
+        <span class="callout-icon">📄</span>
+        <span class="callout-text">Every track implements these functions in <code>/src/</code></span>
+    </div>
+    <pre><code><span class="fn">load_data</span>(config) → data
+<span class="fn">clean_data</span>(data, config) → clean_data
+<span class="fn">analyze</span>(clean_data, config) → results
+<span class="fn">plot</span>(clean_data, results, config) → figures
+<span class="fn">export_results</span>(clean_data, results, figures, config) → paths
+<span class="fn">self_check</span>() → None   <span class="cm"># must pass every week</span></code></pre>
+
+    <hr class="divider">
+
+    <!-- ═══ JOURNEY (Toggle sections) ════════════ -->
+    <h2>Journey</h2>
+
+    <details open>
+        <summary>How it works</summary>
+        <div class="toggle-body">
+            <p>You keep <strong>one GitHub repository</strong> for two years. Every week you open a Colab notebook, learn a concept, and apply it to your project. By the end, you have a portfolio-quality tool that you built from scratch.</p>
+            <p>There are no exams. Your grade comes from what you build, what you can explain, and the evidence you produce every week.</p>
+        </div>
+    </details>
+
+    <details>
+        <summary>Year 1 &mdash; Learn to code, build a working tool</summary>
+        <div class="toggle-body">
+            <p><strong>CP1 (Semester 1):</strong> You start from zero &mdash; <code>print("hello")</code> &mdash; and by Week 14 you have a working data pipeline. Every week adds one concept: variables, conditionals, loops, functions, file I/O. Each session is 5 hours: learn the concept, apply it to your project, run the check, submit.</p>
+            <p><strong>CP2 (Semester 2):</strong> Your v1 pipeline works but it's fragile. Now you make it robust: validate input schemas, add configurable cleaning rules, create professional plots, generate reports, write tests, and move all code into <code>/src</code>. By Week 14 your tool is something you'd be proud to show.</p>
+        </div>
+    </details>
+
+    <details>
+        <summary>Year 2 &mdash; Engineer it, optimize it</summary>
+        <div class="toggle-body">
+            <p><strong>OOP (Semester 3):</strong> You refactor your v2 code into an architecture with components &mdash; DataSource, Cleaner, Analyzer, Plotter, Reporter. You learn design patterns (Strategy, Factory), write pytest tests, and build a plugin system. Sessions are 3 hours.</p>
+            <p><strong>DSA (Semester 4):</strong> You find the bottleneck in your pipeline and optimize it using the right data structure &mdash; hash tables, heaps, binary search, trees. You prove the improvement with benchmarks: baseline vs optimized, Big-O analysis, timing plots. Your tool is now fast <em>and</em> you can explain why.</p>
+        </div>
+    </details>
+
+    <details>
+        <summary>Typical week</summary>
+        <div class="toggle-body">
+            <ol>
+                <li>Open the <strong>Core Notebook</strong> in Colab &mdash; learn the concept with worked examples</li>
+                <li>Open your <strong>Studio Notebook</strong> &mdash; apply the concept to your project</li>
+                <li>Finish the <strong>must-pass core</strong> first, then the standard target, then stretch if time</li>
+                <li>Run the <strong>Universal Check</strong> &mdash; it tells you pass or fail</li>
+                <li>Fix failures in <code>/src</code>, not in the notebook</li>
+                <li>Complete the <strong>reflection</strong> and submit</li>
+                <li>Do the <strong>Homework</strong> at home before next week</li>
+            </ol>
+        </div>
+    </details>
+
+    <details>
+        <summary>What if I fall behind?</summary>
+        <div class="toggle-body">
+            <p>Every week has three levels. If you can't finish the standard target, <strong>finish the must-pass core</strong> &mdash; that keeps you safe. If you can't even finish that, submit a <strong>recovery ticket</strong> (what failed, what you tried, what you'll do next).</p>
+            <p>You get <strong>up to 3 recovery tickets per semester</strong> with full credit. After that, missed weeks are capped at the core level. The system is designed so nobody fails silently &mdash; but you have to show up and try.</p>
+        </div>
+    </details>
+
+    <details>
+        <summary>Grading</summary>
+        <div class="toggle-body">
+            <ul class="checklist">
+                <li>Weekly submissions + universal checks: <strong>50%</strong></li>
+                <li>Quizzes / oral explain-your-code: <strong>20%</strong></li>
+                <li>Release demo (v1 / v2 / v3): <strong>20%</strong></li>
+                <li>Professional habits (reflections, recovery, compliance): <strong>10%</strong></li>
+            </ul>
+            <p>Teamwork is allowed, but understanding is individual. If your team submits passing code and you can't explain it, <strong>you</strong> get the penalty.</p>
+        </div>
+    </details>
+
+    <details>
+        <summary>AI policy</summary>
+        <div class="toggle-body">
+            <div class="callout callout-yellow" style="margin-bottom:8px;">
+                <span class="callout-icon">⚠️</span>
+                <span class="callout-text"><strong>"It runs" is not enough &mdash; you must know why it works.</strong></span>
+            </div>
+            <p>If the instructor allows AI tools: you must understand and explain everything you submit. Disclose AI usage in reflections. Inability to explain your own code results in a penalty.</p>
+        </div>
+    </details>
+
+    <hr class="divider">
+
+    <!-- ═══ WEEK-BY-WEEK ═════════════════════════ -->
+    <h2>Week-by-week</h2>
+    <p style="color:#9b9a97; font-size:0.88rem; margin-bottom:16px;">Every week has a Core notebook, Homework, and Check. Click to open in Google Colab.</p>
+
+    <div id="notebooks-container"></div>
+
+    <script>
+    const REPO = "ArifSolmaz/courseos-curriculum";
+    const BASE = "course-content/notebooks";
+    function colab(course, file) {
+        return `https://colab.research.google.com/github/${REPO}/blob/main/${BASE}/${course}/${file}`;
+    }
+
+    const WEEKS = {
+        cp1: [
+            [1,"Welcome to Python & Your Pipeline","S1"],
+            [2,"Variables, Types & Numbers","S1"],
+            [3,"Making Decisions (Conditionals)","S2"],
+            [4,"Decision Logic & Classification","S2"],
+            [5,"Loops: Scanning Data","S3"],
+            [6,"Loops: Counting Events","S3"],
+            [7,"Lists: Indexing & Windows","S4"],
+            [8,"Strings: Parsing Data","S4"],
+            [9,"Functions: Building Blocks","S5"],
+            [10,"Functions: Decomposition & Reuse","S5"],
+            [11,"Exceptions: Handling Errors","S6"],
+            [12,"File I/O: Reading & Writing","S6"],
+            [13,"Integration: End-to-End Pipeline","S6"],
+            [14,"v1 Release & Demo","S6"],
+        ],
+        cp2: [
+            [1,"Schema Validation","S7"],[2,"Dict Analytics","S7"],
+            [3,"Configurable Cleaning Pipeline","S8"],[4,"Data Quality Reports","S8"],
+            [5,"Matplotlib Standards","S9"],[6,"Report Generation","S9"],
+            [7,"NumPy Introduction","S10"],[8,"Timing & Performance","S10"],
+            [9,"Testing: Expanded Self-Check","S11"],[10,"Golden Outputs","S11"],
+            [11,"Modularize into /src","S12"],[12,"Package Hygiene","S12"],
+            [13,"Integration on Larger Data","S12"],[14,"v2 Release & Demo","S12"],
+        ],
+        oop: [
+            [1,"OOP Kickoff: Classes & Objects",""],[2,"Composition: DataSource & Dataset",""],
+            [3,"Cleaner Component",""],[4,"Analyzer Component",""],
+            [5,"Plotter & Reporter Components",""],[6,"Domain Exceptions & Validation",""],
+            [7,"SOLID Principles (SRP/OCP)",""],[8,"Strategy Pattern",""],
+            [9,"Factory & Registry Pattern",""],[10,"Testing with pytest",""],
+            [11,"Package Hygiene",""],[12,"Plugin Exercise",""],
+            [13,"Architecture Freeze",""],[14,"v3 Architecture Demo",""],
+        ],
+        dsa: [
+            [1,"Big-O & Python Cost Model",""],[2,"Benchmark Literacy",""],
+            [3,"Searching: Linear vs Binary",""],[4,"Sorting Algorithms",""],
+            [5,"Hashing & Indexing",""],[6,"Heap & Priority Queue",""],
+            [7,"Performance Sprint 1",""],[8,"Performance Sprint 2",""],
+            [9,"Trees & BST",""],[10,"Graphs: BFS & DFS",""],
+            [11,"Shortest Paths",""],[12,"Dynamic Programming",""],
+            [13,"Final Integration",""],[14,"Final Performance Report",""],
+        ],
+    };
+
+    const LABELS = {
+        cp1: "CP1 \u2014 Python Fundamentals",
+        cp2: "CP2 \u2014 Professional Tool",
+        oop: "OOP \u2014 Architecture",
+        dsa: "DSA \u2014 Performance",
+    };
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function renderWeeks() {
+        const el = document.getElementById("notebooks-container");
+        let html = "";
+        for (const [code, weeks] of Object.entries(WEEKS)) {
+            html += `<details${code === 'cp1' ? ' open' : ''}>
+                <summary>${LABELS[code]} (14 weeks)</summary>
+                <div class="toggle-body" style="padding-left:0;">
+                    <div class="wk-header">
+                        <span class="wh-num">#</span>
+                        <span class="wh-title">Topic</span>
+                        <span class="wh-sprint">Sprint</span>
+                        <span class="wh-links">Notebooks</span>
+                    </div>
+                    ${weeks.map(([num, title, sprint]) => `
+                    <div class="wk">
+                        <div class="wk-num">${num}</div>
+                        <div class="wk-title">${title}</div>
+                        <div class="wk-sprint">${sprint}</div>
+                        <div class="wk-links">
+                            <a href="${colab(code, 'W'+pad(num)+'_core.ipynb')}" target="_blank" class="core-link">Core</a>
+                            <a href="${colab(code, 'W'+pad(num)+'_homework.ipynb')}" target="_blank" class="hw-link">HW</a>
+                            <a href="${colab(code, 'W'+pad(num)+'_check.ipynb')}" target="_blank" class="check-link">Check</a>
+                        </div>
+                    </div>`).join("")}
+                </div>
+            </details>`;
+        }
+        el.innerHTML = html;
+    }
+    document.addEventListener("DOMContentLoaded", renderWeeks);
+    </script>
+
+    <!-- ═══ FOOTER ═══════════════════════════════ -->
+    <div class="footer">
+        CourseOS &mdash; Mechatronics Engineering &middot; <a href="https://github.com/ArifSolmaz/courseos-curriculum">GitHub</a>
+    </div>
+
+</div>
+</body>
+</html>
