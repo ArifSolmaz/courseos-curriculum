@@ -163,7 +163,7 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
   <div class="output-card">
     <h4>Time-Series Plot</h4>
     <div class="file">reports/figures/timeseries.png</div>
-    <p>Multi-sensor line plot with threshold lines, event markers (red dots at fault points), smoothed overlay, labeled axes with units. Publication quality.</p>
+    <p>Multi-sensor line plot with threshold lines, event markers (red dots at fault points), smoothed overlay, labeled axes with units. Report-ready figure quality.</p>
   </div>
   <div class="output-card">
     <h4>Distribution Plot</h4>
@@ -231,6 +231,7 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
       <tr><td>10,000</td><td>1.1ms</td><td>0.010ms</td><td class="fast">110×</td></tr>
       <tr><td>100,000</td><td>11.3ms</td><td>0.012ms</td><td class="fast">940×</td></tr>
     </table>
+    <div style="font-size:.65rem;color:#aaa;margin-top:6px;font-style:italic">Representative example timings; actual performance depends on hardware and environment.</div>
   </div>
 </div>
 
@@ -358,6 +359,7 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
       <tr><td>10,000</td><td>4.2ms</td><td>0.001ms</td><td class="fast">4,200×</td></tr>
       <tr><td>100,000</td><td>42ms</td><td>0.001ms</td><td class="fast">42,000×</td></tr>
     </table>
+    <div style="font-size:.65rem;color:#aaa;margin-top:6px;font-style:italic">Representative example timings; actual performance depends on hardware and environment.</div>
   </div>
 </div>
 
@@ -403,7 +405,7 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
   <div class="output-card">
     <h4>Simulation Log</h4>
     <div class="file">data/cleaned/simulation_log.csv</div>
-    <p>Every timestep recorded: step, x, y, velocity, score, collision_flag. Deterministic — same seed = same results. Reproducible science.</p>
+    <p>Every timestep recorded: step, x, y, velocity, score, collision_flag. Deterministic — same seed = same results. Supports reproducible simulation experiments.</p>
   </div>
   <div class="output-card">
     <h4>Scenario Report</h4>
@@ -471,6 +473,7 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
       <tr><td>1,000</td><td>1.8ms</td><td>0.02ms</td><td class="fast">90×</td></tr>
       <tr><td>10,000</td><td>18ms</td><td>0.03ms</td><td class="fast">600×</td></tr>
     </table>
+    <div style="font-size:.65rem;color:#aaa;margin-top:6px;font-style:italic">Representative example timings; actual performance depends on hardware and environment.</div>
   </div>
 </div>
 
@@ -486,7 +489,7 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
 <!-- SPACE -->
 <!-- ═══════════════════════════════════════════════ -->
 <div class="product" id="space">
-<div class="prod-head"><div class="prod-icon">🌌</div><div class="prod-info"><h2>Lightcurve Explorer</h2><div class="tagline">"Give it starlight data, find hidden planets."</div></div></div>
+<div class="prod-head"><div class="prod-icon">🌌</div><div class="prod-info"><h2>Lightcurve Explorer</h2><div class="tagline">"Give it starlight data, find transit-like events."</div></div></div>
 <div class="prod-oneliner">A lightcurve analysis tool that processes star brightness measurements, cleans instrument noise, applies detrending, detects flux dips that indicate planet transits, estimates orbital periods, and generates annotated discovery reports.</div>
 
 <div class="terminal">
@@ -516,10 +519,10 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
   <div class="output-card">
     <h4>Cleaned Lightcurve</h4>
     <div class="file">data/cleaned/cleaned.csv</div>
-    <p>45,102 validated time-flux pairs. NaN gaps filled or removed, instrument outliers clipped, detrended baseline normalized to 1.0.</p>
+    <p>45,102 validated time-flux pairs. NaN gaps removed or flagged, instrument outliers clipped, detrended baseline normalized to 1.0.</p>
   </div>
   <div class="output-card">
-    <h4>Discovery Report</h4>
+    <h4>Candidate Event Report</h4>
     <div class="file">reports/report.json</div>
     <pre>{
   "star": "TIC-29837",
@@ -585,6 +588,7 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
       <tr><td>100,000</td><td>1.2ms</td><td><0.01ms</td><td class="fast">12,000×</td></tr>
       <tr><td>1,000,000</td><td>12ms</td><td><0.01ms</td><td class="fast">120,000×</td></tr>
     </table>
+    <div style="font-size:.65rem;color:#aaa;margin-top:6px;font-style:italic">Representative example timings; actual performance depends on hardware and environment.</div>
   </div>
 </div>
 
@@ -709,6 +713,7 @@ hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
       <tr><td>4 × 30</td><td>34ms</td><td>0.8ms</td><td class="fast">42×</td></tr>
       <tr><td>20 × 30</td><td>170ms</td><td>1.2ms</td><td class="fast">140×</td></tr>
     </table>
+    <div style="font-size:.65rem;color:#aaa;margin-top:6px;font-style:italic">Representative example timings; actual performance depends on hardware and environment.</div>
   </div>
 </div>
 

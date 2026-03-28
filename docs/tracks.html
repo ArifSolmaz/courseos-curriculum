@@ -109,7 +109,7 @@ tr:hover td{background:#fafafb}
     </div>
     <div class="tc-col">
       <div class="tc-col-label blue">End product after 2 years</div>
-      <p style="font-size:.82rem;color:#555;line-height:1.7">A command-line tool that takes raw sensor CSVs, validates and cleans them, detects threshold crossings and anomalies, generates labeled time-series plots with fault annotations, and exports a structured JSON report. Optimized to handle 100K+ readings with sub-millisecond range queries via binary search.</p>
+      <p style="font-size:.82rem;color:#555;line-height:1.7">A command-line tool that takes raw sensor CSVs, validates and cleans them, detects threshold crossings and anomalies, generates labeled time-series plots with fault annotations, and exports a structured JSON report. Optimized to handle 100K+ readings with fast range queries via binary search.</p>
       <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"3 overtemp events in RPM sensor between t=120–180s, peak 94.2°C (example threshold). 2 vibration spikes above 55g at t=45s and t=162s. Overall health: WARNING."</p></div>
     </div>
     <div class="tc-col">
@@ -148,7 +148,7 @@ tr:hover td{background:#fafafb}
     </div>
     <div class="tc-col">
       <div class="tc-col-label blue">End product after 2 years</div>
-      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes any dirty CSV, checks it against a schema, drops invalid rows with per-reason counts, computes group statistics, generates labeled plots, and writes a complete report — JSON for machines, Markdown for humans. Cached aggregation makes re-runs near-instant on large files.</p>
+      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes any dirty CSV, checks it against a schema, drops invalid rows with per-reason counts, computes group statistics, generates labeled plots, and writes a complete report — JSON for machines, Markdown for humans. Cached aggregation makes repeated queries very fast on large files.</p>
       <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"1,247 of 1,500 rows valid. Dropped: 142 missing, 89 out-of-range, 22 duplicate. Mean score by city: Cairo=78.3, Alex=82.1, Luxor=74.6."</p></div>
     </div>
     <div class="tc-col">
@@ -226,7 +226,7 @@ tr:hover td{background:#fafafb}
     </div>
     <div class="tc-col">
       <div class="tc-col-label blue">End product after 2 years</div>
-      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes raw star brightness data, cleans it, removes instrument noise via detrending, scans for significant flux dips, marks candidate transit events, and produces annotated lightcurve plots with a structured JSON report. Prefix-sum optimization enables instant windowed statistics over millions of data points.</p>
+      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes raw star brightness data, cleans it, removes instrument noise via detrending, scans for significant flux dips, marks candidate transit events, and produces annotated lightcurve plots with a structured JSON report. Prefix-sum optimization enables very fast windowed statistics after preprocessing, with constant-time query complexity.</p>
       <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"Star TIC-29837: 2 dips detected at t=45.2d (depth 0.8%) and t=91.7d (depth 0.9%). Estimated period: ~46.5 days. Confidence: moderate."</p></div>
     </div>
     <div class="tc-col">
@@ -265,7 +265,7 @@ tr:hover td{background:#fafafb}
     </div>
     <div class="tc-col">
       <div class="tc-col-label blue">End product after 2 years</div>
-      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes any IoT CSV, figures out the columns from aliases in config, cleans the data, generates a standardized dashboard with time-series and summary plots, and exports reports. Works with new devices without code changes. Cached computations make batch re-processing near-instant.</p>
+      <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes any IoT CSV, figures out the columns from aliases in config, cleans the data, generates a standardized dashboard with time-series and summary plots, and exports reports. Works with new devices without code changes. Cached computations make batch re-processing very fast in benchmarked examples.</p>
       <div class="tc-sample"><div class="tc-sample-label">Sample output</div><p>"Device D01: 720 readings over 30 days. Temp range 18.2–26.4°C, 3 anomalies flagged. Humidity stable at 44–48%. Dashboard: 4 plots exported."</p></div>
     </div>
     <div class="tc-col">
@@ -320,7 +320,7 @@ tr:hover td{background:#fafafb}
       <p style="margin-top:10px">Your MechaSense tool could have caught it. A vibration spike at t=14:32, an RPM drop to 2,840 (normal: 3,100), and a temperature creep from 65°C to 78°C over 40 minutes. Your pipeline reads the sensor CSV, flags the anomaly, and sends a report: <em>"Warning: motor degradation pattern detected. Recommend maintenance window."</em></p>
       <p style="margin-top:10px"><strong>Why it's medium difficulty:</strong> The data is clean numbers — no messy strings or mixed types. The challenge is detecting <em>meaningful</em> patterns in noise. When is a temperature spike a real fault vs a hot day? That's where your threshold logic and event detection earn their keep.</p>
       <p style="margin-top:10px"><strong>Where this leads:</strong> Predictive maintenance is a $15B+ industry. Companies like Siemens, ABB, and Bosch hire engineers who can build exactly this kind of monitoring pipeline. As a Mechatronics graduate with a working sensor analysis tool in your portfolio, you're not just another applicant — you have proof.</p>
-      <p style="margin-top:10px;padding:12px 16px;background:#eef2ff;border-radius:10px;color:#4338ca"><strong>After graduation, you can tell an employer:</strong> "I built a tool that processes 100K+ sensor readings, detects faults using configurable thresholds, and generates reports — with sub-millisecond range queries. Here's the repo."</p>
+      <p style="margin-top:10px;padding:12px 16px;background:#eef2ff;border-radius:10px;color:#4338ca"><strong>After graduation, you can tell an employer:</strong> "I built a tool that processes 100K+ sensor readings, detects faults using configurable thresholds, and generates reports — with fast binary-search range queries. Here's the repo."</p>
     </div>
   </div>
 
@@ -352,7 +352,7 @@ tr:hover td{background:#fafafb}
   <div style="margin-bottom:48px" id="story-space">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><span style="font-size:2rem">🌌</span><h3 style="font-size:1.05rem;font-weight:700">Space — "I want to discover things nobody has seen"</h3></div>
     <div style="font-size:.9rem;color:#444;line-height:1.85">
-      <p>NASA's TESS satellite stares at a patch of sky for 27 days straight, measuring the brightness of thousands of stars every 2 minutes. If a planet passes in front of a star, the brightness dips — by maybe 0.5%. Hidden in terabytes of noisy data, there's a tiny signal that says: <em>a new world exists</em>.</p>
+      <p>NASA's TESS satellite monitors large regions of the sky over roughly 27-day sectors, producing light curves that can be searched for periodic transit-like dips. If a planet passes in front of a star, the brightness dips — by maybe 0.5%. Hidden in noisy data, there's a tiny signal that says: <em>something interesting is there</em>.</p>
       <p style="margin-top:10px">Your Lightcurve Explorer follows the same broad idea as real transit-search pipelines, but in a simplified educational form. Load a lightcurve CSV. Clean NaN gaps and obvious outliers. Apply detrending to flatten the baseline. Scan for transit-like dips below threshold. Mark candidate events. Your report says: <em>"2 transit-like dips detected at t=45.2d and t=91.7d, depth 0.8%, estimated period 46.5 days."</em> That's a promising toy-pipeline candidate for further vetting.</p>
       <p style="margin-top:10px"><strong>Why it's medium-hard:</strong> The algorithms aren't harder than other tracks — threshold detection, windowed statistics, detrending are all doable. The hard part is the <em>domain</em>. You need to learn what flux means, what a transit looks like, what detrending does and why. Nobody in your Mechatronics class will know this already. You're on your own for domain context, and fewer classmates can help you debug.</p>
       <p style="margin-top:10px"><strong>Why the effort is worth it:</strong> Nothing else in your cohort will look like this. In an interview, when 20 people show data cleaning tools and sensor monitors, you pull out a <em>planet transit detector</em>. Conversation over — they want to hear more. This track also prepares you for aerospace and research careers. And the prefix-sum optimization you build in DSA is used everywhere — from financial analytics to genomics.</p>
