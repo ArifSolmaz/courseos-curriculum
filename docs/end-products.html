@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>End Products — CourseOS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Space Grotesk',sans-serif;background:#fefefe;color:#1a1a1a}
+a{color:#6366f1;text-decoration:none}
+a:hover{text-decoration:underline}
+::selection{background:#e0e7ff;color:#312e81}
+
+.wrap{max-width:820px;margin:0 auto;padding:0 28px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;color:#999;margin-top:32px;transition:color .15s}
+.back:hover{color:#6366f1;text-decoration:none}
+
+.page-header{padding:48px 0 20px}
+.page-header h1{font-size:2rem;font-weight:700;letter-spacing:-.03em}
+.page-header p{font-size:.95rem;color:#777;margin-top:10px;line-height:1.65;max-width:620px}
+
+hr{border:none;border-top:1px solid #f0f0f0;margin:48px 0}
+
+/* Product card */
+.product{margin-bottom:56px;scroll-margin-top:32px}
+.prod-head{display:flex;align-items:center;gap:16px;margin-bottom:6px}
+.prod-icon{font-size:2.8rem}
+.prod-info h2{font-size:1.3rem;font-weight:700;letter-spacing:-.02em}
+.prod-info .tagline{font-size:.88rem;color:#6366f1;font-weight:600;font-style:italic}
+.prod-oneliner{font-size:.95rem;color:#555;line-height:1.7;margin:16px 0 24px;padding-bottom:24px;border-bottom:1px solid #f0f0f0}
+
+/* Terminal demo */
+.terminal{background:#1a1a2e;border-radius:14px;overflow:hidden;margin-bottom:24px}
+.term-bar{display:flex;gap:6px;padding:10px 16px;background:#12121f}
+.term-dot{width:10px;height:10px;border-radius:50%}
+.term-dot.r{background:#ff5f57}.term-dot.y{background:#febc2e}.term-dot.g{background:#28c840}
+.term-code{padding:20px 24px;font-family:'Courier New',monospace;font-size:.78rem;line-height:1.9;color:#c4b5fd;overflow-x:auto}
+.term-code .cmd{color:#6ee7b7}
+.term-code .out{color:#94a3b8}
+.term-code .hi{color:#fbbf24}
+.term-code .err{color:#f87171}
+.term-code .ok{color:#4ade80}
+
+/* Outputs grid */
+.outputs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.output-card{padding:18px 20px;background:#fafafb;border:1px solid #f0f0f0;border-radius:12px}
+.output-card h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;color:#6366f1;font-weight:700;margin-bottom:8px}
+.output-card .file{font-family:monospace;font-size:.75rem;color:#888;margin-bottom:6px}
+.output-card p{font-size:.82rem;color:#555;line-height:1.6}
+.output-card pre{font-family:monospace;font-size:.72rem;color:#666;line-height:1.7;background:#fff;padding:10px 12px;border-radius:6px;border:1px solid #eee;overflow-x:auto;margin-top:8px}
+
+/* Feature list */
+.features{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #f0f0f0;border-radius:14px;overflow:hidden;margin-bottom:24px}
+.feat-col{padding:22px}
+.feat-col+.feat-col{border-left:1px solid #f0f0f0}
+.feat-label{font-size:.65rem;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:10px}
+.feat-label.y1{color:#6366f1}
+.feat-label.y2{color:#a855f7}
+.feat-list{list-style:none;font-size:.82rem;color:#444;line-height:2}
+.feat-list li::before{content:'✓ ';color:#16a34a}
+
+/* Architecture */
+.arch{background:#fafafb;border:1.5px solid #f0f0f0;border-radius:14px;padding:22px 26px;margin-bottom:24px;font-family:monospace;font-size:.78rem;line-height:1.8;color:#555;overflow-x:auto}
+.arch .cls{color:#6366f1;font-weight:600}
+.arch .meth{color:#a855f7}
+.arch .cmt{color:#aaa}
+
+/* Benchmark preview */
+.bench{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px}
+.bench-desc{padding:20px;background:#fafafb;border:1px solid #f0f0f0;border-radius:12px}
+.bench-desc h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;color:#d97706;font-weight:700;margin-bottom:8px}
+.bench-desc p{font-size:.82rem;color:#555;line-height:1.7}
+.bench-table{padding:20px;background:#fafafb;border:1px solid #f0f0f0;border-radius:12px}
+.bench-table table{width:100%;font-size:.75rem;border-collapse:collapse}
+.bench-table th{text-align:left;color:#999;font-weight:600;padding:4px 8px;border-bottom:1px solid #eee}
+.bench-table td{padding:4px 8px;color:#444}
+.bench-table .fast{color:#16a34a;font-weight:600}
+
+/* Use case */
+.usecase{padding:20px 24px;background:#f0fdf4;border-radius:12px;border:1px solid #dcfce7;margin-bottom:24px}
+.usecase h4{font-size:.82rem;font-weight:700;color:#166534;margin-bottom:8px}
+.usecase p{font-size:.85rem;color:#3f6212;line-height:1.7}
+
+.foot{text-align:center;padding:48px 28px 32px;font-size:.72rem;color:#ccc}
+.foot a{color:#a5b4fc}
+
+@media(max-width:768px){
+  .outputs,.features,.bench{grid-template-columns:1fr}
+  .feat-col+.feat-col{border-left:none;border-top:1px solid #f0f0f0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a href="index.html" class="back">← Back to CourseOS</a>
+
+<div class="page-header">
+  <h1>What you'll have when you're done</h1>
+  <p>After 2 years, 56 weeks, and 4 courses — this is the working tool sitting in your GitHub repo. Not a homework assignment. A product.</p>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- ROBOTICS -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="product" id="robotics">
+<div class="prod-head"><div class="prod-icon">🤖</div><div class="prod-info"><h2>MechaSense Studio</h2><div class="tagline">"Give it sensor data, get a fault report."</div></div></div>
+<div class="prod-oneliner">A command-line tool that ingests raw sensor CSVs (temperature, RPM, vibration, IMU), validates and cleans the data, detects anomalies and threshold crossings, generates annotated time-series plots, and exports a structured fault report — all with one function call.</div>
+
+<div class="terminal">
+<div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div></div>
+<div class="term-code">
+<span class="cmd">$ python -c "from mechasense import run; run('data/raw/motor_log.csv')"</span><br><br>
+<span class="out">Loading data/raw/motor_log.csv... 12,847 rows</span><br>
+<span class="out">Schema valid: 4 columns [timestamp, temp, rpm, vibration]</span><br>
+<span class="out">Cleaning: 12,847 → 12,203 rows (644 dropped)</span><br>
+<span class="out">  - missing_values: 312</span><br>
+<span class="out">  - out_of_range_temp: 198</span><br>
+<span class="out">  - out_of_range_vibration: 134</span><br>
+<span class="hi">Events detected:</span><br>
+<span class="hi">  ⚠ 3 overtemp events (threshold: 80°C)</span><br>
+<span class="hi">    t=1432s peak=94.2°C duration=45s</span><br>
+<span class="hi">    t=3891s peak=87.1°C duration=22s</span><br>
+<span class="hi">    t=8204s peak=91.8°C duration=38s</span><br>
+<span class="hi">  ⚠ 5 vibration spikes (threshold: 50g)</span><br>
+<span class="hi">    t=1440s peak=62.3g (correlates with overtemp #1)</span><br>
+<span class="out">Analysis: mean_temp=42.3°C std=12.1 | mean_rpm=2847 std=234</span><br>
+<span class="ok">Saved: reports/figures/timeseries.png</span><br>
+<span class="ok">Saved: reports/figures/summary.png</span><br>
+<span class="ok">Saved: reports/report.json</span><br>
+<span class="ok">Saved: data/cleaned/cleaned.csv (12,203 rows)</span><br><br>
+<span class="cmd">$ python -c "from mechasense.dsa import EventIndex; idx = EventIndex(events); print(idx.query(1400, 1500))"</span><br>
+<span class="out">[Event(t=1432, type='overtemp', value=94.2), Event(t=1440, type='vibration', value=62.3)]</span><br>
+<span class="out">Query time: 0.003ms (binary search on 12,203 events)</span>
+</div>
+</div>
+
+<div class="outputs">
+  <div class="output-card">
+    <h4>Cleaned CSV</h4>
+    <div class="file">data/cleaned/cleaned.csv</div>
+    <p>12,203 validated rows with numeric types enforced, missing values removed, out-of-range readings dropped with documented reasons.</p>
+  </div>
+  <div class="output-card">
+    <h4>Fault Report</h4>
+    <div class="file">reports/report.json</div>
+    <pre>{
+  "project_name": "mechasense",
+  "track": "robotics",
+  "version": "v3",
+  "dataset": {"n_raw": 12847, "n_clean": 12203, "n_dropped": 644},
+  "cleaning_summary": {"missing": 312, "out_of_range": 332},
+  "analysis_summary": {
+    "mean_temp": 42.3, "std_temp": 12.1,
+    "mean_rpm": 2847, "events_overtemp": 3,
+    "events_vibration": 5
+  },
+  "figures": ["timeseries.png", "summary.png"]
+}</pre>
+  </div>
+  <div class="output-card">
+    <h4>Time-Series Plot</h4>
+    <div class="file">reports/figures/timeseries.png</div>
+    <p>Multi-sensor line plot with threshold lines, event markers (red dots at fault points), smoothed overlay, labeled axes with units. Publication quality.</p>
+  </div>
+  <div class="output-card">
+    <h4>Distribution Plot</h4>
+    <div class="file">reports/figures/summary.png</div>
+    <p>Per-sensor histograms with mean/median lines, box plots showing quartiles and outliers. Side-by-side comparison across sensor types.</p>
+  </div>
+</div>
+
+<div class="features">
+  <div class="feat-col">
+    <div class="feat-label y1">Built in Year 1 (CP1 + CP2)</div>
+    <ul class="feat-list">
+      <li>CSV loader with schema validation</li>
+      <li>Configurable cleaning rules (threshold, range, missing)</li>
+      <li>Summary statistics (mean, std, min, max per sensor)</li>
+      <li>Threshold crossing counter</li>
+      <li>Peak/spike detector</li>
+      <li>Moving-average smoother</li>
+      <li>Labeled matplotlib plots saved to disk</li>
+      <li>JSON + Markdown report generator</li>
+      <li>Golden output tests</li>
+      <li>Modular /src with imports</li>
+    </ul>
+  </div>
+  <div class="feat-col">
+    <div class="feat-label y2">Added in Year 2 (OOP + DSA)</div>
+    <ul class="feat-list">
+      <li>CSVDataSource component</li>
+      <li>RuleCleaner with Strategy pattern</li>
+      <li>EventAnalyzer component</li>
+      <li>Plotter + Reporter components</li>
+      <li>Custom exceptions (SensorError, SchemaError)</li>
+      <li>Factory: build pipeline from config</li>
+      <li>pytest suite (8+ tests)</li>
+      <li>EventIndex: sorted events + binary search</li>
+      <li>O(log n) range queries on 100K+ events</li>
+      <li>Benchmark: baseline O(n) vs optimized O(log n)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="arch">
+<span class="cmt"># Architecture (after OOP)</span><br>
+<span class="cls">CSVDataSource</span> → loads CSV, returns <span class="cls">Dataset</span><br>
+<span class="cls">RuleCleaner</span> → applies configurable rules, reports drops<br>
+  └─ strategies: <span class="meth">DropMissing</span>, <span class="meth">DropOutOfRange</span>, <span class="meth">DropSpikes</span><br>
+<span class="cls">EventAnalyzer</span> → detects threshold crossings, peaks, correlations<br>
+<span class="cls">Plotter</span> → generates timeseries + summary figures<br>
+<span class="cls">Reporter</span> → exports JSON + Markdown + cleaned CSV<br>
+<br>
+<span class="cmt"># DSA optimization</span><br>
+<span class="cls">EventIndex</span> → sorted list + <span class="meth">bisect</span> for O(log n) range queries<br>
+<span class="cls">TopKHeap</span> → <span class="meth">heapq.nlargest</span> for top anomalies without full sort
+</div>
+
+<div class="bench">
+  <div class="bench-desc">
+    <h4>Benchmark proof</h4>
+    <p>Event range query: "find all overtemp events between t=1000 and t=2000." Baseline scans all events linearly. Optimized uses a sorted index with binary search to jump directly to the range.</p>
+  </div>
+  <div class="bench-table">
+    <table>
+      <tr><th>n events</th><th>Baseline</th><th>Optimized</th><th>Speedup</th></tr>
+      <tr><td>1,000</td><td>0.12ms</td><td>0.008ms</td><td class="fast">15×</td></tr>
+      <tr><td>10,000</td><td>1.1ms</td><td>0.010ms</td><td class="fast">110×</td></tr>
+      <tr><td>100,000</td><td>11.3ms</td><td>0.012ms</td><td class="fast">940×</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="usecase">
+  <h4>Real-world use</h4>
+  <p>Drop this tool on a factory floor. Any machine with sensor logging (CNC, robotic arm, conveyor) exports a CSV. MechaSense reads it, finds faults, generates the report. A maintenance engineer reads the report and schedules repair before the machine fails. That's predictive maintenance — and you built the prototype.</p>
+</div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- DATA -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="product" id="data">
+<div class="prod-head"><div class="prod-icon">📊</div><div class="prod-info"><h2>CleanReport Pipeline</h2><div class="tagline">"Give it any messy CSV, get a clean dataset and a report."</div></div></div>
+<div class="prod-oneliner">An automated data quality tool that validates any CSV against an expected schema, drops bad rows with per-reason documentation, computes group summaries, generates professional plots, and writes both machine-readable (JSON) and human-readable (Markdown) reports.</div>
+
+<div class="terminal">
+<div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div></div>
+<div class="term-code">
+<span class="cmd">$ python -c "from cleanreport import run; run('data/raw/survey_2024.csv')"</span><br><br>
+<span class="out">Loading data/raw/survey_2024.csv... 15,340 rows</span><br>
+<span class="out">Schema check: expecting [id, age, score, city, date]</span><br>
+<span class="ok">Schema valid ✓</span><br>
+<span class="out">Cleaning: 15,340 → 12,891 rows (2,449 dropped)</span><br>
+<span class="out">  - missing_values: 1,203 (age: 542, score: 661)</span><br>
+<span class="out">  - non_numeric: 487 (age: "N/A", score: "pending")</span><br>
+<span class="out">  - out_of_range: 398 (age: <0 or >120, score: <0 or >100)</span><br>
+<span class="out">  - duplicates: 361</span><br>
+<span class="hi">Group summaries (by city):</span><br>
+<span class="hi">  Cairo:  n=4,201  mean_score=78.3  std=12.4</span><br>
+<span class="hi">  Alex:   n=3,892  mean_score=82.1  std=10.8</span><br>
+<span class="hi">  Luxor:  n=2,445  mean_score=74.6  std=14.2</span><br>
+<span class="hi">  Other:  n=2,353  mean_score=79.0  std=11.9</span><br>
+<span class="out">Outliers (IQR method): 89 flagged across all groups</span><br>
+<span class="ok">Saved: reports/figures/timeseries.png</span><br>
+<span class="ok">Saved: reports/figures/summary.png</span><br>
+<span class="ok">Saved: reports/report.json</span><br>
+<span class="ok">Saved: reports/report.md</span><br>
+<span class="ok">Saved: data/cleaned/cleaned.csv (12,891 rows)</span><br><br>
+<span class="cmd">$ python -c "from cleanreport.dsa import CachedAggregator; a = CachedAggregator(data); print(a.group_mean('city', 'score'))"</span><br>
+<span class="out">{'Cairo': 78.3, 'Alex': 82.1, 'Luxor': 74.6, 'Other': 79.0}</span><br>
+<span class="out">Cache hit — 0.001ms (vs 4.2ms uncached)</span>
+</div>
+</div>
+
+<div class="outputs">
+  <div class="output-card">
+    <h4>Cleaned CSV</h4>
+    <div class="file">data/cleaned/cleaned.csv</div>
+    <p>12,891 validated rows. All types enforced, missing/invalid rows removed with full audit trail in cleaning_summary.</p>
+  </div>
+  <div class="output-card">
+    <h4>JSON Report</h4>
+    <div class="file">reports/report.json</div>
+    <pre>{
+  "project_name": "cleanreport",
+  "version": "v3",
+  "dataset": {"n_raw": 15340, "n_clean": 12891},
+  "cleaning_summary": {
+    "missing_values": 1203,
+    "non_numeric": 487,
+    "out_of_range": 398,
+    "duplicates": 361
+  },
+  "analysis_summary": {
+    "groups": 4,
+    "overall_mean": 78.5,
+    "outliers_flagged": 89
+  }
+}</pre>
+  </div>
+  <div class="output-card">
+    <h4>Markdown Report</h4>
+    <div class="file">reports/report.md</div>
+    <p>Human-readable report with interpretation text: "The dataset lost 16% of rows during cleaning, primarily due to missing age values (542 rows). Cairo has the largest sample but Alexandria scores higher on average."</p>
+  </div>
+  <div class="output-card">
+    <h4>Dashboard Plots</h4>
+    <div class="file">reports/figures/*.png</div>
+    <p>Histograms per group, box plots with outlier markers, scatter plots of key relationships, all with labels, legends, and mean/median reference lines.</p>
+  </div>
+</div>
+
+<div class="features">
+  <div class="feat-col">
+    <div class="feat-label y1">Built in Year 1</div>
+    <ul class="feat-list">
+      <li>Schema validator with meaningful error messages</li>
+      <li>Configurable cleaning pipeline (rules via config dict)</li>
+      <li>Per-reason drop counting and reporting</li>
+      <li>Group-by summaries (Counter, dict analytics)</li>
+      <li>Outlier detection (IQR method)</li>
+      <li>Histogram + box plot + scatter dashboards</li>
+      <li>JSON + Markdown report generator</li>
+      <li>Golden output regression tests</li>
+      <li>Modular /src, notebooks import only</li>
+    </ul>
+  </div>
+  <div class="feat-col">
+    <div class="feat-label y2">Added in Year 2</div>
+    <ul class="feat-list">
+      <li>Pluggable cleaners via Strategy pattern</li>
+      <li>Pluggable analyzers (add new metrics without changing core)</li>
+      <li>Factory: build pipeline from config file</li>
+      <li>Domain exceptions (SchemaError, CleaningError)</li>
+      <li>pytest suite with fixtures</li>
+      <li>CachedAggregator: hash-based group aggregation</li>
+      <li>Memoized statistics for repeated queries</li>
+      <li>Benchmark: uncached O(n) vs cached O(1) lookups</li>
+    </ul>
+  </div>
+</div>
+
+<div class="bench">
+  <div class="bench-desc">
+    <h4>Benchmark proof</h4>
+    <p>Group aggregation: "what is the mean score per city?" Baseline scans all rows every time. Optimized builds a hash-based index once, then answers queries in O(1) from cache.</p>
+  </div>
+  <div class="bench-table">
+    <table>
+      <tr><th>n rows</th><th>Baseline</th><th>Cached</th><th>Speedup</th></tr>
+      <tr><td>1,000</td><td>0.4ms</td><td>0.3ms</td><td class="fast">1.3×</td></tr>
+      <tr><td>10,000</td><td>4.2ms</td><td>0.001ms</td><td class="fast">4,200×</td></tr>
+      <tr><td>100,000</td><td>42ms</td><td>0.001ms</td><td class="fast">42,000×</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="usecase">
+  <h4>Real-world use</h4>
+  <p>A hospital hands you 50,000 patient records in a CSV with inconsistent formats, missing ages, and duplicate entries. Run CleanReport — in seconds you have clean data, a breakdown of what was dropped and why, group statistics by department, and a report the research team can actually use. Every data science job starts with this step.</p>
+</div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SIMULATION -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="product" id="simulation">
+<div class="prod-head"><div class="prod-icon">🎮</div><div class="prod-info"><h2>SimLab Engine</h2><div class="tagline">"Define the rules, run the world, compare the results."</div></div></div>
+<div class="prod-oneliner">A configurable discrete simulation engine that runs timestep-based scenarios, logs every state, validates parameters, computes scores, detects collisions, plots trajectories, and compares runs side by side — all from a config file.</div>
+
+<div class="terminal">
+<div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div></div>
+<div class="term-code">
+<span class="cmd">$ python -c "from simlab import run; run('configs/warehouse_drone.json')"</span><br><br>
+<span class="out">Loading scenario: warehouse_drone</span><br>
+<span class="out">Grid: 100×100, obstacles: 23, agents: 1, seed: 42</span><br>
+<span class="out">Running scenario A (conservative)... 500 timesteps</span><br>
+<span class="out">Running scenario B (aggressive)...  500 timesteps</span><br>
+<span class="hi">Results:</span><br>
+<span class="hi">  Scenario A: score=2,340  collisions=3  time_to_goal=412 steps</span><br>
+<span class="hi">  Scenario B: score=1,890  collisions=0  time_to_goal=298 steps</span><br>
+<span class="hi">  B is 28% faster but scores 19% lower</span><br>
+<span class="out">Collision check: 11,500 proximity queries</span><br>
+<span class="ok">Saved: reports/figures/trajectory_A.png</span><br>
+<span class="ok">Saved: reports/figures/trajectory_B.png</span><br>
+<span class="ok">Saved: reports/figures/comparison.png</span><br>
+<span class="ok">Saved: reports/report.json</span><br><br>
+<span class="cmd">$ python -c "from simlab.dsa import SpatialHash; sh = SpatialHash(grid, cell=10); print(sh.nearby(50, 50, radius=15))"</span><br>
+<span class="out">[Obstacle(32,48), Obstacle(55,44), Agent(50,50)]</span><br>
+<span class="out">Query time: 0.02ms (spatial hash, vs 1.8ms brute force)</span>
+</div>
+</div>
+
+<div class="outputs">
+  <div class="output-card">
+    <h4>Simulation Log</h4>
+    <div class="file">data/cleaned/simulation_log.csv</div>
+    <p>Every timestep recorded: step, x, y, velocity, score, collision_flag. Deterministic — same seed = same results. Reproducible science.</p>
+  </div>
+  <div class="output-card">
+    <h4>Scenario Report</h4>
+    <div class="file">reports/report.json</div>
+    <pre>{
+  "scenarios": ["A", "B"],
+  "comparison": {
+    "A": {"score": 2340, "collisions": 3, "steps": 412},
+    "B": {"score": 1890, "collisions": 0, "steps": 298}
+  },
+  "winner": "B (faster, safer)",
+  "proximity_queries": 11500
+}</pre>
+  </div>
+  <div class="output-card">
+    <h4>Trajectory Plots</h4>
+    <div class="file">reports/figures/trajectory_*.png</div>
+    <p>2D path visualization with obstacles (gray), agent trail (blue), collision points (red), goal (green). Side-by-side comparison of scenarios.</p>
+  </div>
+  <div class="output-card">
+    <h4>Comparison Chart</h4>
+    <div class="file">reports/figures/comparison.png</div>
+    <p>Bar chart: score, collisions, time-to-goal per scenario. Easy visual comparison. Which strategy wins?</p>
+  </div>
+</div>
+
+<div class="features">
+  <div class="feat-col">
+    <div class="feat-label y1">Built in Year 1</div>
+    <ul class="feat-list">
+      <li>Timestep loop with position, velocity, scoring</li>
+      <li>Parameter validation + boundary handling</li>
+      <li>Config-driven scenario definitions</li>
+      <li>Deterministic runs with seed control</li>
+      <li>Batch scenario runner</li>
+      <li>Trajectory and score plots</li>
+      <li>Scenario comparison reports</li>
+      <li>Edge case handling (out of bounds, zero velocity)</li>
+    </ul>
+  </div>
+  <div class="feat-col">
+    <div class="feat-label y2">Added in Year 2</div>
+    <ul class="feat-list">
+      <li>Simulator, Scenario, Logger, Reporter components</li>
+      <li>Strategy pattern for agent behavior</li>
+      <li>Factory: load scenario from JSON config</li>
+      <li>Custom exceptions (CollisionError, BoundsError)</li>
+      <li>pytest suite with seeded deterministic tests</li>
+      <li>SpatialHash for O(1) proximity/collision queries</li>
+      <li>Grid indexing for fast neighbor lookup</li>
+      <li>Benchmark: brute-force O(n²) vs spatial hash O(1)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="bench">
+  <div class="bench-desc">
+    <h4>Benchmark proof</h4>
+    <p>Collision detection: "is anything within 15 units of the agent?" Baseline checks every object (O(n) per query, O(n²) per step). Spatial hashing divides the grid into cells — only check the nearby cells. O(1) average per query.</p>
+  </div>
+  <div class="bench-table">
+    <table>
+      <tr><th>n objects</th><th>Brute force</th><th>Spatial hash</th><th>Speedup</th></tr>
+      <tr><td>100</td><td>0.15ms</td><td>0.02ms</td><td class="fast">7.5×</td></tr>
+      <tr><td>1,000</td><td>1.8ms</td><td>0.02ms</td><td class="fast">90×</td></tr>
+      <tr><td>10,000</td><td>18ms</td><td>0.03ms</td><td class="fast">600×</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="usecase">
+  <h4>Real-world use</h4>
+  <p>Before a drone flies in a real warehouse, you simulate it. 100 different obstacle layouts, 5 navigation strategies, 500 runs each. SimLab runs them all, logs every step, and tells you which strategy is safest. Game studios use the same spatial hashing for real-time collision detection. Defense contractors simulate mission scenarios this way.</p>
+</div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- SPACE -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="product" id="space">
+<div class="prod-head"><div class="prod-icon">🌌</div><div class="prod-info"><h2>Lightcurve Explorer</h2><div class="tagline">"Give it starlight data, find hidden planets."</div></div></div>
+<div class="prod-oneliner">A lightcurve analysis tool that processes star brightness measurements, cleans instrument noise, applies detrending, detects flux dips that indicate planet transits, estimates orbital periods, and generates annotated discovery reports.</div>
+
+<div class="terminal">
+<div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div></div>
+<div class="term-code">
+<span class="cmd">$ python -c "from lightcurve import run; run('data/raw/tic_29837.csv')"</span><br><br>
+<span class="out">Loading data/raw/tic_29837.csv... 48,291 measurements</span><br>
+<span class="out">Time range: 0.0 to 54.2 days (sector A + B)</span><br>
+<span class="out">Cleaning: 48,291 → 45,102 (3,189 dropped: 2,104 NaN, 1,085 outlier)</span><br>
+<span class="out">Detrending: polynomial order 3 applied</span><br>
+<span class="hi">Transit search (threshold: 0.5% dip):</span><br>
+<span class="hi">  🪐 Dip #1: t=12.34d  depth=0.82%  duration=3.2h  SNR=8.4</span><br>
+<span class="hi">  🪐 Dip #2: t=58.81d  depth=0.79%  duration=3.1h  SNR=7.9</span><br>
+<span class="hi">  Estimated period: 46.47 days</span><br>
+<span class="hi">  Confidence: MODERATE (2 transits observed)</span><br>
+<span class="out">Sector summary: A(24,501 pts, 1 dip), B(20,601 pts, 1 dip)</span><br>
+<span class="ok">Saved: reports/figures/lightcurve_full.png</span><br>
+<span class="ok">Saved: reports/figures/dip_detail.png</span><br>
+<span class="ok">Saved: reports/figures/summary.png</span><br>
+<span class="ok">Saved: reports/report.json</span><br><br>
+<span class="cmd">$ python -c "from lightcurve.dsa import WindowStats; w = WindowStats(flux); print(w.mean(1000, 2000))"</span><br>
+<span class="out">0.99847 (prefix sum, 0.0001ms vs 0.12ms naive)</span>
+</div>
+</div>
+
+<div class="outputs">
+  <div class="output-card">
+    <h4>Cleaned Lightcurve</h4>
+    <div class="file">data/cleaned/cleaned.csv</div>
+    <p>45,102 validated time-flux pairs. NaN gaps filled or removed, instrument outliers clipped, detrended baseline normalized to 1.0.</p>
+  </div>
+  <div class="output-card">
+    <h4>Discovery Report</h4>
+    <div class="file">reports/report.json</div>
+    <pre>{
+  "star": "TIC-29837",
+  "transits": [
+    {"time": 12.34, "depth_pct": 0.82, "duration_h": 3.2, "snr": 8.4},
+    {"time": 58.81, "depth_pct": 0.79, "duration_h": 3.1, "snr": 7.9}
+  ],
+  "estimated_period_days": 46.47,
+  "confidence": "moderate",
+  "sectors_analyzed": 2
+}</pre>
+  </div>
+  <div class="output-card">
+    <h4>Lightcurve Plot</h4>
+    <div class="file">reports/figures/lightcurve_full.png</div>
+    <p>Full lightcurve with detrended baseline, dip locations marked with arrows, sector boundaries, flux range shading. The plot that tells the story.</p>
+  </div>
+  <div class="output-card">
+    <h4>Dip Detail Plot</h4>
+    <div class="file">reports/figures/dip_detail.png</div>
+    <p>Zoomed view of each detected transit: ingress, flat bottom, egress. Depth and duration annotated. Phase-folded overlay if multiple transits found.</p>
+  </div>
+</div>
+
+<div class="features">
+  <div class="feat-col">
+    <div class="feat-label y1">Built in Year 1</div>
+    <ul class="feat-list">
+      <li>Time-flux CSV loader (TESS-like format)</li>
+      <li>NaN and outlier cleaning for flux data</li>
+      <li>Threshold-based dip detection</li>
+      <li>Basic detrending (moving average)</li>
+      <li>Lightcurve line plots with annotations</li>
+      <li>Sector-by-sector summary stats</li>
+      <li>JSON report with transit candidates</li>
+      <li>Golden output tests on synthetic lightcurves</li>
+    </ul>
+  </div>
+  <div class="feat-col">
+    <div class="feat-label y2">Added in Year 2</div>
+    <ul class="feat-list">
+      <li>Pluggable detrenders (polynomial, median filter, spline)</li>
+      <li>LightcurveSource, Cleaner, DipDetector components</li>
+      <li>Strategy pattern for detrending algorithm selection</li>
+      <li>Custom exceptions (NoDataError, InsufficientTransits)</li>
+      <li>pytest with synthetic transit injection tests</li>
+      <li>PrefixSum array for O(1) windowed statistics</li>
+      <li>Fast mean/std/min/max over any time range</li>
+      <li>Benchmark: naive O(n) windows vs O(1) prefix sums</li>
+    </ul>
+  </div>
+</div>
+
+<div class="bench">
+  <div class="bench-desc">
+    <h4>Benchmark proof</h4>
+    <p>Windowed statistics: "what's the mean flux between t=10.0 and t=15.0 days?" Baseline sums all values in the range O(n). Prefix sums precompute cumulative sums — any window mean in O(1), two subtractions.</p>
+  </div>
+  <div class="bench-table">
+    <table>
+      <tr><th>n points</th><th>Naive window</th><th>Prefix sum</th><th>Speedup</th></tr>
+      <tr><td>10,000</td><td>0.12ms</td><td>0.0001ms</td><td class="fast">1,200×</td></tr>
+      <tr><td>100,000</td><td>1.2ms</td><td>0.0001ms</td><td class="fast">12,000×</td></tr>
+      <tr><td>1,000,000</td><td>12ms</td><td>0.0001ms</td><td class="fast">120,000×</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="usecase">
+  <h4>Real-world use</h4>
+  <p>NASA's TESS mission has found 7,000+ exoplanet candidates using exactly this workflow: load lightcurve → detrend → detect dips → estimate period → flag candidates. Your tool does the same thing on toy data. The prefix-sum technique you implement is used in financial rolling averages, genomics sliding windows, and video processing. And in an interview, you say "I built a planet detector" — nobody forgets that.</p>
+</div>
+</div>
+
+<hr>
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- IOT -->
+<!-- ═══════════════════════════════════════════════ -->
+<div class="product" id="iot">
+<div class="prod-head"><div class="prod-icon">📡</div><div class="prod-info"><h2>AutoDashboard Reporter</h2><div class="tagline">"Give it any sensor CSV, get a dashboard. Any device, no code changes."</div></div></div>
+<div class="prod-oneliner">A universal IoT dashboard generator that accepts any time-series CSV, auto-maps columns through aliases, applies a dashboard profile, cleans data, generates standardized plots, and exports per-device reports — all config-driven, no code changes for new devices.</div>
+
+<div class="terminal">
+<div class="term-bar"><div class="term-dot r"></div><div class="term-dot y"></div><div class="term-dot g"></div></div>
+<div class="term-code">
+<span class="cmd">$ python -c "from autodashboard import run; run('data/raw/', profile='building')"</span><br><br>
+<span class="out">Scanning data/raw/... found 4 device CSVs</span><br>
+<span class="out">Profile: building (temp, humidity, co2, water_flow)</span><br><br>
+<span class="out">Device D01 (server_room):</span><br>
+<span class="out">  Columns mapped: "T(°C)" → temperature, "RH%" → humidity</span><br>
+<span class="out">  Loaded: 8,640 readings (30 days × 288/day)</span><br>
+<span class="out">  Cleaned: 8,640 → 8,412 (228 dropped: 185 missing, 43 spike)</span><br>
+<span class="hi">  Alerts: 12 temp exceedances (>28°C), humidity stable</span><br>
+<span class="ok">  Dashboard: 4 plots saved</span><br><br>
+<span class="out">Device D02 (lobby): ... 7,200 readings, 3 anomalies</span><br>
+<span class="out">Device D03 (meeting_hall): ... 5,760 readings, 0 anomalies</span><br>
+<span class="out">Device D04 (basement): ... 4,320 readings, 8 water_flow alerts</span><br><br>
+<span class="ok">Saved: reports/D01_report.json</span><br>
+<span class="ok">Saved: reports/D02_report.json</span><br>
+<span class="ok">Saved: reports/D03_report.json</span><br>
+<span class="ok">Saved: reports/D04_report.json</span><br>
+<span class="ok">Saved: reports/figures/ (16 plots total)</span><br>
+<span class="ok">Saved: reports/building_summary.md</span><br><br>
+<span class="cmd">$ python -c "from autodashboard.dsa import BatchCache; bc = BatchCache(devices); bc.recompute_all()"</span><br>
+<span class="out">4 devices recomputed: 0.8ms (cached) vs 34ms (from scratch)</span>
+</div>
+</div>
+
+<div class="outputs">
+  <div class="output-card">
+    <h4>Per-Device Reports</h4>
+    <div class="file">reports/D01_report.json</div>
+    <pre>{
+  "device": "D01",
+  "location": "server_room",
+  "readings": 8412,
+  "period": "2024-01-01 to 2024-01-30",
+  "alerts": {"temp_high": 12, "humidity": 0},
+  "stats": {
+    "temp": {"mean": 23.4, "min": 18.2, "max": 31.5},
+    "humidity": {"mean": 46.2, "min": 41, "max": 52}
+  }
+}</pre>
+  </div>
+  <div class="output-card">
+    <h4>Building Summary</h4>
+    <div class="file">reports/building_summary.md</div>
+    <p>Cross-device summary: "4 devices monitored over 30 days. Server room has recurring temp exceedances — recommend HVAC review. Basement water flow anomalies on 3 dates — possible leak. Lobby and meeting hall within normal range."</p>
+  </div>
+  <div class="output-card">
+    <h4>Device Dashboards</h4>
+    <div class="file">reports/figures/D01_*.png</div>
+    <p>Per-device standardized dashboard: time-series (all metrics overlaid), daily summary bars, anomaly scatter, 30-day trend line. Same layout for every device — consistent and comparable.</p>
+  </div>
+  <div class="output-card">
+    <h4>Column Mapping Config</h4>
+    <div class="file">src/autodashboard/config.py</div>
+    <pre># New device? Just add aliases:
+"column_aliases": {
+  "temperature": ["temp", "T(°C)", "ambient_temp"],
+  "humidity": ["RH%", "hum", "rel_humidity"],
+  "co2": ["CO2_ppm", "carbon_dioxide"]
+}
+# No code changes needed.</pre>
+  </div>
+</div>
+
+<div class="features">
+  <div class="feat-col">
+    <div class="feat-label y1">Built in Year 1</div>
+    <ul class="feat-list">
+      <li>CSV loader with auto column detection</li>
+      <li>Column alias mapping from config</li>
+      <li>Standard cleaning pipeline for IoT streams</li>
+      <li>Per-device summary statistics</li>
+      <li>Time-series + daily summary plots</li>
+      <li>JSON report per device</li>
+      <li>Markdown summary across devices</li>
+      <li>Dashboard profile system (configurable layouts)</li>
+    </ul>
+  </div>
+  <div class="feat-col">
+    <div class="feat-label y2">Added in Year 2</div>
+    <ul class="feat-list">
+      <li>Plugin dashboard architecture</li>
+      <li>DeviceSource, Cleaner, DashboardRenderer components</li>
+      <li>Strategy: different dashboard profiles per device type</li>
+      <li>Factory: instantiate pipeline from profile config</li>
+      <li>Custom exceptions (UnknownColumnError, DeviceOfflineError)</li>
+      <li>pytest suite with mock device data</li>
+      <li>BatchCache: memoized stats for repeat computations</li>
+      <li>Benchmark: fresh computation vs cached batch reprocessing</li>
+    </ul>
+  </div>
+</div>
+
+<div class="bench">
+  <div class="bench-desc">
+    <h4>Benchmark proof</h4>
+    <p>Batch reprocessing: when a new day of data arrives, recompute all device summaries. Baseline recalculates everything from scratch. Cached version only processes the new data and merges with stored results.</p>
+  </div>
+  <div class="bench-table">
+    <table>
+      <tr><th>n devices × days</th><th>From scratch</th><th>Cached</th><th>Speedup</th></tr>
+      <tr><td>4 × 7</td><td>8ms</td><td>2ms</td><td class="fast">4×</td></tr>
+      <tr><td>4 × 30</td><td>34ms</td><td>0.8ms</td><td class="fast">42×</td></tr>
+      <tr><td>20 × 30</td><td>170ms</td><td>1.2ms</td><td class="fast">140×</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="usecase">
+  <h4>Real-world use</h4>
+  <p>A facilities manager has 200 sensors across a building — temperature in every room, humidity in the server room, CO2 in the halls. Each device dumps a CSV with different column names. AutoDashboard reads them all, maps the columns, generates standardized dashboards, and writes one summary report. New sensor type? Add one line to the config. This is a miniature version of what Grafana, Datadog, and AWS IoT do — and you built it from scratch.</p>
+</div>
+</div>
+
+<hr>
+
+<div style="text-align:center;padding:32px 0 48px">
+  <p style="font-size:.9rem;color:#555;margin-bottom:16px">This is what sits in your GitHub repo after 2 years. Employers can clone it, run it, and see it work.</p>
+  <a href="index.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:10px;font-size:.85rem;font-weight:600;background:#6366f1;color:#fff;text-decoration:none;box-shadow:0 2px 8px rgba(99,102,241,.25)">← Back to CourseOS</a>
+</div>
+</div>
+
+<div class="foot">CourseOS · <a href="https://github.com/ArifSolmaz/courseos-curriculum">GitHub</a></div>
+</body>
+</html>
