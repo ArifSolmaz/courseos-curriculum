@@ -270,7 +270,7 @@ details[open] summary{color:#6366f1;border-bottom:1px solid #f0f0f0}
   <div class="track-cl" data-tk="space" style="margin-bottom:28px">
     <div style="padding:24px 28px;background:#fff;border:1.5px solid #f0f0f0;border-radius:16px 16px 0 0;border-bottom:none">
       <h3 style="font-size:1.1rem;margin-bottom:4px">🌌 Space / Astro — <em>Lightcurve Explorer</em></h3>
-      <p style="font-size:.85rem;color:#888;line-height:1.6">You build a <strong>lightcurve analysis tool</strong> that processes star brightness data, detects flux dips (possible planet transits), detrends noise, and generates discovery reports. Real NASA-style data science.</p>
+      <p style="font-size:.85rem;color:#888;line-height:1.6">You build a <strong>lightcurve analysis tool</strong> that processes star brightness data, detects flux dips that may indicate transit-like events, applies basic detrending, and generates candidate-event reports for educational use.</p>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border:1.5px solid #f0f0f0;border-radius:0 0 16px 16px;overflow:hidden">
       <div style="padding:20px;border-right:1px solid #f0f0f0">
@@ -288,7 +288,7 @@ details[open] summary{color:#6366f1;border-bottom:1px solid #f0f0f0}
       </div>
       <div style="padding:20px;border-right:1px solid #f0f0f0">
         <div style="font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:#6366f1;font-weight:700;margin-bottom:8px">End product (after 2 years)</div>
-        <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes <strong>raw star brightness data</strong>, cleans it, applies detrending to remove instrument noise, scans for significant flux dips, marks candidate transit events, and produces annotated lightcurve plots with a structured report. Optimized with prefix sums for O(1) windowed statistics.</p>
+        <p style="font-size:.82rem;color:#555;line-height:1.7">A tool that takes <strong>raw star brightness data</strong>, cleans it, applies detrending to reduce baseline trends, scans for significant flux dips, marks candidate transit-like events, and produces annotated lightcurve plots with a structured report. Prefix sums accelerate range-sum and mean queries after preprocessing.</p>
         <div style="margin-top:12px;font-size:.78rem;color:#888"><strong>Sample output:</strong> "Star TIC-29837: 2 dips detected at t=45.2d (depth 0.8%) and t=91.7d (depth 0.9%). Period estimate: ~46.5 days."</div>
       </div>
       <div style="padding:20px">
