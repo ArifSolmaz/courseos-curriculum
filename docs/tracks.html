@@ -209,7 +209,7 @@ tr:hover td{background:#fafafb}
 <!-- ═══ SPACE ═══ -->
 <div class="track-card" id="space">
   <div class="tc-header"><div class="tc-icon">🌌</div><div class="tc-info"><h2>Space / Astro</h2><div class="product">Lightcurve Explorer</div></div></div>
-  <div class="tc-desc">You build a <strong>lightcurve analysis tool</strong>. It processes star brightness (flux) measurements, cleans noise and NaN values, detects flux dips that could indicate planet transits, applies detrending, and generates discovery reports with annotated plots.</div>
+  <div class="tc-desc">You build a <strong>lightcurve analysis tool</strong>. It processes star brightness (flux) measurements, cleans noise and NaN values, detects flux dips that may indicate transit-like events, applies detrending, and generates annotated candidate-event reports.</div>
   <div class="tc-grid">
     <div class="tc-col">
       <div class="tc-col-label green">What you build (4 courses)</div>
@@ -221,7 +221,7 @@ tr:hover td{background:#fafafb}
         <li><span class="icon">✓</span> Lightcurve plots with dip annotations</li>
         <li><span class="icon">✓</span> Sector-by-sector summary reports</li>
         <li><span class="icon">✓</span> OOP: pluggable detrenders (Strategy pattern)</li>
-        <li><span class="icon">✓</span> DSA: prefix sums for constant-time windowed statistics</li>
+        <li><span class="icon">✓</span> DSA: prefix sums for constant-time range-sum queries and fast rolling statistics after preprocessing</li>
       </ul>
     </div>
     <div class="tc-col">
@@ -353,9 +353,9 @@ tr:hover td{background:#fafafb}
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px"><span style="font-size:2rem">🌌</span><h3 style="font-size:1.05rem;font-weight:700">Space — "I want to discover things nobody has seen"</h3></div>
     <div style="font-size:.9rem;color:#444;line-height:1.85">
       <p>NASA's TESS satellite monitors large regions of the sky over roughly 27-day sectors, producing light curves that can be searched for periodic transit-like dips. If a planet passes in front of a star, the brightness dips — by maybe 0.5%. Hidden in noisy data, there's a tiny signal that says: <em>something interesting is there</em>.</p>
-      <p style="margin-top:10px">Your Lightcurve Explorer follows the same broad idea as real transit-search pipelines, but in a simplified educational form. Load a lightcurve CSV. Clean NaN gaps and obvious outliers. Apply detrending to flatten the baseline. Scan for transit-like dips below threshold. Mark candidate events. Your report says: <em>"2 transit-like dips detected at t=45.2d and t=91.7d, depth 0.8%, estimated period 46.5 days."</em> That's a promising toy-pipeline candidate for further vetting.</p>
+      <p style="margin-top:10px">Your Lightcurve Explorer follows the same broad idea as real transit-search pipelines, but in a simplified educational form. Load a lightcurve CSV. Remove or flag NaN-contaminated rows and screen obvious outliers. Apply detrending to flatten the baseline. Scan for transit-like dips below threshold. Mark candidate events. Your report says: <em>"2 transit-like dips detected at t=45.2d and t=91.7d, depth 0.8%, estimated period 46.5 days."</em> That's a promising toy-pipeline candidate for further vetting.</p>
       <p style="margin-top:10px"><strong>Why it's medium-hard:</strong> The algorithms aren't harder than other tracks — threshold detection, windowed statistics, detrending are all doable. The hard part is the <em>domain</em>. You need to learn what flux means, what a transit looks like, what detrending does and why. Nobody in your Mechatronics class will know this already. You're on your own for domain context, and fewer classmates can help you debug.</p>
-      <p style="margin-top:10px"><strong>Why the effort is worth it:</strong> Nothing else in your cohort will look like this. In an interview, when 20 people show data cleaning tools and sensor monitors, you pull out a <em>planet transit detector</em>. Conversation over — they want to hear more. This track also prepares you for aerospace and research careers. And the prefix-sum optimization you build in DSA is used everywhere — from financial analytics to genomics.</p>
+      <p style="margin-top:10px"><strong>Why the effort is worth it:</strong> Nothing else in your cohort will look like this. In an interview, when 20 people show data cleaning tools and sensor monitors, you pull out an <em>educational transit-candidate detector</em>. Conversation over — they want to hear more. This track also prepares you for aerospace and research careers. And the prefix-sum optimization you build in DSA is used everywhere — from financial analytics to genomics.</p>
       <p style="margin-top:10px;padding:12px 16px;background:#eef2ff;border-radius:10px;color:#4338ca"><strong>After graduation, you can tell an employer:</strong> "I built an educational lightcurve analysis pipeline that detects transit-like dip candidates in star brightness data — with windowed statistics optimized using prefix sums. Here's the repo."</p>
     </div>
   </div>
@@ -378,7 +378,7 @@ tr:hover td{background:#fafafb}
   <h3 style="font-size:1rem;font-weight:700;color:#818cf8;margin-bottom:12px">How to decide</h3>
   <div style="font-size:.88rem;line-height:1.85;color:#a1a1aa">
     <p><strong style="color:#e2e8f0">If you're unsure:</strong> pick Data/AI. It's the safest, easiest, and most transferable. You can always make it interesting with your own dataset choice.</p>
-    <p style="margin-top:8px"><strong style="color:#e2e8f0">If you want to stand out:</strong> pick Space or Simulation. Harder, but nobody else will have it. Interviewers remember the student who built a planet detector.</p>
+    <p style="margin-top:8px"><strong style="color:#e2e8f0">If you want to stand out:</strong> pick Space or Simulation. Harder, but nobody else will have it. Interviewers remember the student who built a transit-candidate detector from scratch.</p>
     <p style="margin-top:8px"><strong style="color:#e2e8f0">If you want the most relevant to your degree:</strong> pick Robotics or IoT. Both deal with sensor data and monitoring — core Mechatronics territory.</p>
     <p style="margin-top:8px"><strong style="color:#e2e8f0">If you want the most fun:</strong> pick Simulation. You design the rules, you watch things move, and the demo practically sells itself.</p>
     <p style="margin-top:14px;color:#818cf8"><strong>Don't pick based on difficulty alone.</strong> The hard tracks teach you more. The easy track frees you to go deeper on your own. Both are valid. Pick what you'll still care about in Week 28.</p>
