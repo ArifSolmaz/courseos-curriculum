@@ -109,7 +109,7 @@ TRACK_DATA = {
         "dataset_desc": "simulation timestep logs with position, velocity, and score",
         "bottleneck": "collision detection between many game objects",
         "baseline_op": "check every pair of objects for collision O(n^2)",
-        "optimized_op": "spatial hash grid for O(n) average collision detection",
+        "optimized_op": "spatial hash grid for reduced average candidate checks in broad-phase collision detection",
         "sample_data": [
             {"step": 0, "entity": "player", "x": 0.0, "y": 0.0, "hp": 100},
             {"step": 1, "entity": "player", "x": 1.0, "y": 0.5, "hp": 100},
@@ -130,9 +130,9 @@ TRACK_DATA = {
         "name": "Space/Astro",
         "product": "Lightcurve Explorer",
         "dataset_desc": "star brightness (flux) measurements over time for exoplanet detection",
-        "bottleneck": "searching sorted flux time-series for transit events",
+        "bottleneck": "querying candidate intervals and ranking detected dips in flux data",
         "baseline_op": "linear scan through all flux measurements",
-        "optimized_op": "binary search on sorted time + heap for top-k dips",
+        "optimized_op": "toy optimization: prefix sums for fast windowed stats + heap for ranking top dips",
         "sample_data": [
             {"time": 0.0, "flux": 1.000, "sector": "A"},
             {"time": 0.1, "flux": 0.998, "sector": "A"},
